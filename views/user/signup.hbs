@@ -1,18 +1,27 @@
 <div class="page page-signin">
-    <div class="row">
-            <h1>Sign Up</h1>
-            <p class="up">Already have an account? <a href="/user/signin">Sign in</a></p>
+   
+            <h1>Create your account</h1>
+            <p>Easier to order. Enable your point redemption. More privilege for online member</p>
             <form action='/user/signup' method="post">
-                <div class="form-group">
-                    <label for="email">E-mail</label><br>
-                    <input type="text" id="email" name="email">
+             <div class="form-group">
+                    <input type="text" id="firstName" name="firstName" class="form-control" placeholder="First name*" required>
+                </div>
+                 <div class="form-group">
+                    <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Last name*" required>
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label><br>
-                    <input type="password" id="password" name="password">
+                    <input type="text" id="email" name="email" class="form-control" placeholder="Email Address*" required>
+                </div>
+                 <div class="form-group">
+                    <input type="text"  pattern="^\[0-9]\d{1,14}$" id="mobilePhone" name="mobilePhone" class="form-control" placeholder="Mobile Number*" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Password*" required>
                 </div>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-                <button type="submit">Sign Up</button>
+                <button type="submit" >SIGN UP</button>
+                <b>OR</b>
+                <a href="/user/signin" id="createacc" >SIGN IN</a>
             </form>
             {{#if hasErrors}}
                 <div class="btn alert alert-danger">
@@ -21,7 +30,5 @@
                     {{/each}}
                 </div>
             {{/if}}
-            <p>* By Logging in, you agree to our Terms of Use and to receive<br>
-Our emails & updates and acknowledge that you read our Privacy Policy.</p>
-    </div>
+   
 </div>

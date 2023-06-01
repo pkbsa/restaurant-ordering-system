@@ -24,7 +24,7 @@ router.get("/profile", isLoggedIn, function (req, res, next) {
     });
     res.render("user/profile", {
       orders: orders,
-      users: req.user,
+      user: req.user,
       csrfToken: req.csrfToken(),
     });
   });
@@ -82,9 +82,9 @@ router.post(
   }),
   function (req, res, next) {
     console.log(req.session.oldUrl);
-    if (req.session.oldUrl) {
-      var oldUrl = req.session.oldUrl;
-      req.session.oldUrl = null;
+    if (req.session.referringUrl) {
+      var oldUrl = req.session.referringUrl;
+      req.session.referringUrl = null;
       res.redirect(oldUrl);
     } else {
       res.redirect("/user/profile");
@@ -110,10 +110,9 @@ router.post(
     failureFlash: true,
   }),
   function (req, res, next) {
-    console.log(req.session.oldUrl);
-    if (req.session.oldUrl) {
-      var oldUrl = req.session.oldUrl;
-      req.session.oldUrl = null;
+    if (req.session.referringUrl) {
+      var oldUrl = req.session.referringUrl;
+      req.session.referringUrl = null;
       res.redirect(oldUrl);
     } else {
       res.redirect("/user/profile");

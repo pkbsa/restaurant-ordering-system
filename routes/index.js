@@ -15,16 +15,18 @@ const { line_api } = require('../config/config');
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.render("shop/index", {
-    title: "Shopping Cart",
+    title: "Pye Boat Noodle",
+    user: req.user,
   });
 });
 
-router.get("/products", function (req, res, next) {
+router.get("/menu", function (req, res, next) {
+  req.session.referringUrl = req.originalUrl;
+  var cart = new Cart(req.session.cart ? req.session.cart : {});
   var successMsg = req.flash("success")[0];
   Product.find(function (err, docs) {
     var snacks = [];
     var rice = [];
-    var vegetarianDishes = [];
 
     // Categorize the products into separate arrays
     docs.forEach(function (product) {
@@ -32,8 +34,6 @@ router.get("/products", function (req, res, next) {
         snacks.push(product);
       } else if (product.category === "PYE OVER RICE") {
         rice.push(product);
-      } else if (product.category === "PYE VEGETARIAN DISHES") {
-        vegetarianDishes.push(product);
       }
     });
 
@@ -41,17 +41,99 @@ router.get("/products", function (req, res, next) {
       title: "Shopping Cart",
       snacks: snacks,
       rice: rice,
-      vegetarianDishes: vegetarianDishes,
       successMsg: successMsg || null,
-      noMessages: !successMsg
+      noMessages: !successMsg,
+      user: req.user,
+      totalPrice: cart.totalPrice
     });
   });
 });
 
+router.get("/menu/noodles", function (req, res, next) {
+  req.session.referringUrl = req.originalUrl;
+  var cart = new Cart(req.session.cart ? req.session.cart : {});
+  var successMsg = req.flash("success")[0];
+  Product.find(function (err, docs) {
+    var boat = [];
+    var dry = [];
 
+    // Categorize the products into separate arrays
+    docs.forEach(function (product) {
+      if (product.category === "PYE BOAT NOODLES") {
+        boat.push(product);
+      } else if (product.category === "PYE DRY NOODLES") {
+        dry.push(product);
+      }
+    });
 
+    res.render("shop/products-noodles", {
+      title: "Shopping Cart",
+      boat: boat,
+      dry: dry,
+      successMsg: successMsg || null,
+      noMessages: !successMsg,
+      totalPrice: cart.totalPrice,
+      user: req.user,
+    });
+  });
+});
+router.get("/menu/vegetarian", function (req, res, next) {
+  req.session.referringUrl = req.originalUrl;
+  var cart = new Cart(req.session.cart ? req.session.cart : {});
+  var successMsg = req.flash("success")[0];
+  Product.find(function (err, docs) {
+    var snack = [];
+    var noodle = [];
 
+    // Categorize the products into separate arrays
+    docs.forEach(function (product) {
+      if (product.category === "J SNACKS") {
+        snack.push(product);
+      } else if (product.category === "JAE NOODLES") {
+        noodle.push(product);
+      }
+    });
 
+    res.render("shop/products-vegetarian", {
+      title: "Shopping Cart",
+      snack: snack,
+      noodle: noodle,
+      successMsg: successMsg || null,
+      noMessages: !successMsg,
+      totalPrice: cart.totalPrice,
+      user: req.user,
+    });
+  });
+});
+
+router.get("/menu/drinks", function (req, res, next) {
+  req.session.referringUrl = req.originalUrl;
+  var cart = new Cart(req.session.cart ? req.session.cart : {});
+  var successMsg = req.flash("success")[0];
+  Product.find(function (err, docs) {
+    var drink = [];
+    var desert = [];
+
+    // Categorize the products into separate arrays
+    docs.forEach(function (product) {
+      if (product.category === "DRINK") {
+        drink.push(product);
+      } else if (product.category === "DESERT") {
+        desert.push(product);
+      }
+    });
+
+    res.render("shop/products-drinks", {
+      title: "Shopping Cart",
+      drink: drink,
+      desert: desert,
+      successMsg: successMsg || null,
+      noMessages: !successMsg,
+      totalPrice: cart.totalPrice,
+      user: req.user,
+    });
+  });
+});
 
 
 router.get("/products/:id", function (req, res, next) {
@@ -70,12 +152,13 @@ router.get("/add-to-cart/:id", function (req, res, next) {
 
   Product.findById(productId, function (err, product) {
     if (err) {
-      return res.redirect("/products");
+      return res.redirect("/menu");
     }
     cart.add(product, product.id);
     req.session.cart = cart;
     console.log(req.session.cart);
-    res.redirect("/products");
+    console.log(req.session.referringUrl)
+    res.redirect(req.session.referringUrl || "/menu");
   });
 });
 
@@ -90,7 +173,6 @@ router.get("/add-to-cart-product/:id", function (req, res, next) {
     cart.add(product, product.id);
     req.session.cart = cart;
     console.log(req.session.cart);
-    res.redirect("/products/"+productId);
   });
 });
 
@@ -147,6 +229,7 @@ router.get("/checkout", isLoggedIn, function (req, res, next) {
     products: cart.generateArray(),
     total: cart.totalPrice,
     users: req.user,
+
   });
 });
 

@@ -10,26 +10,19 @@
                 <a href="/">HOME</a>
             </li>
             <li>
-                <a href="/products">ORDER ONLINE</a>
+                <a href="/menu">ORDER ONLINE</a>
             </li>
             <li>
-                <a href="/products">MENU</a>
+                <a href="#">OUR STORY</a>
             </li>
         </ul>
         <ul>
             {{#if login}}
-            <li><a href="/user/profile"><i class="fa fa-user" aria-hidden="true"></i> My Profile</a></li>
+            <li><a href="/user/profile"><i class="fa fa-user" aria-hidden="true"></i> {{user.firstname}}</a></li>
             <li><a href="/user/logout">Logout</a></li>
             {{else}}
             <li id="signin"><a href="/user/signin"><i class="fa fa-user" aria-hidden="true"></i>  SIGN IN</a></li>
             {{/if}}
-            <li>
-                <a href="/shopping-cart">
-                    <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-                    <span class="badge bg-secondary">{{session.cart.totalQty}}</span>
-                </a>
-            </li>
-            
         </ul>
     </div>
 </nav>

@@ -7,10 +7,10 @@
             <li><a href="/menu/drinks">DRINK & DESERT</a></li>
         </ul>
         <ul>
-            {{#if login }}
+           {{#if login}}
 
             <div class="delivery"><p>Delivery to : ...... </p><a href="#" id="change">Change</a></div>
-             <li>
+            <li>
                 <a href="/shopping-cart">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                     <span class="badge bg-secondary">{{session.cart.totalQty}}</span>
@@ -29,15 +29,14 @@
                 </a>
             </li>
             {{/if}}
-            
         </ul>
     </div>
 
     <div class="snack">
         <div class="container">
-            <h2>PYE SNACKS</h2>
+            <h2>JAE SNACKS</h2>
             <div class="row">
-                {{#each snacks}}
+                {{#each snack}}
                 <div class="col-6 col-sm-6">
                     <div class="card mb-3" style="max-width: 540px;">
                         <div class="row g-0">
@@ -72,9 +71,9 @@
     </div>
     <div class="rice">
         <div class="container">
-            <h2>PYE OVER RICE</h2>
+            <h2>JAE NOODLES</h2>
             <div class="row">
-                {{#each rice}}
+                {{#each noodle}}
                 <div class="col-6 col-sm-6">
                     <div class="card mb-3" style="max-width: 540px;">
                         <div class="row g-0">
@@ -85,8 +84,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
-                            
-                                     {{#unless ../login}}
+                                   {{#unless ../login}}
                                       <button class="form-control" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal">+${{this.price}}</button>
                                     
@@ -125,5 +123,4 @@
         </div>
     </div>
 </div>
-
 <script src='/stylesheets/products.js'></script>

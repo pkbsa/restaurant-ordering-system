@@ -1,18 +1,19 @@
 <div class="page page-signin">
-    <div class="row">
-            <h1>Sign In</h1>
-            <p class="up">Don't have an account? <a href="/user/signup">Sign up</a></p>
+    
+            <h1>Sign In to order</h1>
+            <p class="up"><b>Protecting the security of your personal data is<br> our priority</b></p>
+            <p>Please sign in to your account with your registered email<br> address and password</p>
             <form action='/user/signin' method="post">
                 <div class="form-group">
-                    <label for="email">E-mail</label><br>
-                    <input type="text" id="email" name="email">
+                    <input type="text" id="email" name="email" class="form-control" placeholder="Email Address*">
                 </div>
                 <div class="form-group">
-                    <label for="password">Password</label><br>
-                    <input type="password" id="password" name="password">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Password*">
                 </div>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-                <button type="submit">Sign In</button>
+                <button type="submit" >SIGN IN</button>
+                <b>OR</b>
+                <a href="/user/signup" id="createacc" >CREATE AN ACCOUNT</a>
             </form>
             {{#if hasErrors}}
                 <div class="btn alert alert-danger">
@@ -21,7 +22,5 @@
                     {{/each}}
                 </div>
             {{/if}}
-            <p>* By Logging in, you agree to our Terms of Use and to receive<br>
-Our emails & updates and acknowledge that you read our Privacy Policy.</p>
-    </div>
+
 </div>
