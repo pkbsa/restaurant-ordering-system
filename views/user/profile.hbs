@@ -6,21 +6,58 @@
                 <div class="view">
                     <h3>No order found</h3>
                 </div>
-                
+
             </div>
             <div class="col-12 col-sm-4">
                 <ul>
-                    <li><a href="#">View previous orders</a></li>
-                    <li><a href="#">Saved addresses</a></li>
-                    <li><a href="#">Saved contact details</a></li>
-                    <li><a href="#">Reset password</a></li>
-                    <li><a href="#">Account deletion</a></li>
+                    <li><a class="contact-link" href="#">View previous orders</a></li>
+                    <li><a class="contact-link" href="#address">Saved addresses</a></li>
+                    <li><a class="contact-link" href="#contact">Saved contact details</a></li>
+                    <li><a class="contact-link" href="#">Reset password</a></li>
+                    <li><a class="contact-link" href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Account
+                            deletion</a></li>
                     <hr>
                     <li><a href="#">Sign out</a></li>
                 </ul>
-                
+
             </div>
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade deleteacc" id="staticBackdrop" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Account</h1>
+            </div>
+            <div class="modal-body">
+                <p>To delete your account, please be informed that your account will be closed and deleted from PYE BOAT
+                    NOODLES website. If you open a new account, you will not have access to any information from this
+                    account.</p>
+                <br>
+                <p>Please note that KFC may retain certain personal data and transaction history related to your
+                    account, if it is necessary and comply with the law and legal obligations.</p>
+            </div>
+            <div class="modal-footer">
+                <form action="/user/delete-account" method="post">
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                    <input type="hidden" name="userid" value="{{ user._id }}">
+                    <button type="submit" class="btn btn-danger">DELETE ACCOUNT</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var user = {
+        firstname: "{{user.firstname}}",
+        lastname: "{{user.lastname}}",
+        email: "{{user.email}}",
+        mobile: "{{user.phone}}",
+        csrfToken: "{{csrfToken}}"
+    };
+</script>
 <script src='/stylesheets/profile.js'></script>

@@ -132,6 +132,12 @@ body {
 .page-profile {
     gap: 1em;
 }
+.page-profile .container{
+    min-height: 60vmin;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
 
 .page-profile h1 {
     font-size: 3em;
@@ -149,6 +155,14 @@ body {
     text-align: center;
     display: flex;
     flex-direction: column;
+    align-items: center;
+}
+.page-profile .hello button#address{
+    width: 25em;
+    height: 80px;
+    border: 2px solid #006391;
+    background-color: transparent;
+    color: #006391;
 }
 .page-profile .view{
     text-align: center;
@@ -166,6 +180,36 @@ body {
 .page-profile a{
     text-decoration: none;
     color: black;
+}
+.page-profile .form-group input {
+    width: 30em;
+    height: 50px;
+    border: solid #CBC4BC 2px;
+    background-color: #ffffff;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    font-size: 1em;
+}
+.page-profile button{
+    margin: 1em 0 1em 0;
+    width: 30em;
+    height: 50px;
+    background-color: #006391;
+    color: white;
+    border: 0px;
+    border-radius: 3px;
+}
+.page-profile form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-profile .form-group {
+    text-align: left;
+    align-items: center;
+    justify-content: center;
 }
 .page-products {
     gap: 1em;
@@ -832,6 +876,16 @@ th {
 .content #add {
     margin-bottom: 0.5em;
 }
+.deleteacc{
+    text-align: center;
+}
+.deleteacc .modal-header{
+   justify-content: center;
+   color: rgb(201, 21, 21);
+}
+.deleteacc .modal-footer{
+    justify-content: center;
+}
 
 @media (max-width: 991px) {
 
@@ -1005,8 +1059,9 @@ th {
     }
     .page-profile .hello{
         margin: 2em 0 2em 0;
-        gap: 1.5em
+        gap: 1.5em;
     }
+   
 }
 
 @media (max-width: 875px) {

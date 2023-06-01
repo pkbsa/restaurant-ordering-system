@@ -29,29 +29,79 @@ router.get("/profile", isLoggedIn, function (req, res, next) {
     });
   });
 });
+
 router.post("/edit-profile", isLoggedIn, function (req, res, next) {
-  console.log(req.body);
-  User.updateOne(
-    { email: req.body.email },
-    { $set: { 
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      address: req.body.address,
-      subdistrict: req.body.subdistrict,
-      district: req.body.district,
-      province: req.body.province,
-      zipcode: req.body.zipcode,
-      phone: req.body.phone,
-    } },
-    function (err, res) {
-      if(err){
-        console.log(err);
-      }
-      console.log(res);
+  var email = req.body.email;
+  var firstName = req.body.firstName;
+  var lastName = req.body.lastName;
+  var mobilePhone = req.body.mobilePhone;
+
+  User.findOne({ email: email }, function (err, existingUser) {
+    if (err) {
+      console.log(err);
+      return res.redirect("/user/profile");
     }
-  );
-  res.redirect("/user/profile");
+
+    if (existingUser && existingUser._id.toString() !== req.user._id.toString()) {
+      req.flash("error", "Email already in use.");
+      return res.redirect("/user/profile");
+    }
+
+    User.findOne({ mobilePhone: mobilePhone }, function (err, existingUser) {
+      if (err) {
+        console.log(err);
+        return res.redirect("/user/profile");
+      }
+
+      if (
+        existingUser &&
+        existingUser._id.toString() !== req.user._id.toString()
+      ) {
+        req.flash("error", "Mobile number already in use.");
+        return res.redirect("/user/profile");
+      }
+
+      // Update the user information
+      User.updateOne(
+        { _id: req.user._id },
+        {
+          $set: {
+            firstname: firstName,
+            lastname: lastName,
+            phone: mobilePhone,
+          },
+        },
+        function (err, result) {
+          if (err) {
+            console.log(err);
+            return res.redirect("/user/profile");
+          }
+
+          res.redirect("/user/profile");
+        }
+      );
+    });
+  });
 });
+
+router.post("/delete-account", isLoggedIn, function (req, res, next) {
+  var userid = req.body.userid;
+  console.log(userid)
+
+  User.findByIdAndDelete(userid, function (err, user) {
+    if (err) {
+      console.log(err);
+      return res.status(500).send("An error occurred while deleting the account.");
+    }
+    
+    if (!user) {
+      return res.status(404).send("User not found.");
+    }
+    console.log("Deleted")
+    return res.redirect("/"); // Redirect to a desired page after successful account deletion
+  });
+});
+
 router.get("/logout", isLoggedIn, function (req, res, next) {
   req.logout(function (err) {
     if (err) {
