@@ -1,0 +1,107 @@
+<div class="container page-products">
+    <div class="foodnav">
+        <ul>
+            <li>PYE DISHES</li>
+            <li>PYE NOODLES</li>
+            <li>DRINK & DESERT</li>
+        </ul>
+        <ul>
+            <button>START MY ORDER</button>
+            <li>300$</li>
+        </ul>
+    </div>
+
+    <div class="snack">
+        <div class="container">
+            <h2>PYE SNACKS</h2>
+            <div class="row">
+                {{#each snacks}}
+                <div class="col-6 col-sm-6">
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-md-5">
+                                <img src="{{ this.imagePath.[0] }}" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{this.title}}</h5>
+                                    <p class="card-text">{{this.description}}</p>
+                                    <a href="/add-to-cart/{{this._id}}"><button class="form-control">+${{this.price}}</button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{#if @index.isEven}}
+                <!-- Add div after every even index -->
+                <div class="w-100 d-none d-md-block"></div>
+                {{/if}}
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    <div class="rice">
+        <div class="container">
+            <h2>PYE OVER RICE</h2>
+            <div class="row">
+                {{#each rice}}
+                <div class="col-6 col-sm-6">
+                    <div class="card mb-3" style="max-width: 540px;">
+                        <div class="row g-0">
+                            <div class="col-md-5">
+                                <img src="{{ this.imagePath.[0] }}" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-md-7">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{this.title}}</h5>
+                                    <p class="card-text">{{this.description}}</p>
+                                    <a href="/add-to-cart/{{this._id}}"><button class="form-control">+${{this.price}}</button></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{#if @index.isEven}}
+                <!-- Add div after every even index -->
+                <div class="w-100 d-none d-md-block"></div>
+                {{/if}}
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>
+{{!-- <div class="row row-cols-4">
+    {{#each products}}
+    {{property}}
+    <div class="width">
+        <div class="thumbnail">
+            <a href="/products/{{this._id}}"><img src="{{ this.imagePath.[0] }}" alt="..." class="img-responsive"></a>
+            <div class="caption">
+                <h3><a class="title" href="/products/{{this._id}}">{{this.title}}</a></h3>
+                <div class="clearfix">
+                    <div class="price pull-left">{{this.price}}.00 บาท</div>
+                    <a href="/add-to-cart/{{this._id}}" class="pull-right {{this.status}}">ADD TO CART</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+    {{#each remainDiv}}
+    <div class="width">
+        <div class="thumbnail">
+
+            <div class="caption">
+                <h3></h3>
+                <div class="clearfix">
+                    <div class="price pull-left"></div>
+                    <a href="/add-to-cart/{{this._id}}" class="pull-right"></a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    {{/each}}
+</div> --}}
+</div>
+<script src='/stylesheets/products.js'></script>

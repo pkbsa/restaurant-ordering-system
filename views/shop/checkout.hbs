@@ -1,0 +1,143 @@
+<div class="page page-checkout">
+    <h1>ชำระเงิน</h1>
+    <div class="flex-row1">
+        <div class="flex-column">
+            <form id="regForm" action="#" method="POST" enctype="multipart/form-data">
+                <!-- One "tab" for each step in the form: -->
+                <div class="tab">
+                    <label class="field1">ที่อยู่จัดส่ง</label>
+                    <div class="fields fields--2">
+                        <label class="field" id="fnameField">
+                            <span class="field__label" for="firstname">First name<span class="required">*</span></span>
+                            <input class="field__input" type="text" id="firstname" name="firstname" placeholder="Firstname"
+                                value="{{this.users.firstname}}" required />
+                        </label>
+                        <label class="field" id="lnameField" >
+                            <span class="field__label" for="lastname">Last name<span class="required">*</span></span>
+                            <input class="field__input" type="text" id="lastname" name="lastname" placeholder="Lastname"
+                                value="{{this.users.lastname}}" required/>
+                        </label>
+                    </div>
+                    <label class="field"  id="addressField">
+                        <span class="field__label" for="address">Address<span class="required">*</span></span>
+                        <input class="field__input" id="address" type="text" name="address" placeholder="1/1 House, Thanaon Rd"
+                            value="{{this.users.address}}" required/>
+                    </label>
+                    <div class="fields fields--2">
+                        <label class="field" id="subdistrictField" >
+                            <span class="field__label" for="subdistrict">แขวง / ตำบล<span
+                                    class="required">*</span></span>
+                            <input class="field__input" type="text" id="subdistrict" name="subdistrict" placeholder="Sub-District"
+                                value="{{this.users.subdistrict}}" required/>
+                        </label>
+                        <label class="field" id="districtField">
+                            <span class="field__label" for="district">เขต / อำเภอ<span class="required">*</span></span>
+                            <input class="field__input" type="text" id="district" name="district" placeholder="District"
+                                value="{{this.users.district}}" required/>
+                        </label>
+                    </div>
+                    <div class="fields fields--2">
+                        <label class="field" id="provinceField">
+                            <span class="field__label" for="province">จังหวัด<span class="required">*</span></span>
+                            <input class="field__input" type="text" id="province" name="province" placeholder="Bangkok"
+                                value="{{this.users.province}}" required/>
+                        </label>
+                        <label class="field" id="zipcodefield">
+                            <span class="field__label" for="zipcode">ZIP CODE<span class="required">*</span></span>
+                            <input class="field__input" type="text" id="zipcode" name="zipcode" pattern="[0-9]{5}" placeholder="10000"
+                                value="{{this.users.zipcode}}" required/>
+                        </label>
+                    </div>
+                     <label class="field" id="phonefield">
+                            <span class="field__label" for="phone">เบอร์โทรศัพท์<span class="required">*</span></span>
+                            <input class="field__input" type="tel" id="phone" name="phone" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" placeholder="08X-XXX-XXXX"
+                                value="{{this.users.phone}}" required/>
+                     </label>
+                </div>
+                <div class="tab">
+                    <label class="field1">เลือกวิธีชำระเงิน</label>
+                    <div class="payment-info">
+                        <input type="radio" id="Bank" name="paymentMethod" value="Bank" checked>
+                        <label for="Bank" class="field2">โอนธนาคาร (Siranut Akarawuthi)</label><br>
+                        <ul>
+                            <li>กรุงศรี : 649-1-0497804</li>
+                            <li>ไทยพาณิชย์ : 038-474665-3</li>
+                            <li>กสิกร : 033-1-67481-8</li>
+                        </ul>
+                        <input type="radio" id="TW" name="paymentMethod" value="True Wallet">
+                        <label for="True" class="field2">True Wallet</label><br>
+                        <ul>
+                            <li>085-525-9987</li>
+                        </ul>
+                    </div>
+                     <div class="fields fields--2">
+                        <label class="field" id="datefield">
+                            <span class="field__label" for="date">วันที่ชำระเงิน<span class="required">*</span></span>
+                            <input class="field__input" type="text" id="date" name="date"  pattern="[0-3][0-9]/[0-1][0-9]/25[0-7][0-9]"
+                                placeholder="13/1/2566" required/>
+                        </label>
+                        <label class="field" id="timefield">
+                            <span class="field__label" for="time">เวลา<span class="required">*</span></span>
+                            <input class="field__input" type="text" id="time" name="time"  pattern="[0-2][0-9]:[0-5][0-9]"
+                                placeholder="17:01"  required/>
+                        </label>
+                    </div>
+                    <div class="mb-3">
+                        <label for="formFile" class="form-label">อัพโหลดหลักฐานการชำระเงิน</label>
+                        <input class="form-control" type="file" name="sampleFile" accept="image/*" id="formFile" required>
+                    </div>
+                </div>
+                <div class='middle' style="overflow:auto;">
+                    <div style="float:none;">
+                        <button type="button" id="prevBtn" class='btn btn-primary'
+                            onclick="nextPrev(-1)">Previous</button>
+                        <button type="button" id="nextBtn" class='btn btn-primary' onclick="nextPrev(1)">Next</button>
+                    </div>
+                </div>
+                <!-- Circles which indicates the steps of the form: -->
+                <div style="text-align:center;">
+                    <span class="step"></span>
+                    <span class="step"></span>
+                </div>
+            </form>
+        </div>
+        <div class="flex-column-sum">
+            <div class="flex-column-insum">
+                <h3 class="field1">คำสั่งซื้อ</h3>
+                <div class="flex-column-1">
+                    {{#each products}}
+                    <div class="flex-row-1">
+                        <div class="flex-row-2">
+                            <img src="{{this.item.imagePath.[0]}}">
+                            <div>
+                                <h2>{{this.item.title}}</h2>
+                                <p id="price">ราคา : {{this.item.price}} บาท ({{this.qty}} ชิ้น)</p>
+                            </div>
+                        </div>
+                        <div class="flex-column-below">
+
+                            <h3>{{this.price}}.00 บาท</h3>
+                        </div>
+                    </div>
+                    {{/each}}
+                    <hr>
+
+                    <div class="flex-row-1 total pad-top">
+                        <h5> </h5>
+                        <div class="flex-column-2">
+                             <div class="flex-row-3">
+                                <h4>ค่าส่ง </h4>
+                                <h4>30.00 บาท</h4>
+                            </div>
+                            <div class="flex-row-3">
+                                <h3>Subtotal </h3>
+                                <h3>{{total}}.00 บาท</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src='/stylesheets/checkout.js'></script>
