@@ -92,3 +92,50 @@ passport.use('local.signin', new LocalStrategy({
        return done(null, user);
     })
 }));
+
+passport.use('local.reset-password', new LocalStrategy({
+    usernameField: 'email',
+    passwordField: 'newpassword',
+    passReqToCallback: true
+}, function(req, email, password, done){
+    console.log("reset password")
+    req.checkBody('email', 'Invalid email').notEmpty().isEmail();
+    req.checkBody('oldpassword', 'Invalid old password').notEmpty();
+    req.checkBody('newpassword', 'Invalid password').notEmpty().isLength({ min: 4 });
+    req.checkBody('confirmpassword', 'Passwords do not match').equals(password);
+
+    var errors = req.validationErrors();
+    console.log(errors)
+    if(errors){
+        
+        var messages = [];
+        errors.forEach(function (error){
+            messages.push(error.msg)
+        });
+        return done(null, false, req.flash('error', messages));
+    }
+
+    User.findOne({ email: email }, function(err, user) {
+        if (err) {
+            return done(err);
+        }
+        if (!user) {
+            return done(null, false, { message: 'User not found.' });
+        }
+
+        // Check if the old password matches
+        if (!user.validPassword(req.body.oldpassword)) {
+            return done(null, false, { message: 'Invalid old password.' });
+        }
+
+        // Update user's password
+        user.password = user.encryptPassword(password);
+
+        user.save(function(err, result) {
+            if (err) {
+                return done(err);
+            }
+            return done(null, user);
+        });
+    });
+}));

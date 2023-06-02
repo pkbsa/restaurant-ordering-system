@@ -1,45 +1,83 @@
 <div class="page page-cart">
-    <h1>ตะกร้าสินค้า</h1>
-    {{#if products}}
-    <div class="flex-column-1">
-        {{#each products}}
-        <div class="flex-row-1">
-            <div class="flex-row-2">
-                <img src="{{this.item.imagePath.[0]}}">
-                <div>
-                    <h2>{{this.item.title}}</h2>
-                    <p>{{this.item.description}}</p>
-                    <p id="price">ราคา : {{this.item.price}} บาท</p>
+    <div class="container">
+         
+        <div class="row">
+            {{#if products}}
+            <h1>YOUR ORDER</h1>
+            <p>Delivery to : ...</p>
+            <div class="col-12 col-sm-7">
+               
+                <div class="flex-column-1">
+                    {{#each products}}
+                    <div class="flex-row-1">
+                        <div class="flex-row-2">
+                            <div>
+                                <h2>{{this.qty}}x {{this.item.title}}</h2>
+                                <p>{{this.item.description}}</p>
+                                <div class="quantity">
+                                    <a href="/reduce/{{this.item._id}}"><i class="fa fa-minus-circle fa-2x"
+                                            aria-hidden="true"></i></a>
+                                    <button type="button" class="btn">{{this.qty}}</button>
+                                    <a href="/addone-to-cart/{{this.item._id}}"><i class="fa fa-plus-circle fa-2x"
+                                            aria-hidden="true"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        {{!-- --}}
+                        <div class="flex-column-between">
+                            <a data-bs-toggle="modal" data-bs-target="#{{this.item._id}}"><i class="fa fa-trash"
+                                    aria-hidden="true"></i></a>
+                            <h3>${{this.price}}</h3>
+                        </div>
+                    </div>
+                    <!-- Modal -->
+                    <div class="modal fade" id="{{this.item._id}}" tabindex="-1"
+                        aria-labelledby="{{this.item._id}}Label" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    Remove <b>{{this.item.title}}</b> from the order?
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="/remove/{{this.item._id}}" class="btn btn-secondary">Okay</a>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
                 </div>
             </div>
-            <div class="flex-column-below">
-                <h3>Quantity</h3>
-                <div class="btn-group" role="group" aria-label="Basic example">
-                    <a href="/reduce/{{this.item._id}}" class="btn btn-primary">-</a>
-                    <button type="button" class="btn">{{this.qty}}</button>
-                    <a href="/addone-to-cart/{{this.item._id}}" class="btn btn-primary">+</a>
+
+            <div class="col-12 col-sm-4">
+                <p>Delivery to : </p>
+
+                <hr>
+                <div class="flex-coloumn-1">
+                    <div class="flex-row-3">
+                        <h4>{{session.cart.totalQty}} item</h4>
+                        <h4>${{cart.totalPrice}}</h4>
+                    </div>
+                    <div class="flex-row-3">
+                        <p>Delivery Charge</p>
+                        <p>$10</p>
+                    </div>
+
+                    <hr>
+                    <div class="flex-row-3">
+                        <h4>Total</h4>
+                        <h4>${{totalPrice}}</h4>
+                    </div>
+                    <a href="/checkout" class="btn btn-primary w-100">ชำระเงิน</a>
                 </div>
             </div>
-            <div class="flex-column-between">
-                <a href="/remove/{{this.item._id}}"><i class="fa fa-trash" aria-hidden="true"></i></a>
-                <h3>{{this.price}}.00 บาท</h3>
-            </div>
+            {{else}}
         </div>
-        {{/each}}
-        <hr>
-        <div class="flex-row-1 total">
-            <h5> </h5>
-            <div class="flex-coloumn-1">
-                <div class="flex-row-3">
-                    <h3>Subtotal </h3>
-                    <h3>{{totalPrice}}.00 บาท</h3>
-                </div>
-                <p>ยอดเงินทั้งหมด รวมค่าส่งแล้ว</p>
-                <a href="/checkout" class="btn btn-primary w-100">ชำระเงิน</a>
-            </div>
-        </div>
+        <h2 id="noitem">No items in cart</h2>
+        {{/if}}
     </div>
-    {{else}}
-    <h2>ไม่มีสินค้าในตะกร้า</h2>
-    {{/if}}
 </div>

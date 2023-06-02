@@ -216,7 +216,9 @@ router.get("/shopping-cart", function (req, res, next) {
   var cart = new Cart(req.session.cart);
   res.render("shop/shopping-cart", {
     products: cart.generateArray(),
-    totalPrice: cart.totalPrice,
+    totalPrice: cart.totalPrice+10,
+    cart: cart,
+    user: req.user,
   });
 });
 
@@ -229,7 +231,7 @@ router.get("/checkout", isLoggedIn, function (req, res, next) {
     products: cart.generateArray(),
     total: cart.totalPrice,
     users: req.user,
-
+ 
   });
 });
 

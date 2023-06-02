@@ -11,21 +11,22 @@ var csrfProtection = csrf();
 router.use(csrfProtection);
 
 router.get("/profile", isLoggedIn, function (req, res, next) {
-  //console.log(req.user)
   Order.find({ user: req.user }, function (err, orders) {
     if (err) {
       return res.write("Error!");
     }
     var cart;
-    //console.log(orders)
     orders.forEach(function (order) {
       cart = new Cart(order.cart);
       order.items = cart.generateArray();
     });
+
+    var messages = req.flash(); // Retrieve flash messages
     res.render("user/profile", {
       orders: orders,
       user: req.user,
       csrfToken: req.csrfToken(),
+      messages: messages,
     });
   });
 });
@@ -42,7 +43,10 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
       return res.redirect("/user/profile");
     }
 
-    if (existingUser && existingUser._id.toString() !== req.user._id.toString()) {
+    if (
+      existingUser &&
+      existingUser._id.toString() !== req.user._id.toString()
+    ) {
       req.flash("error", "Email already in use.");
       return res.redirect("/user/profile");
     }
@@ -86,21 +90,73 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
 
 router.post("/delete-account", isLoggedIn, function (req, res, next) {
   var userid = req.body.userid;
-  console.log(userid)
+  console.log(userid);
 
   User.findByIdAndDelete(userid, function (err, user) {
     if (err) {
       console.log(err);
-      return res.status(500).send("An error occurred while deleting the account.");
+      return res
+        .status(500)
+        .send("An error occurred while deleting the account.");
     }
-    
+
     if (!user) {
       return res.status(404).send("User not found.");
     }
-    console.log("Deleted")
+    console.log("Deleted");
     return res.redirect("/"); // Redirect to a desired page after successful account deletion
   });
 });
+
+router.post("/reset-password", function (req, res, next) {
+  var email = req.body.email;
+  var oldPassword = req.body.oldPassword;
+  var newPassword = req.body.newPassword;
+
+  req.checkBody("email", "Invalid email").notEmpty().isEmail();
+  req.checkBody("oldPassword", "Invalid old password").notEmpty();
+  req.checkBody("newPassword", "Invalid password").notEmpty().isLength({ min: 4 });
+  req.checkBody("confirmPassword", "Passwords do not match").equals(newPassword);
+
+  var errors = req.validationErrors();
+  if (errors) {
+    var messages = [];
+    errors.forEach(function (error) {
+      messages.push(error.msg);
+    });
+    req.flash("error", messages);
+    return res.redirect("/user/profile#password");
+  }
+
+  User.findOne({ email: email }, function (err, user) {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      req.flash("error", "User not found.");
+      return res.redirect("/user/profile#password");
+    }
+
+    // Check if the old password matches
+    if (!user.validPassword(oldPassword)) {
+      req.flash("error", "Invalid old password.");
+      return res.redirect("/user/profile#password");
+    }
+
+    // Update user's password
+    user.password = user.encryptPassword(newPassword);
+
+    User.updateOne({ email: email }, { password: user.password }, function (err) {
+      if (err) {
+        return next(err);
+      }
+      req.flash("success", "Password reset successful.");
+      res.redirect("/user/profile#password"); // Redirect to the login page after password reset
+    });
+  });
+});
+
+
 
 router.get("/logout", isLoggedIn, function (req, res, next) {
   req.logout(function (err) {

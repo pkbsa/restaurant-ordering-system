@@ -151,11 +151,22 @@ body {
     width: 100%;
     justify-content: center;
 }
+.page-profile .conhello{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.page-profile .alert p{
+    margin-bottom: 0;
+}
 .page-profile .hello{
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 100%;
+
 }
 .page-profile .hello button#address{
     width: 25em;
@@ -344,15 +355,34 @@ body {
 
 .page-cart {
     background-color: #f3f1f1;
+    justify-content: flex-start;
+    gap: 1em;
 }
+.page-cart .container{
+    display: flex;
+    justify-content: center;
+    text-align: center;
+}
+.page-cart .row{
+    text-align: left;
+    justify-content: center;
+}
+
 
 .page-cart h1 {
     font-size: 3em;
     margin-top: 1em;
+    text-align: center;
+}
+.page-cart p#address {
+    text-align: center;
+}
+.page-cart h3 {
+    font-size: 1.2em;
 }
 
-.page-cart h3 {
-    font-size: 1.3em;
+.page-cart h4 {
+    font-size: 1.2em;
 }
 
 .page-cart img {
@@ -368,7 +398,6 @@ body {
     background-color: #ffffff;
     padding: 2em;
     border-radius: 2px;
-    width: 70vw;
     justify-content: space-between;
 }
 
@@ -377,11 +406,6 @@ body {
     flex-direction: column;
     gap: 1em;
     margin-bottom: 2em;
-}
-
-.page-cart {
-    justify-content: flex-start;
-    gap: 3em;
 }
 
 .page-cart .flex-row-2 {
@@ -395,26 +419,21 @@ body {
     flex-direction: row;
     gap: 5em;
     align-items: center;
-    font-size: 2em;
+    font-size: 1em;
+    justify-content: space-between;
 }
 
-.page-cart .flex-row-3 h3 {
-    font-size: 0.7em;
+.page-cart #noitem{
+    margin: 2em 0 2em 0;
 }
 
 .page-cart .flex-row-2 h2 {
-    font-size: 2em;
+    font-size: 1em;
 }
 
 .page-cart .flex-row-2 p {
-    font-size: 1em;
-    max-width: 250px;
-}
-
-.page-cart .flex-column-below {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
+    font-size: 0.8em;
+    max-width: 280px;
 }
 
 .page-cart .flex-column-between {
@@ -442,9 +461,20 @@ body {
 
 .page-cart #price {
     color: rgb(134, 133, 133);
-
 }
-
+.page-cart .quantity{
+    display: flex;
+    text-align: center;
+    align-items: center;
+}
+.page-cart .quantity i{
+    background-color: transparent;
+    color: black;
+}
+.page-cart .modal-footer{
+    display: flex;
+    justify-content: center;
+}
 
 .page-checkout {
     gap: 2em;

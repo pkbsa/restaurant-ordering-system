@@ -1,19 +1,35 @@
 <div class="page page-profile">
     <div class="container">
         <div class="row">
-            <div class="col-12 col-sm-7 hello">
-                <h2>Hello {{user.firstname}}!</h2>
-                <div class="view">
-                    <h3>No order found</h3>
+            <div class="col-12 col-sm-7 conhello">
+                <div class="hello">
+                    <h2>Hello {{user.firstname}}!</h2>
+                    <div class="view">
+                        <h3>No order found</h3>
+                    </div>
                 </div>
-
+                
+                {{#if messages.error}}
+               <div class="alert alert-danger" role="alert">
+                    {{#each messages.error}}
+                    <p>{{this}}</p>
+                    {{/each}}
+                </div>
+                {{/if}}
+                {{#if messages.success}}
+               <div class="alert alert-success" role="alert">
+                    {{#each messages.success}}
+                    <p>{{this}}</p>
+                    {{/each}}
+                </div>
+                {{/if}}
             </div>
             <div class="col-12 col-sm-4">
                 <ul>
                     <li><a class="contact-link" href="#">View previous orders</a></li>
                     <li><a class="contact-link" href="#address">Saved addresses</a></li>
                     <li><a class="contact-link" href="#contact">Saved contact details</a></li>
-                    <li><a class="contact-link" href="#">Reset password</a></li>
+                    <li><a class="contact-link" href="#password">Reset password</a></li>
                     <li><a class="contact-link" href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Account
                             deletion</a></li>
                     <hr>
