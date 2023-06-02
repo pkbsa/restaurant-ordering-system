@@ -81,7 +81,7 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
           $set: {
             firstname: firstName,
             lastname: lastName,
-            phone: mobilePhone,
+            mobilePhone: mobilePhone,
           },
         },
         function (err, result) {

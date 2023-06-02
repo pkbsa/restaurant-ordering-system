@@ -10,7 +10,7 @@ var userSchema = new Schema({
     address: {type: String, required: false},
     latitude: {type: String, required: false},
     longtitude: {type: String, required: false},
-    phone: {type: String, required: false},
+    mobilePhone: {type: String, required: false},
     admin: {type: Number, required: true}
 });
 userSchema.methods.encryptPassword = function(password){

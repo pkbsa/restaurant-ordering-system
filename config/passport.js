@@ -49,11 +49,9 @@ passport.use('local.signup',new LocalStrategy({
         newUser.firstname = req.body.firstName;
         newUser.lastname = req.body.lastName;
         newUser.address = "";
-        newUser.subdistrict = "";
-        newUser.district = "";
-        newUser.province = "";
-        newUser.zipcode = "";
-        newUser.phone = req.body.mobilePhone;
+        newUser.latitude = "";
+        newUser.longtitude = "";
+        newUser.mobilePhone = req.body.mobilePhone;
 
         newUser.save(function(err, result) {
             if (err) {
