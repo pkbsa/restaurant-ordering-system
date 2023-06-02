@@ -168,8 +168,11 @@ body {
     height: 100%;
 
 }
-.page-profile .hello button#address{
-    width: 25em;
+.page-profile .hello a#address{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20em;
     height: 80px;
     border: 2px solid #006391;
     background-color: transparent;
@@ -817,6 +820,45 @@ th {
 
 .page-viewproduct .notAvailable {
     background-color: rgb(180, 39, 39);
+}
+
+.page-delivery .container{
+    text-align: center;
+    margin: 3em 0 3em 0;
+}
+.page-delivery h1{
+    font-size: 2.5em;
+    font-weight: 500;
+}
+.page-delivery p{
+    margin: 0;
+}
+.page-delivery .hidden{
+   display: none;
+}
+.page-delivery .map{
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+    margin: 1em 0 1em 0;
+}
+.page-delivery .map input{
+    height: 50px;
+}
+.page-delivery .map button{
+    height: 50px;
+
+}
+.page-delivery .map a{
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.page-delivery #map-canvas{
+    height: 60vh;
+    width: 100%;
 }
 
 /* Navbar */

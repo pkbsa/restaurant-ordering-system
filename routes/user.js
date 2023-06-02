@@ -31,6 +31,15 @@ router.get("/profile", isLoggedIn, function (req, res, next) {
   });
 });
 
+router.get("/adddeliverylocation", isLoggedIn, function (req, res, next) {
+  console.log("ggols");
+  req.session.oldUrl = req.originalUrl;
+  res.render("user/delivery", {
+    csrfToken: req.csrfToken(),
+    user: req.user
+  });
+});
+
 router.post("/edit-profile", isLoggedIn, function (req, res, next) {
   var email = req.body.email;
   var firstName = req.body.firstName;
@@ -225,6 +234,7 @@ router.post(
     }
   }
 );
+
 
 module.exports = router;
 

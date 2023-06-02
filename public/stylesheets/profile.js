@@ -28,7 +28,7 @@ function replaceWithForm(userFirstName, userLastName, userEmail, userMobile, use
       viewElement.innerHTML = formHTML;
     } else if (formType === "address") {
       var textHTML = `
-        <button id='address'>Add a new address</button>
+        <a href='/user/adddeliverylocation'id='address'>Add a new address</a>
         <div class="view">
           <p>No addresses saved</p>
         </div>

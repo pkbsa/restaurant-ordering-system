@@ -1,0 +1,25 @@
+<div class="page page-delivery">
+    <div class="container">
+        <h1>MOVE MAP TO SET LOCATION</h1>
+        <div class="map">
+            <input id="map-search" class="form-control" type="text" placeholder="Enter delivery address" size="104">
+            <div>
+                <p class="distance">Status :</p>
+            </div>
+            <div id="map-canvas"></div>
+            <button class="btn btn-primary">CONFIRM</button>
+            <a href="#" class="btn btn-secondary">Cancel</button></a>
+
+
+        </div>
+    </div>
+    <div class="hidden">
+        <label for="">Lat: <input type="text" class="latitude"></label>
+        <label for="">Long: <input type="text" class="longitude"></label>
+    </div>
+</div>
+
+
+<script src='/stylesheets/delivery.js'></script>
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAcAfn-ZbSkyF65L5zyAEfyvboNNYS1ugw&libraries=places&callback=initialize"></script>

@@ -8,10 +8,8 @@ var userSchema = new Schema({
     firstname: {type: String, required: false},
     lastname: {type: String, required: false},
     address: {type: String, required: false},
-    subdistrict: {type: String, required: false},
-    district: {type: String, required: false},
-    province: {type: String, required: false},
-    zipcode: {type: String, required: false},
+    latitude: {type: String, required: false},
+    longtitude: {type: String, required: false},
     phone: {type: String, required: false},
     admin: {type: Number, required: true}
 });
