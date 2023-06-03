@@ -11,6 +11,8 @@ var csrfProtection = csrf();
 router.use(csrfProtection);
 
 router.get("/profile", isLoggedIn, function (req, res, next) {
+  req.session.oldUrl = req.originalUrl;
+
   Order.find({ user: req.user }, function (err, orders) {
     if (err) {
       return res.write("Error!");
@@ -32,13 +34,41 @@ router.get("/profile", isLoggedIn, function (req, res, next) {
 });
 
 router.get("/adddeliverylocation", isLoggedIn, function (req, res, next) {
-  console.log("ggols");
-  req.session.oldUrl = req.originalUrl;
+  console.log(req.session.oldUrl);
   res.render("user/delivery", {
     csrfToken: req.csrfToken(),
-    user: req.user
+    user: req.user,
+    redirectUrl: req.session.oldUrl
   });
 });
+
+router.post("/edit-address", isLoggedIn, function (req, res, next) {
+  var userId = req.user._id;
+  var latitude = req.body.latitude;
+  var longitude = req.body.longitude;
+  var address = req.body.address;
+
+  User.updateOne(
+    { _id: userId },
+    {
+      $set: {
+        latitude: latitude,
+        longitude: longitude,
+        address: address,
+      },
+    },
+    function (err, result) {
+      if (err) {
+        console.log(err);
+        req.flash("error", "Failed to update address.");
+      } else {
+        req.flash("success", "Address updated successfully.");
+      }
+      res.redirect("/user/profile");
+    }
+  );
+});
+
 
 router.post("/edit-profile", isLoggedIn, function (req, res, next) {
   var email = req.body.email;

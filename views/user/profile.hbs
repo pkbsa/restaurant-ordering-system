@@ -1,5 +1,15 @@
 <div class="page page-profile">
+    {{#if messages.success}}
+               <div class="alert alert-dismissible alert-success" role="alert">
+                    {{#each messages.success}}
+                    <div>{{this}}</div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+                    {{/each}}
+                </div>
+                {{/if}}
     <div class="container">
+        
         <div class="row">
             <div class="col-12 col-sm-7 conhello">
                 <div class="hello">
@@ -10,19 +20,13 @@
                 </div>
                 
                 {{#if messages.error}}
-               <div class="alert alert-danger" role="alert">
+               <div class="alert alert-dismissible alert-danger" role="alert">
                     {{#each messages.error}}
                     <p>{{this}}</p>
                     {{/each}}
                 </div>
                 {{/if}}
-                {{#if messages.success}}
-               <div class="alert alert-success" role="alert">
-                    {{#each messages.success}}
-                    <p>{{this}}</p>
-                    {{/each}}
-                </div>
-                {{/if}}
+                
             </div>
             <div class="col-12 col-sm-4">
                 <ul>
@@ -72,7 +76,7 @@
         firstname: "{{user.firstname}}",
         lastname: "{{user.lastname}}",
         email: "{{user.email}}",
-        mobile: "{{user.phone}}",
+        userMobile: "{{user.mobilePhone}}",
         csrfToken: "{{csrfToken}}"
     };
 </script>

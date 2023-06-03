@@ -9,7 +9,7 @@ var userSchema = new Schema({
     lastname: {type: String, required: false},
     address: {type: String, required: false},
     latitude: {type: String, required: false},
-    longtitude: {type: String, required: false},
+    longitude: {type: String, required: false},
     mobilePhone: {type: String, required: false},
     admin: {type: Number, required: true}
 });

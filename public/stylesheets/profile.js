@@ -22,7 +22,7 @@ function replaceWithForm(userFirstName, userLastName, userEmail, userMobile, use
             <input type="text" id="mobilePhone" name="mobilePhone" class="form-control" placeholder="Mobile Number*" value="${userMobile}" required>
           </div>
           <input type="hidden" name="_csrf" value="${userCsrf}">
-          <button type="submit">UPDATE</button>
+          <button type="submit" id="" >UPDATE</button>
         </form>
       `;
       viewElement.innerHTML = formHTML;
@@ -49,7 +49,7 @@ function replaceWithForm(userFirstName, userLastName, userEmail, userMobile, use
           </div>
           <input type="hidden" name="email" value="${userEmail}">
           <input type="hidden" name="_csrf" value="${userCsrf}">
-          <button type="submit">CHANGE PASSWORD </button>
+          <button type="submit" id='reset'>CHANGE PASSWORD </button>
         </form>
       `;
       viewElement.innerHTML = formHTML;
@@ -86,4 +86,4 @@ function replaceWithForm(userFirstName, userLastName, userEmail, userMobile, use
   handleHashChange();
 }
 
-replaceWithForm(user.firstname, user.lastname, user.email, user.mobile, user.csrfToken);
+replaceWithForm(user.firstname, user.lastname, user.email, user.userMobile, user.csrfToken);

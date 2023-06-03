@@ -204,15 +204,17 @@ body {
     margin-bottom: 0.5em;
     font-size: 1em;
 }
-.page-profile button{
+
+.page-profile button#reset{
     margin: 1em 0 1em 0;
     width: 30em;
     height: 50px;
-    background-color: #006391;
-    color: white;
     border: 0px;
     border-radius: 3px;
+    background-color: #006391;
+    color: white;
 }
+
 .page-profile form {
     display: flex;
     flex-direction: column;
@@ -846,7 +848,7 @@ th {
 .page-delivery .map input{
     height: 50px;
 }
-.page-delivery .map button{
+.page-delivery .map #liveAlertBtn{
     height: 50px;
 
 }

@@ -5,7 +5,7 @@ function initialize() {
     searchBox,
     city,
     infoWindow = "",
-    addressEl = document.querySelector("#map-search"),
+    addressEl = document.querySelector("#map-search"), 
     latEl = document.querySelector(".latitude"),
     longEl = document.querySelector(".longitude"),
     element = document.getElementById("map-canvas");
@@ -146,16 +146,40 @@ function initialize() {
             ".distance"
           ).innerHTML = `Status: <i class="fa fa-check" aria-hidden="true" style="color: green"></i>
 		  <span style="color: green">Supporting the current location! (${formattedDistance} km)</span> `;
+		  document.getElementById("liveAlertPlaceholder").style.display = 'none';
+		  document.getElementById("liveAlertBtn").type = "submit";
 			
         } else {
           document.querySelector(
             ".distance"
           ).innerHTML = `Status: <i class="fa fa-times" aria-hidden="true" style="color: red"></i>
 		  <span style="color: red">Not supported in this location. (${formattedDistance} km)</span>`;
+		  document.getElementById("liveAlertPlaceholder").style.display = 'block';
+		  document.getElementById("liveAlertBtn").type = "button";
+
         }
       } else {
         console.log("Error calculating distance: " + status);
       }
     });
   }
+}
+const alertPlaceholder = document.getElementById('liveAlertPlaceholder')
+const appendAlert = (message, type) => {
+  const wrapper = document.createElement('div')
+  wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    '</div>'
+  ].join('')
+
+  alertPlaceholder.append(wrapper)
+}
+
+const alertTrigger = document.getElementById('liveAlertBtn')
+if (alertTrigger) {
+  alertTrigger.addEventListener('click', () => {
+    appendAlert('Not supported in this location.', 'danger')
+  })
 }

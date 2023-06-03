@@ -30,7 +30,7 @@ passport.use('local.signup',new LocalStrategy({
         });
         return done(null, false, req.flash('error',messages));
     }
-    User.findOne({ $or: [{ 'email': email }, { 'mobilePhone': req.body.mobilePhone }] }, function(err, user) {
+    User.findOne({ $or: [{ 'email': email.toLowerCase() }, { 'mobilePhone': req.body.mobilePhone }] }, function(err, user) {
         if (err) {
             return done(err);
         }
@@ -43,14 +43,14 @@ passport.use('local.signup',new LocalStrategy({
         }
 
         var newUser = new User();
-        newUser.email = email;
+        newUser.email = email.toLowerCase();
         newUser.password = newUser.encryptPassword(password);
         newUser.admin = 0;
         newUser.firstname = req.body.firstName;
         newUser.lastname = req.body.lastName;
         newUser.address = "";
         newUser.latitude = "";
-        newUser.longtitude = "";
+        newUser.longitude = "";
         newUser.mobilePhone = req.body.mobilePhone;
 
         newUser.save(function(err, result) {
@@ -77,7 +77,7 @@ passport.use('local.signin', new LocalStrategy({
         });
         return done(null, false, req.flash('error',messages));
     }
-    User.findOne({'email': email}, function(err,user){
+    User.findOne({'email': email.toLowerCase()}, function(err,user){
         if (err){
             return done(err);
         }
