@@ -1,5 +1,12 @@
-function replaceWithForm(userFirstName, userLastName, userEmail, userMobile, userCsrf) {
-  var contactLinks = document.querySelectorAll('li a.contact-link');
+function replaceWithForm(
+  userFirstName,
+  userLastName,
+  userEmail,
+  userMobile,
+  userCsrf,
+  userAddress
+) {
+  var contactLinks = document.querySelectorAll("li a.contact-link");
   var viewElement = document.querySelector(".hello");
   var errorAlert = document.querySelector(".alert-danger");
   var successAlert = document.querySelector(".alert-success");
@@ -22,17 +29,27 @@ function replaceWithForm(userFirstName, userLastName, userEmail, userMobile, use
             <input type="text" id="mobilePhone" name="mobilePhone" class="form-control" placeholder="Mobile Number*" value="${userMobile}" required>
           </div>
           <input type="hidden" name="_csrf" value="${userCsrf}">
-          <button type="submit" id="" >UPDATE</button>
+          <button type="submit" id="reset" >UPDATE</button>
         </form>
       `;
       viewElement.innerHTML = formHTML;
     } else if (formType === "address") {
-      var textHTML = `
+      if (userAddress == " ") {
+        var textHTML = `
         <a href='/user/adddeliverylocation'id='address'>Add a new address</a>
         <div class="view">
           <p>No addresses saved</p>
         </div>
       `;
+      } else {
+       
+      var textHTML = `
+      <a href='/user/adddeliverylocation'id='address'>Edit delivery address</a>
+      <div class="view">
+        <p>Delivery : ${userAddress}</p>
+      </div>
+    `;
+      }
       viewElement.innerHTML = textHTML;
     } else if (formType === "password") {
       var formHTML = `
@@ -54,7 +71,6 @@ function replaceWithForm(userFirstName, userLastName, userEmail, userMobile, use
       `;
       viewElement.innerHTML = formHTML;
     }
-    
   }
 
   // Function to handle contactLink click event
@@ -86,4 +102,11 @@ function replaceWithForm(userFirstName, userLastName, userEmail, userMobile, use
   handleHashChange();
 }
 
-replaceWithForm(user.firstname, user.lastname, user.email, user.userMobile, user.csrfToken);
+replaceWithForm(
+  user.firstname,
+  user.lastname,
+  user.email,
+  user.userMobile,
+  user.csrfToken,
+  user.address
+);

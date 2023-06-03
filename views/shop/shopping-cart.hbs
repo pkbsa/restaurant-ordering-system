@@ -4,7 +4,6 @@
         <div class="row">
             {{#if products}}
             <h1>YOUR ORDER</h1>
-            <p>Delivery to : ...</p>
             <div class="col-12 col-sm-7">
                
                 <div class="flex-column-1">
@@ -54,7 +53,9 @@
             </div>
 
             <div class="col-12 col-sm-4">
-                <p>Delivery to : </p>
+                <p>Delivery to :
+               </p>
+               <a href="/user/adddeliverylocation" id="address"> {{user.address}}</a>
 
                 <hr>
                 <div class="flex-coloumn-1">
@@ -64,7 +65,7 @@
                     </div>
                     <div class="flex-row-3">
                         <p>Delivery Charge</p>
-                        <p>$10</p>
+                        <p>$0</p>
                     </div>
 
                     <hr>
@@ -72,7 +73,8 @@
                         <h4>Total</h4>
                         <h4>${{totalPrice}}</h4>
                     </div>
-                    <a href="/checkout" class="btn btn-primary w-100">ชำระเงิน</a>
+                    <a href="/checkout" class="btn btn-primary w-100 submitbtn">CHECK OUT</a>
+                    <a href="/menu" class="btn btn-secondary w-100 submitbtn">Add more food</a>
                 </div>
             </div>
             {{else}}

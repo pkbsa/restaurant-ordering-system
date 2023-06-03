@@ -11,7 +11,7 @@ var csrfProtection = csrf();
 router.use(csrfProtection);
 
 router.get("/profile", isLoggedIn, function (req, res, next) {
-  req.session.oldUrl = req.originalUrl;
+  req.session.referringUrl = req.originalUrl;
 
   Order.find({ user: req.user }, function (err, orders) {
     if (err) {
@@ -34,15 +34,17 @@ router.get("/profile", isLoggedIn, function (req, res, next) {
 });
 
 router.get("/adddeliverylocation", isLoggedIn, function (req, res, next) {
-  console.log(req.session.oldUrl);
+  console.log(req.session.referringUrl);
   res.render("user/delivery", {
     csrfToken: req.csrfToken(),
     user: req.user,
-    redirectUrl: req.session.oldUrl
+    redirectUrl: req.session.referringUrl
   });
 });
 
 router.post("/edit-address", isLoggedIn, function (req, res, next) {
+  var redirectUrl = req.session.referringUrl
+  console.log(redirectUrl)
   var userId = req.user._id;
   var latitude = req.body.latitude;
   var longitude = req.body.longitude;
@@ -64,7 +66,7 @@ router.post("/edit-address", isLoggedIn, function (req, res, next) {
       } else {
         req.flash("success", "Address updated successfully.");
       }
-      res.redirect("/user/profile");
+      res.redirect(redirectUrl);
     }
   );
 });
@@ -226,7 +228,6 @@ router.post(
     failureFlash: true,
   }),
   function (req, res, next) {
-    console.log(req.session.oldUrl);
     if (req.session.referringUrl) {
       var oldUrl = req.session.referringUrl;
       req.session.referringUrl = null;
@@ -239,8 +240,8 @@ router.post(
 
 router.get("/signin", function (req, res, next) {
   var messages = req.flash("error");
-  req.session.oldUrl = req.originalUrl;
-  console.log(req.session.oldUrl);
+  req.session.referringUrl = req.originalUrl;
+  console.log(req.session.referringUrl);
   res.render("user/signin", {
     csrfToken: req.csrfToken(),
     messages: messages,
@@ -272,7 +273,7 @@ function isLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  req.session.oldUrl = req.url;
+  req.session.referringUrl = req.url;
   res.redirect("/");
 }
 function notLoggedIn(req, res, next) {

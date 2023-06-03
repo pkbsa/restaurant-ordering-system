@@ -9,8 +9,13 @@
         <ul>
             {{#if login }}
 
-            <div class="delivery"><p>Delivery to : ...... </p><a href="#" id="change">Change</a></div>
-             <li>
+            <div class="delivery">
+                <div class="textoverflow">
+                    <p>Delivery to : {{user.address}} </p>
+                </div>
+                <a href="/user/adddeliverylocation" id="change">Change</a>
+            </div>
+            <li>
                 <a href="/shopping-cart">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                     <span class="badge bg-secondary">{{session.cart.totalQty}}</span>
@@ -19,9 +24,9 @@
             </li>
 
             {{else}}
-               <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">START MY
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">START MY
                 ORDER</button>
-                <li>
+            <li>
                 <a href="/shopping-cart">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                     <span class="badge bg-secondary">{{session.cart.totalQty}}</span>
@@ -29,7 +34,7 @@
                 </a>
             </li>
             {{/if}}
-            
+
         </ul>
     </div>
 
@@ -49,12 +54,12 @@
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
                                     {{#unless ../login}}
-                                      <button class="form-control" data-bs-toggle="modal"
+                                    <button class="form-control" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal">+${{this.price}}</button>
-                                    
+
                                     {{else}}
-                                   
-                                        <a href="/add-to-cart/{{this._id}}"><button
+
+                                    <a href="/add-to-cart/{{this._id}}"><button
                                             class="form-control">+${{this.price}}</button></a>
                                     {{/unless}}
                                 </div>
@@ -85,14 +90,14 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
-                            
-                                     {{#unless ../login}}
-                                      <button class="form-control" data-bs-toggle="modal"
+
+                                    {{#unless ../login}}
+                                    <button class="form-control" data-bs-toggle="modal"
                                         data-bs-target="#exampleModal">+${{this.price}}</button>
-                                    
+
                                     {{else}}
-                                   
-                                        <a href="/add-to-cart/{{this._id}}"><button
+
+                                    <a href="/add-to-cart/{{this._id}}"><button
                                             class="form-control">+${{this.price}}</button></a>
                                     {{/unless}}
                                 </div>

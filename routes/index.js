@@ -210,13 +210,14 @@ router.get("/reduce/:id", function (req, res, next) {
 });
 
 router.get("/shopping-cart", function (req, res, next) {
+  req.session.referringUrl = req.originalUrl;
   if (!req.session.cart) {
     return res.render("shop/shopping-cart", { products: null });
   }
   var cart = new Cart(req.session.cart);
   res.render("shop/shopping-cart", {
     products: cart.generateArray(),
-    totalPrice: cart.totalPrice+10,
+    totalPrice: cart.totalPrice,
     cart: cart,
     user: req.user,
   });
