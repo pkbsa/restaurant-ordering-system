@@ -13,6 +13,7 @@ const passport = require('passport');
 const flash = require('connect-flash');
 const validator = require('express-validator');
 const MongoStore = require('connect-mongo')(session);
+const cors = require('cors');
 
 const routes = require('./routes/index');
 const userRoutes = require('./routes/user');
@@ -35,12 +36,18 @@ app.engine('.hbs', expressHbs({
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', '.hbs');
 
+app.use(cors());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(fileUpload());
 app.use(validator());
 app.use(cookieParser());
+app.use(cors({
+  origin: 'http://example.com', // specify the allowed origin(s)
+  methods: ['GET', 'POST'], // specify the allowed HTTP methods
+  allowedHeaders: ['Content-Type', 'Authorization'] // specify the allowed headers
+}));
 app.use(session({
   secret: 'mysupersecret',
   resave: false,
