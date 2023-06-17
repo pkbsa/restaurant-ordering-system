@@ -1,19 +1,36 @@
-<div class="page page-cart">
+<div class="page page-cart page-checkout">
     <div class="container">
-         
+
         <div class="row">
             {{#if products}}
             <h1>CHECK OUT</h1>
             <div class="col-12 col-sm-7">
-               
-                
-            
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle=""
+                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                1. Contact
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                <label><b>First Name:</b> {{user.firstname}}</label><br />
+                                <label><b>Last Name:</b> {{user.lastname}}</label><br />
+                                <label><b>Phone Number:</b> : {{user.mobilePhone}}</label><br />
+                                <label><b>Address:</b> {{user.address}}</label><br />
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
 
             <div class="col-12 col-sm-4">
                 <p>Delivery to :
-               </p>
-               <a href="/user/adddeliverylocation" id="address"> {{user.address}}</a>
+                </p>
+                <a href="/user/adddeliverylocation" id="address"> {{user.address}}</a>
 
                 <hr>
                 <div class="flex-coloumn-1">
@@ -31,6 +48,9 @@
                         <h4>Total</h4>
                         <h4>${{totalPrice}}</h4>
                     </div>
+                    <form action="/create-checkout-session" method="POST">
+                        <button type="submit" id="checkout-button" class="btn btn-primary w-100">Checkout</button>
+                    </form>
                     <a href="/menu" class="btn btn-secondary w-100 submitbtn">Add more food</a>
                 </div>
             </div>

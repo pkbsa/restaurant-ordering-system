@@ -2,15 +2,12 @@ var express = require("express");
 var router = express.Router();
 var Cart = require("../models/cart");
 
-var fs = require("fs");
-
 var Product = require("../models/product");
 var Order = require("../models/order");
 
-const axios = require("axios");
-const FormData = require("form-data");
-
 const { line_api } = require('../config/config');
+
+const stripe = require('stripe')('sk_test_51MR6MPExAgqOVTCm0kkqWiINL1gFOP2X1V2EJJZEzTrMdrW3tsXodHr1p7jeXWm7K2oeKTiU56xnAwiFFlOVpu8D00JwVPq6vC');
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
@@ -230,106 +227,36 @@ router.get("/checkout", isLoggedIn, function (req, res, next) {
   var cart = new Cart(req.session.cart);
   res.render("shop/checkout", {
     products: cart.generateArray(),
-    total: cart.totalPrice,
-    users: req.user,
+    totalPrice: cart.totalPrice,
+    cart: cart,
+    user: req.user,
  
   });
 });
 
-router.post("/checkout", isLoggedIn, function (req, res, next) {
-  if (!req.session.cart) {
-    return res.redirect("/shopping-cart");
-  }
-  var cart = new Cart(req.session.cart);
+const YOUR_DOMAIN = 'http://localhost:3000';
 
-  const cartArray = cart.generateArray();
-  const itemsString = cartArray
-    .map((item) => `${item.item.title} x ${item.qty} - ${item.price} บาท`)
-    .join("\n");
-
-  let sampleFile;
-  let uploadFile;
-
-  //console.log(req.files.sampleFile)
-  sampleFile = req.files.sampleFile;
-  uploadFile = "./public/Slip/" + sampleFile.name;
-
-  sampleFile.mv(uploadFile);
-
-  const today = new Date();
-  const offset = -(today.getTimezoneOffset() / 60) + 7;
-  const thaiDate = new Date(today.getTime() + offset * 60 * 60 * 1000);
-  const date = thaiDate.toLocaleDateString("th-TH", {
-    day: "numeric",
-    month: "numeric",
-    year: "numeric",
-  });
-  const time = thaiDate.toLocaleTimeString("th-TH", {
-    hour: "numeric",
-    minute: "numeric",
-  });
-
-  var curDate = `${date} - ${time}`;
-
-  const address =
-    req.body.address +
-    " " +
-    req.body.subdistrict +
-    " " +
-    req.body.district +
-    " " +
-    req.body.province +
-    " " +
-    req.body.zipcode;
-  const fullname = req.body.firstname + " " + req.body.lastname;
-  const paymentDate = req.body.date + " - " + req.body.time;
-
-  var order = new Order({
-    user: req.user,
-    cart: cart,
-    address: address,
-    name: fullname,
-    phone: req.body.phone,
-    paymentId: sampleFile.name,
-    paymentDate: paymentDate,
-    paymentMethod: req.body.paymentMethod,
-    status: "Pending",
-    date: curDate,
-  });
-
-  if(line_api != "PASTE_YOUR_LINENOTIFY_TOKEN"){
-    setTimeout(function () {
-      var payload = `\nวันที่สั่ง : ${order.date}\n\n${itemsString}\n\nวันที่ชำระเงิน : ${order.paymentDate}\nวิธีการชำระเงิน : ${order.paymentMethod}\nจำนวน : ${order.cart.totalPrice}.00 บาท\n\nที่อยู่จัดส่ง\n${order.name}\n${order.address}`;
-
-      const formData = new FormData();
-      formData.append("imageFile", fs.createReadStream(uploadFile));
-      formData.append("message", `${payload}`);
-      formData.append(
-        "access_token",
-        line_api
-      );
-      axios
-        .post("https://notify-api.line.me/api/notify", formData, {
-          headers: {
-            Authorization: `Bearer ${line_api}`,
+router.post('/create-checkout-session', async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: 'usd',
+          unit_amount: 15000,
+          product_data: {
+            name: 'Custom Payment',
+            description: 'Custom payment description',
           },
-        })
-        .then((response) => {
-          //console.log(response.data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }, 8000);
-  }
-
-  order.save(function (err, result) {
-    if (err) {
-      console.log(err);
-    }
-    req.session.cart = null;
-    res.redirect("/user/profile");
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `${YOUR_DOMAIN}/success`,
+    cancel_url: `${YOUR_DOMAIN}/cancel`,
   });
+
+  res.redirect(303, session.url);
 });
 
 module.exports = router;

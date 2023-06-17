@@ -508,6 +508,12 @@ body {
     display: flex;
     justify-content: center;
 }
+.page-checkout label{
+    margin: 5px 0 5px 0;
+}
+.page-checkout #proceed{
+    margin: 15px 0 15px 0;
+}
 
 .page-delivery .container{
     text-align: center;
@@ -722,5 +728,24 @@ body {
     }
     .page-signin button{
         width: 80vmin;
+    }
+    .page-profile .row{
+        gap: 2.5em;
+        padding: 2em 0 2em 0;
+    }
+    .page-profile .form-group input{
+        width: auto;
+    }
+    .page-profile button#reset{
+        width: 100%;
+    }
+    .page-cart h1{
+        font-size: 2em!important;
+    }
+    .page-cart .flex-row-2 h2{
+        font-size: 1em!important;
+    }
+    .page-cart .row{
+        gap: 1em;
     }
 }
