@@ -232,9 +232,21 @@ router.get("/checkout", isLoggedIn, function (req, res, next) {
   });
 });
 
+router.get("/success", isLoggedIn, function (req, res, next) {
+  req.session.cart = null;
+  console.log(req.session.cart)
+  res.render("shop/success")
+})
+router.get("/cancel", isLoggedIn, function (req, res, next) {
+  res.render("shop/cancel")
+})
+
 const YOUR_DOMAIN = "http://localhost:3000";
 
 router.post("/create-checkout-session", async (req, res) => {
+  const cart = req.session.cart;
+  const user = req.session.user;
+
   const totalprice = req.body.totalprice * 100;
   const session = await stripe.checkout.sessions.create({
     line_items: [
@@ -254,23 +266,61 @@ router.post("/create-checkout-session", async (req, res) => {
     success_url: `${YOUR_DOMAIN}/success`,
     cancel_url: `${YOUR_DOMAIN}/cancel`,
   });
-
+  createOrder(session, user, cart);
   res.redirect(303, session.url);
 });
 
 const fulfillOrder = (session) => {
-  // TODO: fill me in
-  console.log("Fulfilling order", session);
+  const paymentId = session.id;
+
+  Order.findOneAndUpdate(
+    { paymentId: paymentId },
+    { $set: { status: "paid" } },
+    { new: true },
+    (err, order) => {
+      if (err) {
+        console.log("Error fulfilling order:", err);
+        return;
+      }
+
+      if (order) {
+        console.log("Order fulfilled:", order);
+      }
+    }
+  );
 };
 
-const createOrder = (session) => {
-  // TODO: fill me in
-  console.log("Creating order", session);
+const createOrder = (session, user, cart) => {
+  console.log('Creating order');
+  const order = new Order({
+    user: user,
+    cart: cart,
+    paymentId: session.id,
+    status: 'awaiting payment',
+    date: Date.now()
+  });
+  order.save(function (err, result) {
+  });
 };
 
 const emailCustomerAboutFailedPayment = (session) => {
-  // TODO: fill me in
-  console.log("Emailing customer", session);
+  const paymentId = session.id;
+
+  Order.findOneAndUpdate(
+    { paymentId: paymentId },
+    { $set: { status: "payment failed" } },
+    { new: true },
+    (err, order) => {
+      if (err) {
+        console.log("Error fulfilling order:", err);
+        return;
+      }
+
+      if (order) {
+        console.log("Order fulfilled:", order);
+      }
+    }
+  );
 };
 
 const endpointSecret =
@@ -279,8 +329,9 @@ const endpointSecret =
 router.use(express.json({ type: 'application/json' }));
 
 router.post('/webhook', (request, response) => {
+
   const sig = request.headers['stripe-signature'];
-  
+
   let event;
 
   try {
@@ -290,22 +341,14 @@ router.post('/webhook', (request, response) => {
     return response.sendStatus(400);
   }
 
-  console.log(event.type);
-  console.log(event.data.object);
-  console.log(event.data.object.id);
-
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object;
-      // Save an order in your database, marked as 'awaiting payment'
-      createOrder(session);
-
-      // Check if the order is paid (for example, from a card payment)
-      //
-      // A delayed notification payment will have an `unpaid` status, as
-      // you're still waiting for funds to be transferred from the customer's
-      // account.
+      console.log("waiting payment")
+     
       if (session.payment_status === 'paid') {
+        console.log("change payment status to paid")
+
         fulfillOrder(session);
       }
 
@@ -314,8 +357,8 @@ router.post('/webhook', (request, response) => {
 
     case 'checkout.session.async_payment_succeeded': {
       const session = event.data.object;
+      console.log("change payment status to paid")
 
-      // Fulfill the purchase...
       fulfillOrder(session);
 
       break;
@@ -324,13 +367,11 @@ router.post('/webhook', (request, response) => {
     case 'checkout.session.async_payment_failed': {
       const session = event.data.object;
 
-      // Send an email to the customer asking them to retry their order
       emailCustomerAboutFailedPayment(session);
 
       break;
     }
   }
-
   response.status(200).end();
 });
 
