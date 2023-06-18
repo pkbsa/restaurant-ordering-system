@@ -49,7 +49,8 @@ app.use(
       req.rawBody = buf;
     },
   })
-);app.use(bodyParser.urlencoded({ extended: false }));
+);
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(fileUpload());
 app.use(validator());
 app.use(cookieParser());

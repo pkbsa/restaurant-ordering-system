@@ -19,6 +19,7 @@ router.get("/", function (req, res, next) {
 
 router.get("/menu", function (req, res, next) {
   req.session.referringUrl = req.originalUrl;
+  console.log(req.session.cart);
   var cart = new Cart(req.session.cart ? req.session.cart : {});
   var successMsg = req.flash("success")[0];
   Product.find(function (err, docs) {
@@ -224,6 +225,7 @@ router.get("/checkout", isLoggedIn, function (req, res, next) {
     return res.redirect("/shopping-cart");
   }
   var cart = new Cart(req.session.cart);
+  console.log(cart)
   res.render("shop/checkout", {
     products: cart.generateArray(),
     totalPrice: cart.totalPrice,
@@ -241,34 +243,46 @@ router.get("/cancel", isLoggedIn, function (req, res, next) {
   res.render("shop/cancel")
 })
 
-const YOUR_DOMAIN = "http://localhost:3000";
+const YOUR_DOMAIN = "http://localhost:3000"; 
 
 router.post("/create-checkout-session", async (req, res) => {
   const cart = req.session.cart;
   const user = req.session.user;
+  console.log(cart);
 
-  const totalprice = req.body.totalprice * 100;
-  const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price_data: {
-          currency: "usd",
-          unit_amount: totalprice,
-          product_data: {
-            name: "Pye Boat Noodles",
-            description: "Custom payment description",
-          },
+  const lineItems = [];
+
+  // Convert cart items into line items
+  for (const itemId in cart.items) {
+    const cartItem = cart.items[itemId];
+    const { item, qty, price } = cartItem;
+
+    const lineItem = {
+      price_data: {
+        currency: "usd",
+        unit_amount_decimal: price * 100,
+        product_data: {
+          name: item.title,
+          description: item.description,
         },
-        quantity: 1,
       },
-    ],
+      quantity: qty,
+    };
+
+    lineItems.push(lineItem);
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: lineItems, // Use the converted line items
     mode: "payment",
     success_url: `${YOUR_DOMAIN}/success`,
     cancel_url: `${YOUR_DOMAIN}/cancel`,
   });
+
   createOrder(session, user, cart);
   res.redirect(303, session.url);
 });
+
 
 const fulfillOrder = (session) => {
   const paymentId = session.id;
@@ -323,12 +337,30 @@ const emailCustomerAboutFailedPayment = (session) => {
   );
 };
 
+const removeOrder = async (session) => {
+  try {
+    // Retrieve the order based on the session
+    const order = await Order.findOne({ paymentId: session.id });
+
+    if (order) {
+      // Remove the order from the database
+      await Order.findByIdAndRemove(order._id);
+      console.log("Order removed:", order);
+    } else {
+      console.log("Order not found:", session.id);
+    }
+  } catch (err) {
+    console.log("Error removing order:", err);
+  }
+};
+
+
 const endpointSecret =
   "whsec_3625c57a647dd4749ea2df8603f689c2d150ed0959939d3ea3a470e75b91a150";
 
 router.use(express.json({ type: 'application/json' }));
 
-router.post('/webhook', (request, response) => {
+router.post('/webhook', async (request, response) => {
 
   const sig = request.headers['stripe-signature'];
 
@@ -345,11 +377,14 @@ router.post('/webhook', (request, response) => {
     case 'checkout.session.completed': {
       const session = event.data.object;
       console.log("waiting payment")
+      console.log(session.metadata)
      
       if (session.payment_status === 'paid') {
-        console.log("change payment status to paid")
-
+        console.log("Change payment status to paid");
         fulfillOrder(session);
+      } else {
+        console.log("Order is still waiting for payment. Removing order...");
+        await removeOrder(session);
       }
 
       break;

@@ -11,7 +11,19 @@ var products = [
         description: 'Minced shrimp, pork and Jicama with sweet soy dipping.',
         price: 6.5,
         category: "PYE SNACKS",
-        status: "Available"
+        status: "Available",
+        additionalChoices: [
+            {
+                title: 'Additional Choice 1',
+                choices: ['A', 'B', 'C'],
+                prices: [1, 2, 3]
+            },
+            {
+                title: 'Additional Choice 2',
+                choices: ['X', 'Y', 'Z'],
+                prices: [4, 5, 6]
+            }
+        ]
     }),
     new Product({
         imagePath: ['/products/img2.png'],
@@ -19,7 +31,14 @@ var products = [
         description: 'Taro, glass noodle, and cabbage',
         price: 5.5,
         category: "PYE SNACKS",
-        status: "Available"
+        status: "Available",
+        additionalChoices: [
+            {
+                title: 'Additional Choice 1',
+                choices: ['A', 'B', 'C'],
+                prices: [1, 2, 3]
+            },
+        ]
     }),
     new Product({
         imagePath: ['/products/img3.png'],

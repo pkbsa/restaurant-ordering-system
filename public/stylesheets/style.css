@@ -284,7 +284,6 @@ body {
 
 .page-products .foodnav li:last-child::after {
     content: none;
-    /* Remove the vertical line from the last li element */
 }
 
 .page-products img {
@@ -311,6 +310,19 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 1em;
+}
+.page-products p.choiceTitle {
+    margin-bottom: 0.5em;
+    margin-top: 0.5em;
+
+}
+
+.page-products .food-modal{
+    align-items: normal;
+    gap: 0em;
+}
+.page-products .footer-food-modal{
+    display: block;
 }
 
 .page-products .close-btn{

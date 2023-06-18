@@ -24,7 +24,7 @@
             </li>
 
             {{else}}
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">START MY
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signInModal">START MY
                 ORDER</button>
             <li>
                 <a href="/shopping-cart">
@@ -53,15 +53,8 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
-                                    {{#unless ../login}}
                                     <button class="form-control" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal">+${{this.price}}</button>
-
-                                    {{else}}
-
-                                    <a href="/add-to-cart/{{this._id}}"><button
-                                            class="form-control">+${{this.price}}</button></a>
-                                    {{/unless}}
+                                        data-bs-target="#{{this._id}}">+${{this.price}}</button>
                                 </div>
                             </div>
                         </div>
@@ -71,6 +64,39 @@
                 <!-- Add div after every even index -->
                 <div class="w-100 d-none d-md-block"></div>
                 {{/if}}
+                <!-- Food Modal -->
+                <div class="modal fade" id="{{this._id}}" tabindex="-1" aria-labelledby="{{this._id}}Label"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="{{this.item._id}}">{{this.title}}</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form>
+                            <div class="modal-body food-modal">
+                                {{#if additionalChoices}}
+                                    {{#each additionalChoices}}
+                                    <p class="choiceTitle">{{this.title}}</p>
+                                    {{#each choices}}
+                                    <label>
+                                        <input type="radio" name="additionalChoice{{@../index}}" value="{{this}}" required>
+                                        {{this}} - ${{lookup ../prices @index}}
+                                    </label>
+                                    {{/each}}
+                                    {{/each}}
+                                {{/if}}
+                                <p class="choiceTitle">Additional requests (if any)</p>
+                                <textarea></textarea>
+                            </div>
+                            <div class="modal-footer footer-food-modal">
+                                <button class="btn btn-primary w-100" type="submit">Add to Cart</button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 {{/each}}
             </div>
         </div>
@@ -93,7 +119,7 @@
 
                                     {{#unless ../login}}
                                     <button class="form-control" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal">+${{this.price}}</button>
+                                        data-bs-target="#signInModal">+${{this.price}}</button>
 
                                     {{else}}
 
@@ -114,7 +140,7 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -125,7 +151,6 @@
                     <a href="/user/signin" id='signin' class="form-control">Sign In</a>
                     <p>Your first order? <a href="#">Sign Up</a></p>
                 </div>
-
             </div>
         </div>
     </div>
