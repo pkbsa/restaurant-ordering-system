@@ -1,14 +1,14 @@
 var express = require("express");
-var router = express.Router();
 var Cart = require("../models/cart");
 
 var Product = require("../models/product");
 var Order = require("../models/order");
 
-const { line_api } = require('../config/config');
+const stripe = require("stripe")(
+  "sk_test_51MR6MPExAgqOVTCm0kkqWiINL1gFOP2X1V2EJJZEzTrMdrW3tsXodHr1p7jeXWm7K2oeKTiU56xnAwiFFlOVpu8D00JwVPq6vC"
+);
 
-const stripe = require('stripe')('sk_test_51MR6MPExAgqOVTCm0kkqWiINL1gFOP2X1V2EJJZEzTrMdrW3tsXodHr1p7jeXWm7K2oeKTiU56xnAwiFFlOVpu8D00JwVPq6vC');
-
+var router = express.Router();
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.render("shop/index", {
@@ -41,7 +41,7 @@ router.get("/menu", function (req, res, next) {
       successMsg: successMsg || null,
       noMessages: !successMsg,
       user: req.user,
-      totalPrice: cart.totalPrice
+      totalPrice: cart.totalPrice,
     });
   });
 });
@@ -132,14 +132,13 @@ router.get("/menu/drinks", function (req, res, next) {
   });
 });
 
-
 router.get("/products/:id", function (req, res, next) {
   var productId = req.params.id;
   Product.findById(productId, function (err, product) {
     if (err) {
       return res.redirect("/products");
     }
-    res.render("shop/product-view", {product: product});
+    res.render("shop/product-view", { product: product });
   });
 });
 
@@ -154,7 +153,7 @@ router.get("/add-to-cart/:id", function (req, res, next) {
     cart.add(product, product.id);
     req.session.cart = cart;
     console.log(req.session.cart);
-    console.log(req.session.referringUrl)
+    console.log(req.session.referringUrl);
     res.redirect(req.session.referringUrl || "/menu");
   });
 });
@@ -230,33 +229,109 @@ router.get("/checkout", isLoggedIn, function (req, res, next) {
     totalPrice: cart.totalPrice,
     cart: cart,
     user: req.user,
- 
   });
 });
 
-const YOUR_DOMAIN = 'http://localhost:3000';
+const YOUR_DOMAIN = "http://localhost:3000";
 
-router.post('/create-checkout-session', async (req, res) => {
+router.post("/create-checkout-session", async (req, res) => {
+  const totalprice = req.body.totalprice * 100;
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
         price_data: {
-          currency: 'usd',
-          unit_amount: 15000,
+          currency: "usd",
+          unit_amount: totalprice,
           product_data: {
-            name: 'Custom Payment',
-            description: 'Custom payment description',
+            name: "Pye Boat Noodles",
+            description: "Custom payment description",
           },
         },
         quantity: 1,
       },
     ],
-    mode: 'payment',
+    mode: "payment",
     success_url: `${YOUR_DOMAIN}/success`,
     cancel_url: `${YOUR_DOMAIN}/cancel`,
   });
 
   res.redirect(303, session.url);
+});
+
+const fulfillOrder = (session) => {
+  // TODO: fill me in
+  console.log("Fulfilling order", session);
+};
+
+const createOrder = (session) => {
+  // TODO: fill me in
+  console.log("Creating order", session);
+};
+
+const emailCustomerAboutFailedPayment = (session) => {
+  // TODO: fill me in
+  console.log("Emailing customer", session);
+};
+
+const endpointSecret =
+  "whsec_3625c57a647dd4749ea2df8603f689c2d150ed0959939d3ea3a470e75b91a150";
+
+router.use(express.json({ type: 'application/json' }));
+
+router.post('/webhook', (request, response) => {
+  const sig = request.headers['stripe-signature'];
+  
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(request.rawBody, sig, endpointSecret);
+  } catch (err) {
+    console.log('⚠️  Webhook signature verification failed.', err.message);
+    return response.sendStatus(400);
+  }
+
+  console.log(event.type);
+  console.log(event.data.object);
+  console.log(event.data.object.id);
+
+  switch (event.type) {
+    case 'checkout.session.completed': {
+      const session = event.data.object;
+      // Save an order in your database, marked as 'awaiting payment'
+      createOrder(session);
+
+      // Check if the order is paid (for example, from a card payment)
+      //
+      // A delayed notification payment will have an `unpaid` status, as
+      // you're still waiting for funds to be transferred from the customer's
+      // account.
+      if (session.payment_status === 'paid') {
+        fulfillOrder(session);
+      }
+
+      break;
+    }
+
+    case 'checkout.session.async_payment_succeeded': {
+      const session = event.data.object;
+
+      // Fulfill the purchase...
+      fulfillOrder(session);
+
+      break;
+    }
+
+    case 'checkout.session.async_payment_failed': {
+      const session = event.data.object;
+
+      // Send an email to the customer asking them to retry their order
+      emailCustomerAboutFailedPayment(session);
+
+      break;
+    }
+  }
+
+  response.status(200).end();
 });
 
 module.exports = router;
