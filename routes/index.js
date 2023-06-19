@@ -175,9 +175,9 @@ router.post("/add-to-cart/:id", function (req, res, next) {
       function () {
         req.session.cart = cart;
         console.log("refering url: " + req.session.referringUrl);
-        setTimeout(function () {
+        req.session.save(function(err) {
           res.redirect(req.session.referringUrl);
-        }, 500);
+        })
       }
     );
   });
@@ -203,9 +203,9 @@ router.post("/addone-to-cart/:id", function (req, res, next) {
       additionalNote,
       function () {
         req.session.cart = cart;
-        setTimeout(function () {
+        req.session.save(function(err) {
           res.redirect("/shopping-cart?cache=" + Date.now());
-        }, 2000);
+        })
       }
     );
   });
@@ -216,10 +216,11 @@ router.get("/remove/:id", function (req, res, next) {
   var cart = new Cart(req.session.cart ? req.session.cart : {});
 
   cart.removeItem(productId, function () {
+    console.log(cart)
     req.session.cart = cart;
-    setTimeout(function () {
+    req.session.save(function(err) {
       res.redirect("/shopping-cart?cache=" + Date.now());
-    }, 500);
+    })
   });
 });
 
@@ -229,9 +230,9 @@ router.get("/reduce/:id", function (req, res, next) {
 
   cart.reduceByOne(productId, function () {
     req.session.cart = cart;
-    setTimeout(function () {
+    req.session.save(function(err) {
       res.redirect("/shopping-cart?cache=" + Date.now());
-    }, 500);
+    })
   });
 });
 
