@@ -19,7 +19,7 @@ router.get("/", function (req, res, next) {
 
 router.get("/menu", function (req, res, next) {
   req.session.referringUrl = req.originalUrl;
-  console.log(req.session.cart);
+  console.log(req.session.cart.items);
 
   var cart = new Cart(req.session.cart ? req.session.cart : {});
   var successMsg = req.flash("success")[0];
@@ -152,44 +152,42 @@ router.post("/add-to-cart/:id", function (req, res, next) {
     if (err) {
       return res.redirect("/menu");
     }
-    var additionalChoices = req.body.additionalChoices;
+    var additionalChoices = [];
+    for (var key in req.body) {
+      if (key.startsWith("additionalChoice")) {
+        additionalChoices.push(req.body[key]);
+      }
+    }
+    var additionalChoicesString = additionalChoices.join(", ");
     var additionalNote = req.body.additionalNote;
-    
-    cart.add(product, product.id, additionalChoices, additionalNote);
+
+    cart.add(product, product.id, additionalChoicesString, additionalNote);
 
     req.session.cart = cart;
     console.log(req.session.cart);
     console.log(req.session.referringUrl);
-    res.redirect(req.session.referringUrl || "/menu");
+    setTimeout(function () {
+      res.redirect(req.session.referringUrl);
+    }, 500);
   });
 });
 
-router.get("/add-to-cart-product/:id", function (req, res, next) {
+router.post("/addone-to-cart/:id", function (req, res, next) {
   var productId = req.params.id;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
+  let additionalChoices = req.body.additionalChoices;
+  let additionalNote = req.body.additionalNote;
 
   Product.findById(productId, function (err, product) {
     if (err) {
       return res.redirect("/products");
     }
-    cart.add(product, product.id);
+    cart.add(product, product.id, additionalChoices, additionalNote);
     req.session.cart = cart;
-    console.log(req.session.cart);
-  });
-});
-
-router.get("/addone-to-cart/:id", function (req, res, next) {
-  var productId = req.params.id;
-  var cart = new Cart(req.session.cart ? req.session.cart : {});
-
-  Product.findById(productId, function (err, product) {
-    if (err) {
-      return res.redirect("/products");
-    }
-    cart.add(product, product.id);
-    req.session.cart = cart;
-    //console.log(req.session.cart);
-    res.redirect("/shopping-cart");
+    
+    setTimeout(function () {
+      res.redirect('/shopping-cart');
+    }, 500);
   });
 });
 
@@ -197,9 +195,10 @@ router.get("/remove/:id", function (req, res, next) {
   var productId = req.params.id;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
 
-  cart.removeItem(productId);
-  req.session.cart = cart;
-  res.redirect("/shopping-cart");
+  cart.removeItem(productId, function () {
+    req.session.cart = cart;
+    res.redirect("/shopping-cart?cache=" + Date.now());
+  });
 });
 
 router.get("/reduce/:id", function (req, res, next) {
@@ -208,11 +207,19 @@ router.get("/reduce/:id", function (req, res, next) {
 
   cart.reduceByOne(productId);
   req.session.cart = cart;
-  res.redirect("/shopping-cart");
+
+  setTimeout(function () {
+    res.redirect("/shopping-cart?cache=" + Date.now());
+  }, 500);
 });
 
 router.get("/shopping-cart", function (req, res, next) {
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
   req.session.referringUrl = req.originalUrl;
+  
   if (!req.session.cart) {
     return res.render("shop/shopping-cart", { products: null });
   }
@@ -230,7 +237,6 @@ router.get("/checkout", isLoggedIn, function (req, res, next) {
     return res.redirect("/shopping-cart");
   }
   var cart = new Cart(req.session.cart);
-  console.log(cart)
   res.render("shop/checkout", {
     products: cart.generateArray(),
     totalPrice: cart.totalPrice,
@@ -241,14 +247,14 @@ router.get("/checkout", isLoggedIn, function (req, res, next) {
 
 router.get("/success", isLoggedIn, function (req, res, next) {
   req.session.cart = null;
-  console.log(req.session.cart)
-  res.render("shop/success")
-})
+  console.log(req.session.cart);
+  res.render("shop/success");
+});
 router.get("/cancel", isLoggedIn, function (req, res, next) {
-  res.render("shop/cancel")
-})
+  res.render("shop/cancel");
+});
 
-const YOUR_DOMAIN = "http://localhost:3000"; 
+const YOUR_DOMAIN = "http://localhost:3000";
 
 router.post("/create-checkout-session", async (req, res) => {
   const cart = req.session.cart;
@@ -288,7 +294,6 @@ router.post("/create-checkout-session", async (req, res) => {
   res.redirect(303, session.url);
 });
 
-
 const fulfillOrder = (session) => {
   const paymentId = session.id;
 
@@ -310,16 +315,15 @@ const fulfillOrder = (session) => {
 };
 
 const createOrder = (session, user, cart) => {
-  console.log('Creating order');
+  console.log("Creating order");
   const order = new Order({
     user: user,
     cart: cart,
     paymentId: session.id,
-    status: 'awaiting payment',
-    date: Date.now()
+    status: "awaiting payment",
+    date: Date.now(),
   });
-  order.save(function (err, result) {
-  });
+  order.save(function (err, result) {});
 };
 
 const emailCustomerAboutFailedPayment = (session) => {
@@ -359,32 +363,34 @@ const removeOrder = async (session) => {
   }
 };
 
-
 const endpointSecret =
   "whsec_3625c57a647dd4749ea2df8603f689c2d150ed0959939d3ea3a470e75b91a150";
 
-router.use(express.json({ type: 'application/json' }));
+router.use(express.json({ type: "application/json" }));
 
-router.post('/webhook', async (request, response) => {
-
-  const sig = request.headers['stripe-signature'];
+router.post("/webhook", async (request, response) => {
+  const sig = request.headers["stripe-signature"];
 
   let event;
 
   try {
-    event = stripe.webhooks.constructEvent(request.rawBody, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(
+      request.rawBody,
+      sig,
+      endpointSecret
+    );
   } catch (err) {
-    console.log('⚠️  Webhook signature verification failed.', err.message);
+    console.log("⚠️  Webhook signature verification failed.", err.message);
     return response.sendStatus(400);
   }
 
   switch (event.type) {
-    case 'checkout.session.completed': {
+    case "checkout.session.completed": {
       const session = event.data.object;
-      console.log("waiting payment")
-      console.log(session.metadata)
-     
-      if (session.payment_status === 'paid') {
+      console.log("waiting payment");
+      console.log(session.metadata);
+
+      if (session.payment_status === "paid") {
         console.log("Change payment status to paid");
         fulfillOrder(session);
       } else {
@@ -395,16 +401,16 @@ router.post('/webhook', async (request, response) => {
       break;
     }
 
-    case 'checkout.session.async_payment_succeeded': {
+    case "checkout.session.async_payment_succeeded": {
       const session = event.data.object;
-      console.log("change payment status to paid")
+      console.log("change payment status to paid");
 
       fulfillOrder(session);
 
       break;
     }
 
-    case 'checkout.session.async_payment_failed': {
+    case "checkout.session.async_payment_failed": {
       const session = event.data.object;
 
       emailCustomerAboutFailedPayment(session);

@@ -1,11 +1,11 @@
 <div class="page page-cart">
     <div class="container">
-         
+
         <div class="row">
             {{#if products}}
             <h1>YOUR ORDER</h1>
             <div class="col-12 col-sm-7">
-               
+
                 <div class="flex-column-1">
                     {{#each products}}
                     <div class="flex-row-1">
@@ -13,12 +13,23 @@
                             <div>
                                 <h2>{{this.qty}}x {{this.item.title}}</h2>
                                 <p>{{this.item.description}}</p>
+                                <p>{{{this.additionalChoices}}}</p>
+                                <p>{{{this.additionalNote}}}</p>
                                 <div class="quantity">
-                                    <a href="/reduce/{{this.item._id}}"><i class="fa fa-minus-circle fa-2x"
-                                            aria-hidden="true"></i></a>
+                                    <a href="/reduce/{{this.item._id}}-{{additionalChoices}}-{{additionalNote}}"><i
+                                            class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a>
                                     <button type="button" class="btn">{{this.qty}}</button>
-                                    <a href="/addone-to-cart/{{this.item._id}}"><i class="fa fa-plus-circle fa-2x"
-                                            aria-hidden="true"></i></a>
+                                    <form
+                                        action="/addone-to-cart/{{this.item._id}}"
+                                        method="POST">
+                                        <input type="hidden" name="additionalChoices" value="{{this.additionalChoices}}"/>
+                                        <input type="hidden" name="additionalNote" value="{{this.additionalNote}}"/>
+                                        <!-- form fields and other elements -->
+                                        <button type="submit" style="background: none; border: none; padding: 0;">
+                                            <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+
                                 </div>
                             </div>
                         </div>
@@ -42,7 +53,8 @@
                                     Remove <b>{{this.item.title}}</b> from the order?
                                 </div>
                                 <div class="modal-footer">
-                                    <a href="/remove/{{this.item._id}}" class="btn btn-secondary">Okay</a>
+                                    <a href="/remove/{{this.item._id}}-{{additionalChoices}}-{{additionalNote}}"
+                                        class="btn btn-secondary">Okay</a>
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                                 </div>
                             </div>
@@ -54,8 +66,8 @@
 
             <div class="col-12 col-sm-4">
                 <p>Delivery to :
-               </p>
-               <a href="/user/adddeliverylocation" id="address"> {{user.address}}</a>
+                </p>
+                <a href="/user/adddeliverylocation" id="address"> {{user.address}}</a>
 
                 <hr>
                 <div class="flex-coloumn-1">
