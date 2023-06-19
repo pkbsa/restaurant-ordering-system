@@ -18,8 +18,11 @@ router.get("/", function (req, res, next) {
 });
 
 router.get("/menu", function (req, res, next) {
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
   req.session.referringUrl = req.originalUrl;
-  console.log(req.session.cart.items);
 
   var cart = new Cart(req.session.cart ? req.session.cart : {});
   var successMsg = req.flash("success")[0];
@@ -161,16 +164,16 @@ router.post("/add-to-cart/:id", function (req, res, next) {
     var additionalChoicesString = additionalChoices.join(", ");
     var additionalNote = req.body.additionalNote;
 
-    cart.add(product, product.id, additionalChoicesString, additionalNote);
-
-    req.session.cart = cart;
-    console.log(req.session.cart);
-    console.log(req.session.referringUrl);
-    setTimeout(function () {
-      res.redirect(req.session.referringUrl);
-    }, 500);
+    cart.add(product, product.id, additionalChoicesString, additionalNote, function () {
+      req.session.cart = cart;
+      console.log("refering url: "+req.session.referringUrl);
+      setTimeout(function () {
+        res.redirect(req.session.referringUrl);
+      }, 500);
+    });
   });
 });
+
 
 router.post("/addone-to-cart/:id", function (req, res, next) {
   var productId = req.params.id;
@@ -182,12 +185,11 @@ router.post("/addone-to-cart/:id", function (req, res, next) {
     if (err) {
       return res.redirect("/products");
     }
-    cart.add(product, product.id, additionalChoices, additionalNote);
-    req.session.cart = cart;
-    
-    setTimeout(function () {
-      res.redirect('/shopping-cart');
-    }, 500);
+    cart.add(product, product.id, additionalChoices, additionalNote, function () {
+      req.session.cart = cart;
+      setTimeout(function () {
+        res.redirect("/shopping-cart?cache=" + Date.now());
+      }, 500);    });
   });
 });
 
@@ -197,20 +199,20 @@ router.get("/remove/:id", function (req, res, next) {
 
   cart.removeItem(productId, function () {
     req.session.cart = cart;
-    res.redirect("/shopping-cart?cache=" + Date.now());
-  });
+    setTimeout(function () {
+      res.redirect("/shopping-cart?cache=" + Date.now());
+    }, 500);  });
 });
 
 router.get("/reduce/:id", function (req, res, next) {
   var productId = req.params.id;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
 
-  cart.reduceByOne(productId);
-  req.session.cart = cart;
-
-  setTimeout(function () {
-    res.redirect("/shopping-cart?cache=" + Date.now());
-  }, 500);
+  cart.reduceByOne(productId, function (){
+    req.session.cart = cart;
+    setTimeout(function () {
+      res.redirect("/shopping-cart?cache=" + Date.now());
+    }, 500);  });
 });
 
 router.get("/shopping-cart", function (req, res, next) {
