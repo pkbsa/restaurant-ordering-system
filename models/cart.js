@@ -3,7 +3,7 @@ module.exports = function Cart(oldCart) {
   this.totalQty = oldCart.totalQty || 0;
   this.totalPrice = oldCart.totalPrice || 0;
 
-  this.add = function(item, id, additionalChoices, additionalNote, callback) {
+  this.add = function(item, id, price, additionalChoices, additionalNote, callback) {
     console.log('Notes: ' + additionalNote);
     console.log('Option: ' + additionalChoices);
   
@@ -20,23 +20,27 @@ module.exports = function Cart(oldCart) {
     }
   
     storedItem.qty++;
-    storedItem.price = storedItem.item.price * storedItem.qty;
+    storedItem.onePrice =  parseFloat(price)
+    storedItem.price = parseFloat(price) * storedItem.qty;
     this.totalQty++;
-    this.totalPrice += storedItem.item.price;
+    this.totalPrice += parseFloat(price);
   
     if (callback) {
       callback();
     }
   };
 
-  this.reduceByOne = function (id, callback) {
-    this.items[id].qty--;
-    this.items[id].price -= this.items[id].item.price;
-    this.totalQty--;
-    this.totalPrice -= this.items[id].item.price;
-
-    if (this.items[id].qty <= 0) {
-      delete this.items[id];
+  this.reduceByOne = function(id, callback) {
+    var item = this.items[id];
+    if (item) {
+      item.qty--;
+      item.price -= item.onePrice;
+      this.totalQty--;
+      this.totalPrice -= item.onePrice;
+  
+      if (item.qty <= 0) {
+        delete this.items[id];
+      }
     }
     callback();
   };

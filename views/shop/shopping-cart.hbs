@@ -22,6 +22,8 @@
                                     <form
                                         action="/addone-to-cart/{{this.item._id}}"
                                         method="POST">
+                                        <input type="hidden" name="price" value="{{this.price}}"/>
+                                        <input type="hidden" name="qty" value="{{this.qty}}"/>
                                         <input type="hidden" name="additionalChoices" value="{{this.additionalChoices}}"/>
                                         <input type="hidden" name="additionalNote" value="{{this.additionalNote}}"/>
                                         <!-- form fields and other elements -->
