@@ -311,12 +311,27 @@ body {
     align-items: center;
     gap: 1em;
 }
+.page-products p.margin-top{
+    margin-top: 10px;
+    margin-bottom: 5px!important;
+}
 .page-products p.choiceTitle {
-    margin-bottom: 0.5em;
-    margin-top: 0.5em;
-
+  margin-bottom: 0;
+}
+.page-products .price-flex{
+    display: flex;
+    justify-content: space-between;
+    margin: 0.35em 0 0.35em 0
+}
+.page-products .price-flex .flex-radio{
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
 }
 
+.page-products input[type="radio"]{
+    margin-right: 0.5em;
+}
 .page-products .food-modal{
     align-items: normal;
     gap: 0em;

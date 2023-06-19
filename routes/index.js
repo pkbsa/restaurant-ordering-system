@@ -20,6 +20,7 @@ router.get("/", function (req, res, next) {
 router.get("/menu", function (req, res, next) {
   req.session.referringUrl = req.originalUrl;
   console.log(req.session.cart);
+
   var cart = new Cart(req.session.cart ? req.session.cart : {});
   var successMsg = req.flash("success")[0];
   Product.find(function (err, docs) {
@@ -143,7 +144,7 @@ router.get("/products/:id", function (req, res, next) {
   });
 });
 
-router.get("/add-to-cart/:id", function (req, res, next) {
+router.post("/add-to-cart/:id", function (req, res, next) {
   var productId = req.params.id;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
 
@@ -151,7 +152,11 @@ router.get("/add-to-cart/:id", function (req, res, next) {
     if (err) {
       return res.redirect("/menu");
     }
-    cart.add(product, product.id);
+    var additionalChoices = req.body.additionalChoices;
+    var additionalNote = req.body.additionalNote;
+    
+    cart.add(product, product.id, additionalChoices, additionalNote);
+
     req.session.cart = cart;
     console.log(req.session.cart);
     console.log(req.session.referringUrl);

@@ -53,8 +53,8 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
-                                    <button class="form-control" data-bs-toggle="modal"
-                                        data-bs-target="#{{this._id}}">+${{this.price}}</button>
+                                    <button class="form-control" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
+
                                 </div>
                             </div>
                         </div>
@@ -74,24 +74,34 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
-                            <form>
+                            <form action="/add-to-cart/{{id}}" method="POST">
                             <div class="modal-body food-modal">
+                                <div class="price-flex">
+                                    <p><strong>{{this.title}}</strong></p>
+                                    <p><strong id="basePrice">${{this.price}}</strong></p>
+                                </div>
                                 {{#if additionalChoices}}
                                     {{#each additionalChoices}}
                                     <p class="choiceTitle">{{this.title}}</p>
                                     {{#each choices}}
                                     <label>
-                                        <input type="radio" name="additionalChoice{{@../index}}" value="{{this}}" required>
-                                        {{this}} - ${{lookup ../prices @index}}
+                                        
+                                        <div class="price-flex">
+                                            <div class="price-flex flex-radio">
+                                                <input type="radio" name="additionalChoice{{@../index}}" value="{{this}}" required> 
+                                                <p class="choiceTitle">{{this}}</p>
+                                            </div>
+                                            <p class="choiceTitle adittionalPrice">+${{lookup ../prices @index}}</p>
+                                        </div>  
                                     </label>
                                     {{/each}}
                                     {{/each}}
                                 {{/if}}
-                                <p class="choiceTitle">Additional requests (if any)</p>
-                                <textarea></textarea>
+                                <p class="choiceTitle margin-top">Additional requests (if any)</p>
+                                <textarea  name="additionalNote"></textarea>
                             </div>
                             <div class="modal-footer footer-food-modal">
-                                <button class="btn btn-primary w-100" type="submit">Add to Cart</button>
+                                    <button class="btn btn-primary w-100" type="submit">Add to Cart <span id="calculatedPrice">(${{this.price}})</span></button>
                             </div>
                             </form>
                         </div>
