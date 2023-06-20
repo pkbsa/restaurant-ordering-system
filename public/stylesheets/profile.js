@@ -25,7 +25,7 @@ function replaceWithForm(
           </div>
           <div class="form-group">
             <input type="text" id="mobilePhone" name="mobilePhone" class="form-control" placeholder="Mobile Number*" value="${userMobile}" oninput="validatePhoneNumber()" required>
-            <p id="phoneCheck"></p>
+            <p class="formcheck" id="phoneCheck"></p>
 
           </div>
           <input type="hidden" name="_csrf" value="${userCsrf}">
@@ -59,11 +59,11 @@ function replaceWithForm(
           </div>
           <div class="form-group">
             <input type="password" oninput="validatePasswordAndConfirm()" id="newpassword" name="newPassword" class="form-control" placeholder="New Password*" required>
-            <p id="passwordCheck"></p>
+            <p class="formcheck" id="passwordCheck"></p>
             </div>
           <div class="form-group">
             <input type="password" oninput="validateConfirmPassword()" id="confirmpassword" name="confirmPassword" class="form-control" placeholder="Confirm New Password*" required>
-            <p id="confirmPasswordCheck"></p>
+            <p class="formcheck" id="confirmPasswordCheck"></p>
             </div>
           <input type="hidden" name="email" value="${userEmail}">
           <input type="hidden" name="_csrf" value="${userCsrf}">

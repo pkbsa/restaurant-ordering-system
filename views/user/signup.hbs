@@ -11,15 +11,15 @@
                 </div>
                 <div class="form-group">
                     <input type="text" oninput="validateEmail()"  id="email" name="email" class="form-control" placeholder="Email Address*" required>
-                    <p id="emailCheck"></p>
+                    <p class="formcheck" id="emailCheck"></p>
                 </div>
                  <div class="form-group">
                     <input type="text" oninput="validatePhoneNumber()" pattern="^\[0-9]\d{1,14}$" id="mobilePhone" name="mobilePhone" class="form-control" placeholder="Mobile Number*" required>
-                     <p id="phoneCheck"></p>
+                     <p class="formcheck" id="phoneCheck"></p>
                 </div>
                 <div class="form-group">
                     <input type="password" oninput="validatePassword()" id="password" name="password" class="form-control" placeholder="Password*" required>
-                     <p id="passwordCheck"></p>
+                     <p class="formcheck" id="passwordCheck"></p>
                 </div>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
                 <button type="submit" >SIGN UP</button>

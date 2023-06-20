@@ -275,20 +275,29 @@ router.get("/checkout", isLoggedIn, function (req, res, next) {
   });
 });
 
-router.get("/success", isLoggedIn, function (req, res, next) {
-  req.session.cart = null;
-  console.log(req.session.cart);
-  res.render("shop/success");
-});
-router.get("/cancel", isLoggedIn, function (req, res, next) {
-  res.render("shop/cancel");
-});
+router.get("/success/", isLoggedIn, function (req, res, next) {
+  Order.findOne({ paymentId: req.session.recentid }, function (err, order) {
+    if (err) {
+      return res.redirect("/");
+    }
 
-const YOUR_DOMAIN = "http://localhost:3000";
+    if (!order) {
+      return res.redirect("/");
+    }
+    req.session.cart = null;
+    req.session.save(function (err) {
+      res.redirect(`/order/${order._id}`);
+    });
+  });
+});
 
 router.post("/create-checkout-session", async (req, res) => {
   const cart = req.session.cart;
   const user = req.user;
+
+  const protocol = req.protocol;
+  const host = req.get("host");
+  const YOUR_DOMAIN = `${protocol}://${host}`;
 
   const lineItems = [];
 
@@ -316,12 +325,15 @@ router.post("/create-checkout-session", async (req, res) => {
   const session = await stripe.checkout.sessions.create({
     line_items: lineItems, // Use the converted line items
     mode: "payment",
-    success_url: `${YOUR_DOMAIN}/success`,
-    cancel_url: `${YOUR_DOMAIN}/cancel`,
+    success_url: `${YOUR_DOMAIN}/success/`,
+    cancel_url: `${YOUR_DOMAIN}/checkout`,
   });
 
   createOrder(session, user, cart);
-  res.redirect(303, session.url);
+  req.session.recentid = session.id;
+  req.session.save(function (err) {
+    res.redirect(303, session.url);
+  });
 });
 
 const fulfillOrder = (session) => {
@@ -358,16 +370,16 @@ const createOrder = (session, user, cart) => {
   });
   console.log("Creating order");
 
-  var deliveryName = user.firstname +" "+user.lastname;
+  var deliveryName = user.firstname + " " + user.lastname;
   var deliveryAddress = user.address;
   var deliveryUrl = `http://maps.google.com/maps?z=12&t=m&q=loc:${user.latitude}+${user.longitude}`;
   var deliveryContact = user.mobilePhone;
-  
+
   const order = new Order({
     user: user,
     cart: cart,
     deliveryName: deliveryName,
-    deliveryAddress: deliveryAddress, 
+    deliveryAddress: deliveryAddress,
     deliveryUrl: deliveryUrl,
     deliveryContact: deliveryContact,
     paymentId: session.id,

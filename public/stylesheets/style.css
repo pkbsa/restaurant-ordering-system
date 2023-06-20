@@ -175,20 +175,7 @@ body {
     background-color: #E9ECEF;
     color: #747C84;
 }
-#phoneCheck{
-    color: red;
-    margin-bottom: 0px;
-}
-#passwordCheck{
-    color: red;
-    margin-bottom: 0px;
-}
-.page-signin #emailCheck{
-    color: red;
-    margin-bottom: 0px;
-}
-
-.page-profile #confirmPasswordCheck{
+p.formcheck{
     color: red;
     margin-bottom: 0px;
 }
@@ -907,6 +894,12 @@ body {
     }
     .page-cart .row{
         gap: 1em;
+    }
+    p.formcheck{
+        font-size: 0.8em!important;
+    }
+    .page-profile p.formcheck{
+        font-size: 0.7em!important;
     }
 }
 
