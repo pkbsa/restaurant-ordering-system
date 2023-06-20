@@ -1,42 +1,62 @@
 <div class="page page-profile">
     {{#if messages.success}}
-               <div class="alert alert-dismissible alert-success" role="alert">
-                    {{#each messages.success}}
-                    <div>{{this}}</div>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="alert alert-dismissible alert-success" role="alert">
+        {{#each messages.success}}
+        <div>{{this}}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 
-                    {{/each}}
-                </div>
-                {{/if}}
+        {{/each}}
+    </div>
+    {{/if}}
     <div class="container">
-        
+
         <div class="row">
             <div class="col-12 col-sm-7 conhello">
-                <div class="hello">
+                <div class="hello w-100">
                     <h2>Hello {{user.firstname}}!</h2>
                     <div class="view">
-                        <h3>No order found</h3>
+                        {{#if orders}}
+                        <div class="card card-body order">
+                            {{#each orders}}
+                            <div class="flex-column">
+                                <div class="flex-row">
+                                    <p>Order: #{{this._id}}</p>
+                                    <p>${{this.cart.totalPrice}}</p>
+                                </div>
+                                <p>{{this.date}} · {{this.cart.totalQty}} items</p>
+                                 <div class="flex-row">
+                                    <p>{{this.orderStatus}} </p>
+                                    <a href="/order/{{this._id}}">View Order</a>
+                                </div>
+                            </div>
+
+                            {{/each}}
+                        </div>
+                        {{else}}
+                            <h3>No order found</h3>
+                        
+                        {{/if}}
                     </div>
                 </div>
-                
+
                 {{#if messages.error}}
-               <div class="alert alert-dismissible alert-danger" role="alert">
+                <div class="alert alert-dismissible alert-danger" role="alert">
                     {{#each messages.error}}
                     <p>{{this}}</p>
                     {{/each}}
                 </div>
                 {{/if}}
-                
+
             </div>
             <div class="col-12 col-sm-4">
                 <ul>
-                    <li><a class="contact-link" href="#">View previous orders</a></li>
+                    <li><a class="contact-link" href="#" onclick="redirectToProfile()">View previous orders</a></li>
                     <li><a class="contact-link" href="#address">Saved addresses</a></li>
                     <li><a class="contact-link" href="#contact">Saved contact details</a></li>
                     <li><a class="contact-link" href="#password">Reset password</a></li>
                     <li><a class="contact-link" href="#" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Account
                             deletion</a></li>
-                    <hr>
+                    <hr />
                     <li><a href="#">Sign out</a></li>
                 </ul>
 
@@ -53,17 +73,19 @@
                 <h1 class="modal-title fs-5" id="staticBackdropLabel">Delete Account</h1>
             </div>
             <div class="modal-body">
-                <p>To delete your account, please be informed that your account will be closed and deleted from PYE BOAT
-                    NOODLES website. If you open a new account, you will not have access to any information from this
+                <p>To delete your account, please be informed that your account will be
+                    closed and deleted from PYE BOAT NOODLES website. If you open a new
+                    account, you will not have access to any information from this
                     account.</p>
-                <br>
-                <p>Please note that KFC may retain certain personal data and transaction history related to your
-                    account, if it is necessary and comply with the law and legal obligations.</p>
+                <br />
+                <p>Please note that KFC may retain certain personal data and transaction
+                    history related to your account, if it is necessary and comply with
+                    the law and legal obligations.</p>
             </div>
             <div class="modal-footer">
                 <form action="/user/delete-account" method="post">
-                    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-                    <input type="hidden" name="userid" value="{{ user._id }}">
+                    <input type="hidden" name="_csrf" value="{{csrfToken}}" />
+                    <input type="hidden" name="userid" value="{{user._id}}" />
                     <button type="submit" class="btn btn-danger">DELETE ACCOUNT</button>
                 </form>
 
@@ -73,12 +95,9 @@
 </div>
 <script>
     var user = {
-        firstname: "{{user.firstname}}",
-        lastname: "{{user.lastname}}",
-        email: "{{user.email}}",
-        userMobile: "{{user.mobilePhone}}",
-        csrfToken: "{{csrfToken}}",
-        address : "{{user.address}}"
+        firstname: "{{user.firstname}}", lastname: "{{user.lastname}}",
+        email: "{{user.email}}", userMobile: "{{user.mobilePhone}}", csrfToken: "{{csrfToken}}",
+        address: "{{user.address}}"
     };
 </script>
-<script src='/stylesheets/profile.js'></script>
+<script src="/stylesheets/profile.js"></script>

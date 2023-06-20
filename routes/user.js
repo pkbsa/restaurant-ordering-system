@@ -11,9 +11,10 @@ var csrfProtection = csrf();
 router.use(csrfProtection);
 
 router.get("/profile", isLoggedIn, function (req, res, next) {
+
   req.session.referringUrl = req.originalUrl;
 
-  Order.find({ user: req.user }, function (err, orders) {
+  Order.find({ user: req.user, paymentStatus: { $ne: "Awaiting Payment" } }, function (err, orders) {
     if (err) {
       return res.write("Error!");
     }
@@ -233,15 +234,16 @@ router.post(
       req.session.referringUrl = null;
       res.redirect(oldUrl);
     } else {
-      res.redirect("/user/profile");
+      res.redirect('/menu');
     }
   }
 );
 
 router.get("/signin", function (req, res, next) {
   var messages = req.flash("error");
-  req.session.referringUrl = req.originalUrl;
   console.log(req.session.referringUrl);
+  var cartData = req.session.cart;
+
   res.render("user/signin", {
     csrfToken: req.csrfToken(),
     messages: messages,
@@ -261,7 +263,7 @@ router.post(
       req.session.referringUrl = null;
       res.redirect(oldUrl);
     } else {
-      res.redirect("/user/profile");
+      res.redirect('/menu');
     }
   }
 );

@@ -1,0 +1,68 @@
+<div class="container page-order">
+    <div class="container-fluid my-5 justify-content-center">
+        <div class="card px-2">
+            <div class="card-header bg-white">
+                <div class="row justify-content-between">
+                    <div class="col">
+                        <p class="text-muted"> Order: <span class="font-weight-bold text-dark"> #{{order._id}}</span>
+                        </p>
+                        <p class="text-muted"> Place On <span class="font-weight-bold text-dark">{{order.date}}</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+
+                <div class="row px-3">
+                    <h5 class="bold">Order: <span id="orderStatus">{{order.orderStatus}}</span></h5>
+                    <div class="col">
+                        <ul id="progressbar">
+                            <li class="step0 " id="step1">PREPARING</li>
+                            <li class="step0 text-center" id="step2">ON DELIVERY</li>
+                            <li class="step0 text-muted text-end" id="step3">COMPLETED</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="media flex-column flex-sm-row">
+                    <div class="media-body ">
+                        <p class="text-muted"> Total Qty: {{order.cart.totalQty}} Dishes</p>
+                        <h4 class="mt-3 mb-4 bold"> <span class="mt-5">$</span> {{order.cart.totalPrice}} <span
+                                class="small text-muted"> </span></h4>
+                        <div id="collapseOne" class="accordion-collapse collapse show"
+                            data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                 {{deliveryUser}}
+                                <label><b>Name:</b> {{order.deliveryName}}</label><br />
+                                <label><b>Phone Number:</b> : {{order.deliveryContact}}</label><br />
+                                <label><b>Address:</b> {{order.deliveryAddress}}</label><br />
+                            </div>
+                        </div>
+                        <hr />
+                
+                        {{#each order.cart.items}}
+                        <div class="cart-item">
+                            <p>{{this.qty}} x {{this.item.title}}</p>
+                            <p class="price">Price: ${{this.price}}</p>
+                            {{#if this.additionalChoices}}
+                                <p class="price">Option: {{this.additionalChoices}}</p>
+                            {{/if}}
+                             {{#if this.additionalNote}}
+                            <p class="price">Notes : {{this.additionalNote}}</p>
+                            {{/if}}
+                        </div>
+
+                        {{/each}}
+                    </div>
+                </div>
+                <div class="card-footer  bg-white px-sm-3 pt-sm-4 px-0">
+                    <div class="row text-center  ">
+                        
+                        <div class="col  my-auto  border-line ">
+                            <h5 id="">Cancel Order</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<script src="/stylesheets/order.js"></script>

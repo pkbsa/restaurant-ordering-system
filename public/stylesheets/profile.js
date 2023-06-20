@@ -8,8 +8,6 @@ function replaceWithForm(
 ) {
   var contactLinks = document.querySelectorAll("li a.contact-link");
   var viewElement = document.querySelector(".hello");
-  var errorAlert = document.querySelector(".alert-danger");
-  var successAlert = document.querySelector(".alert-success");
 
   // Function to render the form based on the URL hash
   function renderForm(formType) {
@@ -42,8 +40,7 @@ function replaceWithForm(
         </div>
       `;
       } else {
-       
-      var textHTML = `
+        var textHTML = `
       <a href='/user/adddeliverylocation'id='address'>Edit delivery address</a>
       <div class="view">
         <p>Delivery : ${userAddress}</p>
@@ -110,3 +107,7 @@ replaceWithForm(
   user.csrfToken,
   user.address
 );
+
+function redirectToProfile() {
+  window.location.href = "/user/profile";
+}

@@ -137,13 +137,20 @@ router.get("/menu/drinks", function (req, res, next) {
   });
 });
 
-router.get("/products/:id", function (req, res, next) {
-  var productId = req.params.id;
-  Product.findById(productId, function (err, product) {
+router.get("/order/:id", function (req, res, next) {
+  Order.findOne({ _id: req.params.id }, function (err, order) {
     if (err) {
-      return res.redirect("/products");
+      return res.redirect("/");
     }
-    res.render("shop/product-view", { product: product });
+
+    if (!order) {
+      return res.redirect("/");
+    }
+
+    res.render("user/order", {
+      order: order,
+      user: req.user,
+    });
   });
 });
 
@@ -162,7 +169,7 @@ router.post("/add-to-cart/:id", function (req, res, next) {
       }
     }
     var price = req.body.price;
-    console.log(price)
+    console.log(price);
     var additionalChoicesString = additionalChoices.join(", ");
     var additionalNote = req.body.additionalNote;
 
@@ -175,9 +182,9 @@ router.post("/add-to-cart/:id", function (req, res, next) {
       function () {
         req.session.cart = cart;
         console.log("refering url: " + req.session.referringUrl);
-        req.session.save(function(err) {
+        req.session.save(function (err) {
           res.redirect(req.session.referringUrl);
-        })
+        });
       }
     );
   });
@@ -188,8 +195,8 @@ router.post("/addone-to-cart/:id", function (req, res, next) {
   var cart = new Cart(req.session.cart ? req.session.cart : {});
   let additionalChoices = req.body.additionalChoices;
   let additionalNote = req.body.additionalNote;
-  let price = parseFloat(req.body.price)/parseFloat(req.body.qty);
-  console.log(price)
+  let price = parseFloat(req.body.price) / parseFloat(req.body.qty);
+  console.log(price);
 
   Product.findById(productId, function (err, product) {
     if (err) {
@@ -203,9 +210,9 @@ router.post("/addone-to-cart/:id", function (req, res, next) {
       additionalNote,
       function () {
         req.session.cart = cart;
-        req.session.save(function(err) {
+        req.session.save(function (err) {
           res.redirect("/shopping-cart?cache=" + Date.now());
-        })
+        });
       }
     );
   });
@@ -216,11 +223,11 @@ router.get("/remove/:id", function (req, res, next) {
   var cart = new Cart(req.session.cart ? req.session.cart : {});
 
   cart.removeItem(productId, function () {
-    console.log(cart)
+    console.log(cart);
     req.session.cart = cart;
-    req.session.save(function(err) {
+    req.session.save(function (err) {
       res.redirect("/shopping-cart?cache=" + Date.now());
-    })
+    });
   });
 });
 
@@ -230,9 +237,9 @@ router.get("/reduce/:id", function (req, res, next) {
 
   cart.reduceByOne(productId, function () {
     req.session.cart = cart;
-    req.session.save(function(err) {
+    req.session.save(function (err) {
       res.redirect("/shopping-cart?cache=" + Date.now());
-    })
+    });
   });
 });
 
@@ -281,8 +288,7 @@ const YOUR_DOMAIN = "http://localhost:3000";
 
 router.post("/create-checkout-session", async (req, res) => {
   const cart = req.session.cart;
-  const user = req.session.user;
-  console.log(cart);
+  const user = req.user;
 
   const lineItems = [];
 
@@ -323,7 +329,7 @@ const fulfillOrder = (session) => {
 
   Order.findOneAndUpdate(
     { paymentId: paymentId },
-    { $set: { status: "paid" } },
+    { $set: { paymentStatus: "Paid" } },
     { new: true },
     (err, order) => {
       if (err) {
@@ -339,13 +345,35 @@ const fulfillOrder = (session) => {
 };
 
 const createOrder = (session, user, cart) => {
+  var currentDate = new Date();
+  var timezoneOffset = -420;
+  currentDate.setMinutes(currentDate.getMinutes() + timezoneOffset);
+  var formattedDate = currentDate.toLocaleString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
   console.log("Creating order");
+
+  var deliveryName = user.firstname +" "+user.lastname;
+  var deliveryAddress = user.address;
+  var deliveryUrl = `http://maps.google.com/maps?z=12&t=m&q=loc:${user.latitude}+${user.longitude}`;
+  var deliveryContact = user.mobilePhone;
+  
   const order = new Order({
     user: user,
     cart: cart,
+    deliveryName: deliveryName,
+    deliveryAddress: deliveryAddress, 
+    deliveryUrl: deliveryUrl,
+    deliveryContact: deliveryContact,
     paymentId: session.id,
-    status: "awaiting payment",
-    date: Date.now(),
+    paymentStatus: "Awaiting Payment",
+    orderStatus: "Order Received",
+    date: formattedDate,
   });
   order.save(function (err, result) {});
 };
@@ -355,7 +383,7 @@ const emailCustomerAboutFailedPayment = (session) => {
 
   Order.findOneAndUpdate(
     { paymentId: paymentId },
-    { $set: { status: "payment failed" } },
+    { $set: { paymentStatus: "payment failed" } },
     { new: true },
     (err, order) => {
       if (err) {
@@ -412,7 +440,6 @@ router.post("/webhook", async (request, response) => {
     case "checkout.session.completed": {
       const session = event.data.object;
       console.log("waiting payment");
-      console.log(session.metadata);
 
       if (session.payment_status === "paid") {
         console.log("Change payment status to paid");
