@@ -79,6 +79,7 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
   var mobilePhone = req.body.mobilePhone;
+  var referringUrl = req.session.referringUrl
 
   User.findOne({ email: email }, function (err, existingUser) {
     if (err) {
@@ -97,7 +98,11 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
     User.findOne({ mobilePhone: mobilePhone }, function (err, existingUser) {
       if (err) {
         console.log(err);
-        return res.redirect("/user/profile#contact");
+        if (referringUrl === '/checkout'){
+          return res.redirect(referringUrl)
+        }else{
+          return res.redirect("/user/profile#contact");
+        }
       }
 
       if (
@@ -105,7 +110,11 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
         existingUser._id.toString() !== req.user._id.toString()
       ) {
         req.flash("error", "Mobile number already in use.");
-        return res.redirect("/user/profile#contact");
+        if (referringUrl === '/checkout'){
+          return res.redirect(referringUrl)
+        }else{
+          return res.redirect("/user/profile#contact");
+        }
       }
 
       // Update the user information
@@ -124,7 +133,11 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
             return res.redirect("/user/profile");
           }
           req.flash("success", "Successfully Updated Contact Detail.");
-          res.redirect("/user/profile#contact");
+          if (referringUrl === '/checkout'){
+            return res.redirect(referringUrl)
+          }else{
+            return res.redirect("/user/profile#contact");
+          }
         }
       );
     });

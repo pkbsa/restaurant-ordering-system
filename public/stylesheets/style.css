@@ -567,7 +567,6 @@ p.formcheck{
 }
 .page-cart i{
     cursor: pointer;
-
 }
 .page-cart .quantity i{
     background-color: transparent;
@@ -583,6 +582,30 @@ p.formcheck{
 .page-checkout #proceed{
     margin: 15px 0 15px 0;
 }
+.page-checkout .flex-row{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.page-checkout .modal-header h1{
+    margin-top: 0;
+}
+.page-checkout .modal-body .form-group{
+    margin: 3px 0 3px 0;
+}
+.page-checkout .modal-body input[type=text]{
+    margin: 3px 0 3px 0;
+}
+.page-checkout .modal-body .label{
+    margin: 0;
+}
+.page-checkout .modal-body button{
+    margin: 10px 0 10px 0;
+}
+.page-checkout .modal-body .btn-secondary{
+    height: 50px;
+}
+
 
 .page-delivery .container{
     text-align: center;

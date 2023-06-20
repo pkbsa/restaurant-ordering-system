@@ -1,6 +1,6 @@
 var express = require("express");
 var Cart = require("../models/cart");
-
+var csrf = require("csurf");
 var Product = require("../models/product");
 var Order = require("../models/order");
 
@@ -9,6 +9,9 @@ const stripe = require("stripe")(
 );
 
 var router = express.Router();
+
+var csrfProtection = csrf();
+
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.render("shop/index", {
@@ -262,19 +265,6 @@ router.get("/shopping-cart", function (req, res, next) {
   });
 });
 
-router.get("/checkout", isLoggedIn, function (req, res, next) {
-  if (!req.session.cart) {
-    return res.redirect("/shopping-cart");
-  }
-  var cart = new Cart(req.session.cart);
-  res.render("shop/checkout", {
-    products: cart.generateArray(),
-    totalPrice: cart.totalPrice,
-    cart: cart,
-    user: req.user,
-  });
-});
-
 router.get("/success/", isLoggedIn, function (req, res, next) {
   Order.findOne({ paymentId: req.session.recentid }, function (err, order) {
     if (err) {
@@ -482,6 +472,24 @@ router.post("/webhook", async (request, response) => {
     }
   }
   response.status(200).end();
+});
+
+router.use(csrfProtection);
+
+router.get("/checkout", isLoggedIn, function (req, res, next) {
+  if (!req.session.cart) {
+    return res.redirect("/shopping-cart");
+  }
+  req.session.referringUrl = req.originalUrl;
+
+  var cart = new Cart(req.session.cart);
+  res.render("shop/checkout", {
+    products: cart.generateArray(),
+    totalPrice: cart.totalPrice,
+    cart: cart,
+    user: req.user,
+    csrfToken: req.csrfToken(),
+  });
 });
 
 module.exports = router;
