@@ -565,6 +565,10 @@ p.formcheck{
     text-align: center;
     align-items: center;
 }
+.page-cart i{
+    cursor: pointer;
+
+}
 .page-cart .quantity i{
     background-color: transparent;
     color: black;

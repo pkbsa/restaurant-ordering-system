@@ -29,7 +29,10 @@ mongoose.connect(mongodb_url);
 
 require("./config/passport");
 
-// view engine setup
+_handlebars.registerHelper("eq", function (a, b, options) {
+  return a === b ? options.fn(this) : options.inverse(this);
+});
+
 app.engine(
   ".hbs",
   expressHbs({
@@ -40,7 +43,6 @@ app.engine(
 );
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", ".hbs");
-
 app.use(cors());
 app.use(logger("dev"));
 app.use(

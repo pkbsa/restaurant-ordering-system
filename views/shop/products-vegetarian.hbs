@@ -7,9 +7,14 @@
             <li><a href="/menu/drinks">DRINK & DESERT</a></li>
         </ul>
         <ul>
-           {{#if login}}
+          {{#if login }}
 
-            <div class="delivery"><p>Delivery to : ...... </p><a href="#" id="change">Change</a></div>
+            <div class="delivery">
+                <div class="textoverflow">
+                    <p>Delivery to : {{user.address}} </p>
+                </div>
+                <a href="/user/adddeliverylocation" id="change">Change</a>
+            </div>
             <li>
                 <a href="/shopping-cart">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
@@ -19,13 +24,14 @@
             </li>
 
             {{else}}
-               <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">START MY
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signInModal">START MY
                 ORDER</button>
-                <li>
+            <li>
                 <a href="/shopping-cart">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                     <span class="badge bg-secondary">{{session.cart.totalQty}}</span>
-                    $ 0
+                    $ {{totalPrice}}
+
                 </a>
             </li>
             {{/if}}
@@ -37,7 +43,7 @@
             <h2>JAE SNACKS</h2>
             <div class="row">
                 {{#each snack}}
-                <div class="col-6 col-sm-6">
+                        <div class="col-6 col-sm-6">
                     <div class="card mb-3" style="max-width: 540px;">
                         <div class="row g-0">
                             <div class="col-md-5">
@@ -47,15 +53,8 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
-                                    {{#unless ../login}}
-                                      <button class="form-control" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal">+${{this.price}}</button>
-                                    
-                                    {{else}}
-                                   
-                                        <a href="/add-to-cart/{{this._id}}"><button
-                                            class="form-control">+${{this.price}}</button></a>
-                                    {{/unless}}
+                                    <button class="form-control" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
+
                                 </div>
                             </div>
                         </div>
@@ -65,6 +64,49 @@
                 <!-- Add div after every even index -->
                 <div class="w-100 d-none d-md-block"></div>
                 {{/if}}
+                <!-- Food Modal -->
+                <div class="modal fade" id="{{this._id}}" tabindex="-1" aria-labelledby="{{this._id}}Label"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="{{this.item._id}}">{{this.title}}</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form action="/add-to-cart/{{id}}" method="POST">
+                            <div class="modal-body food-modal">
+                                <div class="price-flex">
+                                    <p><strong>{{this.title}}</strong></p>
+                                    <p><strong id="basePrice">${{this.price}}</strong></p>
+                                </div>
+                                {{#if additionalChoices}}
+                                    {{#each additionalChoices}}
+                                    <p class="choiceTitle">{{this.title}}</p>
+                                    {{#each choices}}
+                                    <label>
+                                        
+                                        <div class="price-flex">
+                                            <div class="price-flex flex-radio">
+                                                <input type="radio" name="additionalChoice{{@../index}}" value="{{this}}" required> 
+                                                <p class="choiceTitle">{{this}}</p>
+                                            </div>
+                                            <p class="choiceTitle adittionalPrice">+${{lookup ../prices @index}}</p>
+                                        </div>  
+                                    </label>
+                                    {{/each}}
+                                    {{/each}}
+                                {{/if}}
+                                <p class="choiceTitle margin-top">Additional requests (if any)</p>
+                                <textarea  name="additionalNote"></textarea>
+                            </div>
+                            <div class="modal-footer footer-food-modal">
+                                    <button class="btn btn-primary w-100" type="submit">Add to Cart <span id="calculatedPrice">(${{this.price}})</span></button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 {{/each}}
             </div>
         </div>
@@ -74,7 +116,7 @@
             <h2>JAE NOODLES</h2>
             <div class="row">
                 {{#each noodle}}
-                <div class="col-6 col-sm-6">
+                        <div class="col-6 col-sm-6">
                     <div class="card mb-3" style="max-width: 540px;">
                         <div class="row g-0">
                             <div class="col-md-5">
@@ -84,15 +126,8 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
-                                   {{#unless ../login}}
-                                      <button class="form-control" data-bs-toggle="modal"
-                                        data-bs-target="#exampleModal">+${{this.price}}</button>
-                                    
-                                    {{else}}
-                                   
-                                        <a href="/add-to-cart/{{this._id}}"><button
-                                            class="form-control">+${{this.price}}</button></a>
-                                    {{/unless}}
+                                    <button class="form-control" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
+
                                 </div>
                             </div>
                         </div>
@@ -102,12 +137,55 @@
                 <!-- Add div after every even index -->
                 <div class="w-100 d-none d-md-block"></div>
                 {{/if}}
+                <!-- Food Modal -->
+                <div class="modal fade" id="{{this._id}}" tabindex="-1" aria-labelledby="{{this._id}}Label"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="{{this.item._id}}">{{this.title}}</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <form action="/add-to-cart/{{id}}" method="POST">
+                            <div class="modal-body food-modal">
+                                <div class="price-flex">
+                                    <p><strong>{{this.title}}</strong></p>
+                                    <p><strong id="basePrice">${{this.price}}</strong></p>
+                                </div>
+                                {{#if additionalChoices}}
+                                    {{#each additionalChoices}}
+                                    <p class="choiceTitle">{{this.title}}</p>
+                                    {{#each choices}}
+                                    <label>
+                                        
+                                        <div class="price-flex">
+                                            <div class="price-flex flex-radio">
+                                                <input type="radio" name="additionalChoice{{@../index}}" value="{{this}}" required> 
+                                                <p class="choiceTitle">{{this}}</p>
+                                            </div>
+                                            <p class="choiceTitle adittionalPrice">+${{lookup ../prices @index}}</p>
+                                        </div>  
+                                    </label>
+                                    {{/each}}
+                                    {{/each}}
+                                {{/if}}
+                                <p class="choiceTitle margin-top">Additional requests (if any)</p>
+                                <textarea  name="additionalNote"></textarea>
+                            </div>
+                            <div class="modal-footer footer-food-modal">
+                                    <button class="btn btn-primary w-100" type="submit">Add to Cart <span id="calculatedPrice">(${{this.price}})</span></button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 {{/each}}
             </div>
         </div>
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+   <!-- Modal -->
+    <div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -118,7 +196,6 @@
                     <a href="/user/signin" id='signin' class="form-control">Sign In</a>
                     <p>Your first order? <a href="#">Sign Up</a></p>
                 </div>
-
             </div>
         </div>
     </div>

@@ -16,16 +16,20 @@
                                 <p>{{{this.additionalChoices}}}</p>
                                 <p>{{{this.additionalNote}}}</p>
                                 <div class="quantity">
-                                    <a href="/reduce/{{this.item._id}}-{{additionalChoices}}-{{additionalNote}}"><i
-                                            class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a>
+                                    <script>
+            if ({{this.qty}} === 1) {
+              document.write(`<a data-bs-toggle="modal" data-bs-target="#{{this.item._id}}"><i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a>`);
+            } else {
+              document.write(`<a href="/reduce/{{this.item._id}}-{{additionalChoices}}-{{additionalNote}}"><i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a>`);
+            }
+          </script>
                                     <button type="button" class="btn">{{this.qty}}</button>
-                                    <form
-                                        action="/addone-to-cart/{{this.item._id}}"
-                                        method="POST">
-                                        <input type="hidden" name="price" value="{{this.price}}"/>
-                                        <input type="hidden" name="qty" value="{{this.qty}}"/>
-                                        <input type="hidden" name="additionalChoices" value="{{this.additionalChoices}}"/>
-                                        <input type="hidden" name="additionalNote" value="{{this.additionalNote}}"/>
+                                    <form action="/addone-to-cart/{{this.item._id}}" method="POST">
+                                        <input type="hidden" name="price" value="{{this.price}}" />
+                                        <input type="hidden" name="qty" value="{{this.qty}}" />
+                                        <input type="hidden" name="additionalChoices"
+                                            value="{{this.additionalChoices}}" />
+                                        <input type="hidden" name="additionalNote" value="{{this.additionalNote}}" />
                                         <!-- form fields and other elements -->
                                         <button type="submit" style="background: none; border: none; padding: 0;">
                                             <i class="fa fa-plus-circle fa-2x" aria-hidden="true"></i>

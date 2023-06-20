@@ -7,9 +7,14 @@
             <li><a href="/menu/drinks">DRINK & DESERT</a></li>
         </ul>
         <ul>
-            {{#if login}}
+         {{#if login }}
 
-            <div class="delivery"><p>Delivery to : ...... </p><a href="#" id="change">Change</a></div>
+            <div class="delivery">
+                <div class="textoverflow">
+                    <p>Delivery to : {{user.address}} </p>
+                </div>
+                <a href="/user/adddeliverylocation" id="change">Change</a>
+            </div>
             <li>
                 <a href="/shopping-cart">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
@@ -19,13 +24,14 @@
             </li>
 
             {{else}}
-               <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">START MY
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#signInModal">START MY
                 ORDER</button>
-                <li>
+            <li>
                 <a href="/shopping-cart">
                     <i class="fa fa-shopping-cart" aria-hidden="true"></i>
                     <span class="badge bg-secondary">{{session.cart.totalQty}}</span>
-                    $ 0
+                    $ {{totalPrice}}
+
                 </a>
             </li>
             {{/if}}
@@ -107,7 +113,7 @@
         </div>
     </div>
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
 
@@ -118,7 +124,6 @@
                     <a href="/user/signin" id='signin' class="form-control">Sign In</a>
                     <p>Your first order? <a href="#">Sign Up</a></p>
                 </div>
-
             </div>
         </div>
     </div>
