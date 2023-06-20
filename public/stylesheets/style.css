@@ -14,8 +14,11 @@ body {
 
 .page-1 {
     background: url(/products/bg.jpg);
-    object-fit: cover;
     color: white;
+    background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+
 }
 
 .page-1 .container {
@@ -167,7 +170,27 @@ body {
     flex-direction: column;
     align-items: center;
     height: 100%;
+}
+.page-profile #email{
+    background-color: #E9ECEF;
+    color: #747C84;
+}
+#phoneCheck{
+    color: red;
+    margin-bottom: 0px;
+}
+#passwordCheck{
+    color: red;
+    margin-bottom: 0px;
+}
+.page-signin #emailCheck{
+    color: red;
+    margin-bottom: 0px;
+}
 
+.page-profile #confirmPasswordCheck{
+    color: red;
+    margin-bottom: 0px;
 }
 .page-profile .hello a#address{
     display: flex;

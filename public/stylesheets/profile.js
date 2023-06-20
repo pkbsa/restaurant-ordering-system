@@ -21,10 +21,12 @@ function replaceWithForm(
             <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Last name*" value="${userLastName}" required>
           </div>
           <div class="form-group">
-            <input type="email" id="email" name="email" class="form-control" placeholder="Email Address*" value="${userEmail}" required>
+            <input type="email" id="email" name="email" class="form-control" placeholder="Email Address*" value="${userEmail}" readonly>
           </div>
           <div class="form-group">
-            <input type="text" id="mobilePhone" name="mobilePhone" class="form-control" placeholder="Mobile Number*" value="${userMobile}" required>
+            <input type="text" id="mobilePhone" name="mobilePhone" class="form-control" placeholder="Mobile Number*" value="${userMobile}" oninput="validatePhoneNumber()" required>
+            <p id="phoneCheck"></p>
+
           </div>
           <input type="hidden" name="_csrf" value="${userCsrf}">
           <button type="submit" id="reset" >UPDATE</button>
@@ -56,11 +58,13 @@ function replaceWithForm(
             <input type="password" id="oldpassword" name="oldPassword" class="form-control" placeholder="Old Password*" required>
           </div>
           <div class="form-group">
-            <input type="password" id="newpassword" name="newPassword" class="form-control" placeholder="New Password*" required>
-          </div>
+            <input type="password" oninput="validatePasswordAndConfirm()" id="newpassword" name="newPassword" class="form-control" placeholder="New Password*" required>
+            <p id="passwordCheck"></p>
+            </div>
           <div class="form-group">
-            <input type="password" id="confirmpassword" name="confirmPassword" class="form-control" placeholder="Confirm New Password*" required>
-          </div>
+            <input type="password" oninput="validateConfirmPassword()" id="confirmpassword" name="confirmPassword" class="form-control" placeholder="Confirm New Password*" required>
+            <p id="confirmPasswordCheck"></p>
+            </div>
           <input type="hidden" name="email" value="${userEmail}">
           <input type="hidden" name="_csrf" value="${userCsrf}">
           <button type="submit" id='reset'>CHANGE PASSWORD </button>
@@ -110,4 +114,86 @@ replaceWithForm(
 
 function redirectToProfile() {
   window.location.href = "/user/profile";
+}
+
+function validatePhoneNumber() {
+  console.log("vv")
+  const input = document.getElementById('mobilePhone');
+  const phoneNumber = input.value;
+
+  // Regular expression to validate phone number
+  const regex = /^\d{10}$/;
+
+  if (regex.test(phoneNumber)) {
+    input.classList.remove('invalid');
+    input.classList.add('valid');
+    document.getElementById('phoneCheck').textContent = "";
+    input.setCustomValidity('');
+  } else {
+    input.classList.remove('valid');
+    input.classList.add('invalid');
+    document.getElementById('phoneCheck').textContent = "Phone number must be 10 characters long";
+    input.setCustomValidity('Phone number must be 10 characters long');
+  }
+}
+
+document.getElementById('reset').addEventListener('click', function(event) {
+  validatePhoneNumber();
+
+  if (!document.getElementById('phoneNumber').checkValidity()) {
+    event.preventDefault();
+  }
+});
+
+function validatePassword() {
+  const input = document.getElementById('newpassword');
+  const password = input.value;
+
+  if (password.length >= 4) {
+    input.classList.remove('invalid');
+    input.classList.add('valid');
+    document.getElementById('passwordCheck').textContent = "";
+    input.setCustomValidity('');
+  } else {
+    input.classList.remove('valid');
+    input.classList.add('invalid');
+    document.getElementById('passwordCheck').textContent = "Password must be atleast 4 characters long";
+    input.setCustomValidity('Password must be atleast 4 characters long');
+  }
+}
+
+function validateConfirmPassword() {
+  const newPasswordInput = document.getElementById('newpassword');
+  const confirmPasswordInput = document.getElementById('confirmpassword');
+  const newPassword = newPasswordInput.value;
+  const confirmPassword = confirmPasswordInput.value;
+  console.log(newPassword, confirmPassword)
+
+  if (newPassword === confirmPassword) {
+    confirmPasswordInput.classList.remove('invalid');
+    confirmPasswordInput.classList.add('valid');
+    confirmPasswordInput.setCustomValidity('');
+    document.getElementById('confirmPasswordCheck').textContent = "";
+
+  } else {
+    confirmPasswordInput.classList.remove('valid');
+    confirmPasswordInput.classList.add('invalid');
+    document.getElementById('confirmPasswordCheck').textContent = "Passwords don't match";
+    confirmPasswordInput.setCustomValidity("Passwords don't match");
+  }
+}
+
+
+document.getElementById('reset').addEventListener('click', function(event) {
+  validatePassword();
+  validateConfirmPassword();
+
+  if (!document.getElementById('newpassword').checkValidity()) {
+    event.preventDefault();
+  }
+});
+
+function validatePasswordAndConfirm() {
+  validatePassword();
+  validateConfirmPassword();
 }

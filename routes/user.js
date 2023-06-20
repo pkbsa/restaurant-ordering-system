@@ -24,7 +24,8 @@ router.get("/profile", isLoggedIn, function (req, res, next) {
       order.items = cart.generateArray();
     });
 
-    var messages = req.flash(); // Retrieve flash messages
+    var messages = req.flash();
+    console.log(messages)
     res.render("user/profile", {
       orders: orders,
       user: req.user,
@@ -90,13 +91,13 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
       existingUser._id.toString() !== req.user._id.toString()
     ) {
       req.flash("error", "Email already in use.");
-      return res.redirect("/user/profile");
+      return res.redirect("/user/profile#contact");
     }
 
     User.findOne({ mobilePhone: mobilePhone }, function (err, existingUser) {
       if (err) {
         console.log(err);
-        return res.redirect("/user/profile");
+        return res.redirect("/user/profile#contact");
       }
 
       if (
@@ -104,7 +105,7 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
         existingUser._id.toString() !== req.user._id.toString()
       ) {
         req.flash("error", "Mobile number already in use.");
-        return res.redirect("/user/profile");
+        return res.redirect("/user/profile#contact");
       }
 
       // Update the user information
@@ -122,8 +123,8 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
             console.log(err);
             return res.redirect("/user/profile");
           }
-
-          res.redirect("/user/profile");
+          req.flash("success", "Successfully Updated Contact Detail.");
+          res.redirect("/user/profile#contact");
         }
       );
     });

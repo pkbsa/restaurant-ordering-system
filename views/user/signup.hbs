@@ -10,13 +10,16 @@
                     <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Last name*" required>
                 </div>
                 <div class="form-group">
-                    <input type="text" id="email" name="email" class="form-control" placeholder="Email Address*" required>
+                    <input type="text" oninput="validateEmail()"  id="email" name="email" class="form-control" placeholder="Email Address*" required>
+                    <p id="emailCheck"></p>
                 </div>
                  <div class="form-group">
-                    <input type="text"  pattern="^\[0-9]\d{1,14}$" id="mobilePhone" name="mobilePhone" class="form-control" placeholder="Mobile Number*" required>
+                    <input type="text" oninput="validatePhoneNumber()" pattern="^\[0-9]\d{1,14}$" id="mobilePhone" name="mobilePhone" class="form-control" placeholder="Mobile Number*" required>
+                     <p id="phoneCheck"></p>
                 </div>
                 <div class="form-group">
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Password*" required>
+                    <input type="password" oninput="validatePassword()" id="password" name="password" class="form-control" placeholder="Password*" required>
+                     <p id="passwordCheck"></p>
                 </div>
                 <input type="hidden" name="_csrf" value="{{ csrfToken }}">
                 <button type="submit" >SIGN UP</button>
@@ -32,3 +35,4 @@
             {{/if}}
    </div>
 </div>
+<script src="/stylesheets/signup.js"></script>

@@ -1,4 +1,12 @@
 <div class="page page-profile">
+    {{#if messages.error}}
+    <div class="alert alert-dismissible alert-danger" role="alert">
+        {{#each messages.error}}
+        <div>{{this}}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        {{/each}}
+    </div>
+    {{/if}}
     {{#if messages.success}}
     <div class="alert alert-dismissible alert-success" role="alert">
         {{#each messages.success}}
@@ -24,7 +32,7 @@
                                     <p>${{this.cart.totalPrice}}</p>
                                 </div>
                                 <p>{{this.date}} · {{this.cart.totalQty}} items</p>
-                                 <div class="flex-row">
+                                <div class="flex-row">
                                     <p>{{this.orderStatus}} </p>
                                     <a href="/order/{{this._id}}">View Order</a>
                                 </div>
@@ -33,8 +41,8 @@
                             {{/each}}
                         </div>
                         {{else}}
-                            <h3>No order found</h3>
-                        
+                        <h3>No order found</h3>
+
                         {{/if}}
                     </div>
                 </div>
