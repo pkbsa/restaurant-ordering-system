@@ -20,6 +20,19 @@ router.get("/", function (req, res, next) {
   });
 });
 
+router.get("/terms", function (req, res, next) {
+  res.render("policy/terms", {
+    title: "Pye Boat Noodle",
+    user: req.user,
+  });
+});
+router.get("/privacy", function (req, res, next) {
+  res.render("policy/privacy", {
+    title: "Pye Boat Noodle",
+    user: req.user,
+  });
+});
+
 router.get("/menu", function (req, res, next) {
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   res.setHeader("Pragma", "no-cache");

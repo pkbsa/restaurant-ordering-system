@@ -88,9 +88,10 @@ body {
     text-align: left;
     align-items: center;
     justify-content: center;
+    max-width: 30em;
 }
 
-.page-signin .form-group input {
+.page-signin .form-group input[type=text],.page-signin .form-group input[type=password] {
     width: 30em;
     height: 50px;
     border: solid #CBC4BC 2px;
@@ -99,6 +100,17 @@ body {
     margin-bottom: 0.5em;
     font-size: 1em;
 }
+
+.page-signin .form-group input[type=checkbox]{
+    width: 30px;
+    height: 20px;
+}
+.page-signin .form-group label {
+    display: flex;
+    vertical-align: middle;
+    margin: 5px 0 5px 0
+  }
+
 .page-signin button{
     margin: 1em 0 1em 0;
     width: 30em;
@@ -107,6 +119,9 @@ body {
     color: white;
     border: 0px;
     border-radius: 3px;
+}
+.page-signin #terms{
+    font-size: .8em;
 }
 .page-signin a#createacc{
     display: flex;
@@ -602,10 +617,10 @@ p.formcheck{
 .page-checkout .modal-body button{
     margin: 10px 0 10px 0;
 }
-.page-checkout .modal-body .btn-secondary{
+
+.page-checkout .modal-body .delivery{
     height: 50px;
 }
-
 
 .page-delivery .container{
     text-align: center;
@@ -727,6 +742,15 @@ p.formcheck{
 .page-order .cart-item{
    margin: 0px 0 10px 0;
 }
+.page-term h1{
+    margin: 2em 0 1em 0;
+}
+.page-term .accordion,.page-term .card {
+  margin-bottom: 2em;
+}
+.page-term .accordion-item{
+    margin-bottom: 1em;
+  }
 
 /* Navbar */
 .navbar {
@@ -891,7 +915,7 @@ p.formcheck{
         min-height: 80px;
     }
 
-    .page-signin .form-group input {
+    .page-signin .form-group input[type=text],.page-signin .form-group input[type=password] {
         width: 80vmin;
     }
     .page-signin .form-group a {
@@ -921,6 +945,9 @@ p.formcheck{
     }
     .page-cart .row{
         gap: 1em;
+    }
+    .page-checkout .modal-header h1{
+       font-size: 1.2em!important;
     }
     p.formcheck{
         font-size: 0.8em!important;

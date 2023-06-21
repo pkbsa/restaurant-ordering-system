@@ -19,7 +19,6 @@ function validateEmail() {
 }
 
 function validatePhoneNumber() {
-  console.log("vv");
   const input = document.getElementById("mobilePhone");
   const phoneNumber = input.value;
 
@@ -57,19 +56,35 @@ function validatePassword() {
     input.setCustomValidity("Password must be atleast 4 characters long");
   }
 }
+function validateCheckbox() {
+  const checkbox = document.getElementById("terms-checkbox");
+  console.log(checkbox)
+
+
+  if (checkbox.checked) {
+      checkbox.setCustomValidity("");
+  } else {
+      checkbox.setCustomValidity("You must agree to the terms and conditions and privacy policy.");
+  }
+}
 
 document.getElementById('reset').addEventListener('click', function(event) {
-    validateEmail()
-    validatePhoneNumber();
-    validatePassword()
-  
-    if (!document.getElementById('email').checkValidity()) {
-      event.preventDefault();
-    }
-    if (!document.getElementById('phoneNumber').checkValidity()) {
-        event.preventDefault();
-      }
-      if (!document.getElementById('password').checkValidity()) {
-        event.preventDefault();
-      }
-  });
+  validateEmail();
+  validatePhoneNumber();
+  validatePassword();
+  validateCheckbox();
+
+  if (!document.getElementById('email').checkValidity()) {
+    event.preventDefault();
+  }
+  if (!document.getElementById('phoneNumber').checkValidity()) {
+    event.preventDefault();
+  }
+  if (!document.getElementById('password').checkValidity()) {
+    event.preventDefault();
+  }
+  if (!document.getElementById('terms-checkbox').checkValidity()) {
+    event.preventDefault();
+  }
+});
+

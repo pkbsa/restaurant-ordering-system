@@ -1,38 +1,50 @@
 <div class="page page-signin">
-   <div class="container">
-            <h1>Create your account</h1>
-            <p>Easier to order. Enable your point redemption. More privilege for online member</p>
-            <form action='/user/signup' method="post">
-             <div class="form-group">
-                    <input type="text" id="firstName" name="firstName" class="form-control" placeholder="First name*" required>
-                </div>
-                 <div class="form-group">
-                    <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Last name*" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" oninput="validateEmail()"  id="email" name="email" class="form-control" placeholder="Email Address*" required>
-                    <p class="formcheck" id="emailCheck"></p>
-                </div>
-                 <div class="form-group">
-                    <input type="text" oninput="validatePhoneNumber()" pattern="^\[0-9]\d{1,14}$" id="mobilePhone" name="mobilePhone" class="form-control" placeholder="Mobile Number*" required>
-                     <p class="formcheck" id="phoneCheck"></p>
-                </div>
-                <div class="form-group">
-                    <input type="password" oninput="validatePassword()" id="password" name="password" class="form-control" placeholder="Password*" required>
-                     <p class="formcheck" id="passwordCheck"></p>
-                </div>
-                <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-                <button type="submit" >SIGN UP</button>
-                <b>OR</b>
-                <a href="/user/signin" id="createacc" >SIGN IN</a>
-            </form>
-            {{#if hasErrors}}
-                <div class="btn alert alert-danger">
-                    {{#each messages}}
-                        <p>{{this}}</p>
-                    {{/each}}
-                </div>
-            {{/if}}
-   </div>
+    <div class="container">
+        <h1>Create your account</h1>
+        <p>Easier to order. Enable your point redemption. More privilege for online member</p>
+        <form action='/user/signup' method="post">
+            <div class="form-group">
+                <input type="text" id="firstName" name="firstName" class="form-control" placeholder="First name*"
+                    required>
+            </div>
+            <div class="form-group">
+                <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Last name*" required>
+            </div>
+            <div class="form-group">
+                <input type="text" oninput="validateEmail()" id="email" name="email" class="form-control"
+                    placeholder="Email Address*" required>
+                <p class="formcheck" id="emailCheck"></p>
+            </div>
+            <div class="form-group">
+                <input type="text" oninput="validatePhoneNumber()" pattern="^\[0-9]\d{1,14}$" id="mobilePhone"
+                    name="mobilePhone" class="form-control" placeholder="Mobile Number*" required>
+                <p class="formcheck" id="phoneCheck"></p>
+            </div>
+            <div class="form-group">
+                <input type="password" oninput="validatePassword()" id="password" name="password" class="form-control"
+                    placeholder="Password*" required>
+                <p class="formcheck" id="passwordCheck"></p>
+            </div>
+            <div class="form-group text-center align-middle">
+                <label for="terms-checkbox">
+                    <input type="checkbox" id="terms-checkbox" required>
+                    <span id="terms">By signing up, I agree to the following <a href="/terms">terms and conditions</a> and <a
+                            href="/privacy">privacy policy</a> for using the website and hosting services of 'Pye Boat
+                        Noodles'</span>
+                </label>
+            </div>
+            <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+            <button type="submit">SIGN UP</button>
+            <b>OR</b>
+            <a href="/user/signin" id="createacc">SIGN IN</a>
+        </form>
+        {{#if hasErrors}}
+        <div class="btn alert alert-danger">
+            {{#each messages}}
+            <p>{{this}}</p>
+            {{/each}}
+        </div>
+        {{/if}}
+    </div>
 </div>
 <script src="/stylesheets/signup.js"></script>
