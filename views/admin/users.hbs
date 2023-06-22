@@ -1,61 +1,292 @@
-<div class="content">
-    <h1 class="users" id="heading">Users</h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">E-mail</th>
-                <th scope="col">Password</th>
-                <th scope="col">admin</th>
-                <th scope="col">แก้ไข</th>
-                <th scope="col">delete</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#each users}}
-            <tr>
-                <td>{{this.email}}</td>
-                <td>{{this.password}}</td>
-                <td>{{this.admin}}</td>
-                <td>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#{{this._id}}">
-                        Edit
-                    </button>
-                </td>
-                <td>
-                    <a href="/admin/delete-user/{{this._id}}"><i class="fa fa-trash" aria-hidden="true"></i></a>
-                </td>
-            </tr>
-            <div class="modal fade" id="{{this._id}}" tabindex="-1" aria-labelledby="{{this._id}}lLabel"
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.104.2">
+    <title>Dashboard Template · Bootstrap v5.2</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
+    <link href="/stylesheets/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+
+        .b-example-divider {
+            height: 3rem;
+            background-color: rgba(0, 0, 0, .1);
+            border: solid rgba(0, 0, 0, .15);
+            border-width: 1px 0;
+            box-shadow: inset 0 .5em 1.5em rgba(0, 0, 0, .1), inset 0 .125em .5em rgba(0, 0, 0, .15);
+        }
+
+        .b-example-vr {
+            flex-shrink: 0;
+            width: 1.5rem;
+            height: 100vh;
+        }
+
+        .bi {
+            vertical-align: -.125em;
+            fill: currentColor;
+        }
+
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
+        }
+
+        .nav-scroller .nav {
+            display: flex;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .Received {
+            background-color: #f5d471b6;
+            border: 1px solid #ffc107;
+        }
+
+        .Preparing {
+            background-color: #94cad3;
+            border: 1px solid #17a2b8;
+        }
+
+        .Out-For-Delivery {
+            background-color: #D8E7F4;
+            border: 1px solid #007bff;
+        }
+
+        .Completed {
+            background-color: #E1F0DA;
+            border: 1px solid #A7D28F;
+        }
+
+        .table-responsive {
+            padding: 1em 0 1em 0;
+        }
+    </style>
+
+
+    <!-- Custoxm styles for this template -->
+    <link href="/stylesheets/dashboard.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#">Pye Boat Noodle</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search"
+            aria-label="Search">
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="#">Sign out</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3 sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/admin">
+                                <span data-feather="home" class="align-text-bottom"></span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/orders">
+                                <span data-feather="file" class="align-text-bottom"></span>
+                                Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/products">
+                                <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                                Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/users">
+                                <span data-feather="users" class="align-text-bottom"></span>
+                                Customers
+                            </a>
+                        </li>
+
+                    </ul>
+
+                    <h6
+                        class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                        <span>Navigation</span>
+                        <a class="link-secondary" href="#" aria-label="Add a new report">
+                            <span data-feather="plus-circle" class="align-text-bottom"></span>
+                        </a>
+                    </h6>
+                    <ul class="nav flex-column mb-2">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="file-text" class="align-text-bottom"></span>
+                                Menu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="file-text" class="align-text-bottom"></span>
+                                Profile
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Customers</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                            <span data-feather="calendar" class="align-text-bottom"></span>
+                            This week
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="display" id="myTable">
+                        <thead>
+                            <tr>
+                                <th scope="col">User ID</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Admin</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each users}}
+                            <tr>
+                                <td>{{this._id}}</td>
+                                <td>{{this.firstname}}</td>
+                                <td>{{this.lastname}}</td>
+
+                                <td>{{this.email}}</td>
+                                <td>{{this.mobilePhone}}</td>
+                                <td>{{this.admin}}</td>
+                                <td><a href="#" data-bs-toggle="modal" data-bs-target="#Modal-{{this._id}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
+                                            <path
+                                                d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
+                                            <path
+                                                d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
+                                        </svg>
+                                    </a>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+        {{#each users}}
+        <!-- Modal -->
+        <form method="post" action="/admin/admin-status">
+            <div class="modal fade" id="Modal-{{this._id}}" tabindex="-1" aria-labelledby="{{this._id}}ModalLabel"
                 aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="{{this._id}}Label">Edit Information</h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">{{this.firstname}} {{this.lastname}}
+                            </h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form class="form" method="POST" action="/admin/user-edit">
-                            <div class="modal-body">
-                                <label for="email" class="form-label">E-mail</label>
-                                <input type="text" id="email" name="email" class="form-control" value="{{this.email}}">
-                            
-                                <label for="admin" class="form-label">Admin     Permission</label>
-                                <select id="admin" class="form-select" name="status" value="{{this.admin}}">
-                                    <option value="0">No</option>
-                                    <option value="1">Yes</option>
-                                </select>
-                                <input type="hidden" name="_id" value="{{ this._id }}">
+                        <div class="modal-body">
+                             <input type="hidden" name="userId" class="form-control" value="{{this._id}}">
+                            <label for="firstname">First Name</label>
+                            <input type="text" name="firstname" class="form-control" value="{{this.firstname}}"
+                                disabled>
+                            <label for="lastname">Last Name</label>
+                            <input type="text" name="lastname" class="form-control" value="{{this.lastname}}" disabled>
+                            <label for="email">Email</label>
+                            <input type="text" name="email" class="form-control" value="{{this.email}}" disabled>
+                            <label for="phone">Phone</label>
+                            <input type="text" name="mobilePhone" class="form-control" value="{{this.mobilePhone}}"
+                                disabled>
+                            <label for="address">Address <a href="http://maps.google.com/maps?z=12&t=m&q=loc:{{this.latitude}}+{{this.longitude}}">(Google Maps)</a></label>
+                            <textarea type="text" name="address" class="form-control"
+                                disabled>{{this.address}} </textarea>
+                                
+                            <label for="admin">Admin Permission</label>
+                            <select id="admin" class="form-select" name="status" value="{{this.admin}}">
+                                <option value="0">No</option>
+                                <option value="1">Yes</option>
+                            </select>
 
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save changes</button>
-                            </div>
-                        </form>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            {{/each}}
-        </tbody>
-    </table>
-</div>
-<script src='/stylesheets/admin.js'></script>
+        </form>
+        {{/each}}
+    </div>
+
+
+
+    <script src="/stylesheets/assets/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable();
+        });
+    </script>
+</body>
+
+</html>

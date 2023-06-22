@@ -117,6 +117,27 @@ router.get("/users", isAdmin, function (req, res, next) {
   });
 });
 
+router.post("/admin-status", isAdmin, function (req, res, next) {
+  User.findOne({ _id: req.body.userId }, function(err, user) {
+    if (err) {
+        return res.status(500).send({ error: "Error updating user status" });
+    }
+    if (!user) {
+        return res.status(404).send({ error: "User not found" });
+    }
+
+    user.admin = req.body.status;
+
+    user.save(function(err) {
+        if (err) {
+            return res.status(500).send({ error: "Error updating user status" });
+        }
+        res.redirect('/admin/users');
+    });
+  });
+
+});
+
 router.post("/order-edit", isAdmin, function (req, res, next) {
   console.log(req.body)
   Order.findOne({ _id: req.body._id }, function(err, order) {
