@@ -65,6 +65,49 @@ router.get("/products", isAdmin, function (req, res, next) {
     });
 });
 
+router.post('/edit-products', (req, res) => {
+  const additionalChoices = [];
+  console.log(req.body)
+  // Iterate over the submitted form data
+  for (const key in req.body) {
+    if (key.startsWith('choiceTitle')) {
+      const choiceIndex = key.substring('choiceTitle'.length);
+
+      const choiceTitle = req.body[key];
+
+      const choices = [];
+      const prices = [];
+
+      // Get the choices and prices for the current additional choice
+      for (const subKey in req.body) {
+        if (subKey.startsWith(`choice${choiceIndex}-`)) {
+          const choiceNumber = subKey.substring(`choice${choiceIndex}-`.length);
+          const choice = req.body[subKey];
+          choices.push(choice);
+
+          const price = Number(req.body[`price${choiceIndex}-${choiceNumber}`]);
+          prices.push(price);
+        }
+      }
+
+      // Create an object for the current additional choice
+      const additionalChoice = {
+        title: choiceTitle,
+        choices: choices,
+        prices: prices
+      };
+
+      additionalChoices.push(additionalChoice);
+    }
+  }
+
+  console.log(additionalChoices);
+
+  // Render the additionalChoices data in your desired format
+  const formattedData = JSON.stringify(additionalChoices, null, 2);
+  res.send(`<pre>${formattedData}</pre>`);
+});
+
 router.get("/users", isAdmin, function (req, res, next) {
   User.find( {}, function (err, users){
       if (err) {

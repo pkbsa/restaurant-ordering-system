@@ -82,10 +82,9 @@ app.use(function (req, res, next) {
   res.locals.session = req.session;
   next();
 });
-
+app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
 app.use("/", routes);
-app.use("/admin", adminRoutes);
 
 app.use(function (req, res, next) {
   const err = new Error("Not Found");

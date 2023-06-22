@@ -73,22 +73,6 @@ var products = [
         status: "Available"
     }),
     new Product({
-        imagePath: ['/products/img7.png'],
-        title: 'Fried Tofu',
-        description: 'Fried tofu served with sweet chili sauce and crushed peanuts',
-        price: 6.5,
-        category: "PYE VEGETARIAN DISHES",
-        status: "Available"
-    }),
-    new Product({
-        imagePath: ['/products/img7.png'],
-        title: 'Fried Tofu',
-        description: 'Fried tofu served with sweet chili sauce and crushed peanuts',
-        price: 6.5,
-        category: "PYE VEGETARIAN DISHES",
-        status: "Available"
-    }),
-    new Product({
         imagePath: ['/products/img11.png'],
         title: 'Boat Noodles with Pork',
         description: 'Fresh pork blood broth with soy and anise, bean sprout,slice pork, pork meat ball top with celery and pork rind',

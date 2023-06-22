@@ -133,13 +133,13 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="/admin/orders  ">
+                            <a class="nav-link active" href="/admin/orders">
                                 <span data-feather="file" class="align-text-bottom"></span>
                                 Orders
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="/admin/products">
                                 <span data-feather="shopping-cart" class="align-text-bottom"></span>
                                 Products
                             </a>
@@ -279,25 +279,7 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...
-                        <div class="table-responsive">
-                            <table class="display" id="myTable3">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Order ID</th>
-                                        <th scope="col">Date/Time</th>
-                                        <th scope="col">Customer</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">Items</th>
-                                        <th scope="col">Total</th>
-                                        <th scope="col"></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="receivedOrder">
-
-
-                                </tbody>
-                            </table>
-                        </div>
+                       
                     </div>
                 </div>
 
@@ -321,14 +303,10 @@
         $(document).ready(function () {
             $('#myTable2').DataTable();
         });
-        $(document).ready(function () {
-            $('#myTable3').DataTable();
-        });
     </script>
     <script>
         // Get the source table and destination table
         const sourceTable = document.getElementById('myTable');
-        const destinationTable = document.getElementById('myTable2');
 
         // Get the source and destination tbody elements
         const sourceTbody = sourceTable.getElementsByTagName('tbody')[0];
