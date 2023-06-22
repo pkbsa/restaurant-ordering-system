@@ -23,7 +23,8 @@ var products = [
                 choices: ['X', 'Y', 'Z'],
                 prices: [4, 5, 6]
             }
-        ]
+        ],
+        
     }),
     new Product({
         imagePath: ['/products/img2.png'],

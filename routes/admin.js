@@ -3,8 +3,8 @@ var router = express.Router();
 var Cart = require("../models/cart");
 
 var Product = require("../models/product");
-var Order = require('../models/order');
-var User = require('../models/user')
+var Order = require("../models/order");
+var User = require("../models/user");
 
 router.get("/", isAdmin, function (_, res) {
   Promise.all([
@@ -43,184 +43,161 @@ router.get("/", isAdmin, function (_, res) {
 });
 
 router.get("/orders", isAdmin, function (req, res, next) {
-  Order.find( {paymentStatus: { $ne: "Awaiting Payment" }}, null, {sort: {_id: -1}}, function (err, orders){
+  Order.find(
+    { paymentStatus: { $ne: "Awaiting Payment" } },
+    null,
+    { sort: { _id: -1 } },
+    function (err, orders) {
       if (err) {
-          return res.write('Error!')
-        }
-        var cart;
-        orders.forEach(function(order){
-          cart = new Cart(order.cart);
-          order.items = cart.generateArray(); 
-        })
-        res.render("admin/orders",{orders: orders, isadmin: 1})
-  });
+        return res.write("Error!");
+      }
+      var cart;
+      orders.forEach(function (order) {
+        cart = new Cart(order.cart);
+        order.items = cart.generateArray();
+      });
+      res.render("admin/orders", { orders: orders, isadmin: 1 });
+    }
+  );
 });
 
 router.get("/products", isAdmin, function (req, res, next) {
-    Product.find( {}, function (err, products){
-        if (err) {
-            return res.write('Error!')
-          }
-        res.render("admin/products",{products: products, isadmin: 1})
-    });
-});
-
-router.post('/edit-products', (req, res) => {
-  const additionalChoices = [];
-  console.log(req.body)
-  // Iterate over the submitted form data
-  for (const key in req.body) {
-    if (key.startsWith('choiceTitle')) {
-      const choiceIndex = key.substring('choiceTitle'.length);
-
-      const choiceTitle = req.body[key];
-
-      const choices = [];
-      const prices = [];
-
-      // Get the choices and prices for the current additional choice
-      for (const subKey in req.body) {
-        if (subKey.startsWith(`choice${choiceIndex}-`)) {
-          const choiceNumber = subKey.substring(`choice${choiceIndex}-`.length);
-          const choice = req.body[subKey];
-          choices.push(choice);
-
-          const price = Number(req.body[`price${choiceIndex}-${choiceNumber}`]);
-          prices.push(price);
-        }
-      }
-
-      // Create an object for the current additional choice
-      const additionalChoice = {
-        title: choiceTitle,
-        choices: choices,
-        prices: prices
-      };
-
-      additionalChoices.push(additionalChoice);
+  Product.find({}, function (err, products) {
+    if (err) {
+      return res.write("Error!");
     }
-  }
-
-  console.log(additionalChoices);
-
-  // Render the additionalChoices data in your desired format
-  const formattedData = JSON.stringify(additionalChoices, null, 2);
-  res.send(`<pre>${formattedData}</pre>`);
-});
-
-router.get("/users", isAdmin, function (req, res, next) {
-  User.find( {}, function (err, users){
-      if (err) {
-          return res.write('Error!')
-        }
-      res.render("admin/users",{users: users, isadmin: 1})
+    res.render("admin/products", { products: products, isadmin: 1 });
   });
 });
 
-router.post("/admin-status", isAdmin, function (req, res, next) {
-  User.findOne({ _id: req.body.userId }, function(err, user) {
-    if (err) {
-        return res.status(500).send({ error: "Error updating user status" });
-    }
-    if (!user) {
-        return res.status(404).send({ error: "User not found" });
-    }
+router.post("/edit-products", isAdmin, function (req, res, next) {
+  console.log(req.body.additionalChoices);
+  var additionalChoice = req.body.additionalChoices; // Assuming req.body.additionalChoice contains the input array as a string
 
-    user.admin = req.body.status;
+  // Parse additionalChoice into an array
+  var additionalChoiceArray = JSON.parse(additionalChoice);
 
-    user.save(function(err) {
-        if (err) {
-            return res.status(500).send({ error: "Error updating user status" });
-        }
-        res.redirect('/admin/users');
-    });
+  var transformedChoices = additionalChoiceArray.map(function (item, index) {
+    return {
+      title: item.title,
+      choices: item.choices,
+      prices: item.prices,
+    };
   });
 
-});
+  console.log(transformedChoices);
 
-router.post("/order-edit", isAdmin, function (req, res, next) {
-  console.log(req.body)
-  Order.findOne({ _id: req.body._id }, function(err, order) {
+  Product.findOne({ _id: req.body._id }, function (err, product) {
     if (err) {
-        return res.status(500).send({ error: "Error updating order status" });
-    }
-    if (!order) {
-        return res.status(404).send({ error: "Order not found" });
-    }
-    order.status = req.body.status;
-    order.save(function(err) {
-        if (err) {
-            return res.status(500).send({ error: "Error updating order status" });
-        }
-        res.redirect('/admin');
-    });
-  });
-});
-
-router.post("/product-edit", isAdmin, function (req, res, next) {
-  console.log(req.body)
-  Product.findOne({ _id: req.body._id }, function(err, product) {
-    if (err) {
-        return res.status(500).send({ error: "Error updating product status" });
+      return res.status(500).send({ error: "Error updating product status" });
     }
     if (!product) {
-        return res.status(404).send({ error: "Order not found" });
+      return res.status(404).send({ error: "Order not found" });
     }
 
     product.title = req.body.title;
     product.description = req.body.description;
     product.price = req.body.price;
-    product.status = req.body.status;
+    product.category = req.body.category;
+    product.additionalChoices = transformedChoices
 
-    product.save(function(err) {
-        if (err) {
-            return res.status(500).send({ error: "Error updating product status" });
-        }
-        res.redirect('/admin/products');
+    product.save(function (err) {
+      if (err) {
+        return res.status(500).send({ error: "Error updating product status" });
+      }
+      res.redirect("/admin/products");
     });
   });
 });
 
-router.get("/delete-order/:id", isAdmin, function(req, res) {
+router.get("/users", isAdmin, function (req, res, next) {
+  User.find({}, function (err, users) {
+    if (err) {
+      return res.write("Error!");
+    }
+    res.render("admin/users", { users: users, isadmin: 1 });
+  });
+});
+
+router.post("/admin-status", isAdmin, function (req, res, next) {
+  User.findOne({ _id: req.body.userId }, function (err, user) {
+    if (err) {
+      return res.status(500).send({ error: "Error updating user status" });
+    }
+    if (!user) {
+      return res.status(404).send({ error: "User not found" });
+    }
+
+    user.admin = req.body.status;
+
+    user.save(function (err) {
+      if (err) {
+        return res.status(500).send({ error: "Error updating user status" });
+      }
+      res.redirect("/admin/users");
+    });
+  });
+});
+
+router.post("/order-edit", isAdmin, function (req, res, next) {
+  console.log(req.body);
+  Order.findOne({ _id: req.body._id }, function (err, order) {
+    if (err) {
+      return res.status(500).send({ error: "Error updating order status" });
+    }
+    if (!order) {
+      return res.status(404).send({ error: "Order not found" });
+    }
+    order.status = req.body.status;
+    order.save(function (err) {
+      if (err) {
+        return res.status(500).send({ error: "Error updating order status" });
+      }
+      res.redirect("/admin");
+    });
+  });
+});
+
+router.get("/delete-order/:id", isAdmin, function (req, res) {
   var orderId = req.params.id;
-  Order.deleteOne({ _id: orderId }, function(err) {
-      if (err) {
-          return res.status(500).send({ error: "Error deleting order" });
-      }
-      res.redirect('/admin/orders');
+  Order.deleteOne({ _id: orderId }, function (err) {
+    if (err) {
+      return res.status(500).send({ error: "Error deleting order" });
+    }
+    res.redirect("/admin/orders");
   });
 });
 
-router.get("/delete-product/:id", isAdmin, function(req, res) {
+router.get("/delete-product/:id", isAdmin, function (req, res) {
   var productId = req.params.id;
-  Product.deleteOne({ _id: productId }, function(err) {
-      if (err) {
-          return res.status(500).send({ error: "Error deleting product" });
-      }
-      res.redirect('/admin/products');
+  Product.deleteOne({ _id: productId }, function (err) {
+    if (err) {
+      return res.status(500).send({ error: "Error deleting product" });
+    }
+    res.redirect("/admin/products");
   });
 });
 
-router.get("/delete-user/:id", isAdmin, function(req, res) {
+router.get("/delete-user/:id", isAdmin, function (req, res) {
   var userId = req.params.id;
-  User.deleteOne({ _id: userId }, function(err) {
-      if (err) {
-          return res.status(500).send({ error: "Error deleting users" });
-      }
-      res.redirect('/admin/users');
+  User.deleteOne({ _id: userId }, function (err) {
+    if (err) {
+      return res.status(500).send({ error: "Error deleting users" });
+    }
+    res.redirect("/admin/users");
   });
 });
 
-router.post("/add-product/", isAdmin, function(req, res){
+router.post("/add-product/", isAdmin, function (req, res) {
   console.log(req.body);
   let sampleFiles = req.files.sampleFile;
 
-  if(!Array.isArray(sampleFiles)){
+  if (!Array.isArray(sampleFiles)) {
     sampleFiles = [sampleFiles];
   }
 
   let filePaths = [];
-  sampleFiles.forEach(function(sampleFile) {
+  sampleFiles.forEach(function (sampleFile) {
     let uploadFilename = "/products/" + sampleFile.name;
     //console.log(uploadFilename)
     let uploadFile = "./public/products/" + sampleFile.name;
@@ -233,9 +210,9 @@ router.post("/add-product/", isAdmin, function(req, res){
     description: req.body.description,
     price: req.body.price,
     status: req.body.status,
-    imagePath: filePaths
+    imagePath: filePaths,
   });
-  product.save(function(err) {
+  product.save(function (err) {
     if (err) {
       return res.status(500).send({ error: "Error saving product" });
     }

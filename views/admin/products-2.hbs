@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Edit Product Form</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .choice-container{
+      display: flex;
+      gap: 10px
+    }
+    .remove-btn{
+      margin-left: 0.5em;
+    }
+  </style>
+</head>
+<body>
+  {{#each products}}
+    <div>
+      <h2>{{this.title}}</h2>
+      <p>{{this.description}}</p>
+      <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProductModal_{{this._id}}">Edit</button>
+    </div>
+    {{/each}}
+  {{#each products}}
+    <!-- Modal -->
+    <div class="modal fade" id="editProductModal_{{this._id}}" tabindex="-1" aria-labelledby="editProductModalLabel_{{this._id}}" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editProductModalLabel_{{this._id}}">Edit Product</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="productForm_{{this._id}}" method="post" action="/admin/edit-products">
+              <label for="title_{{this._id}}" class="form-label">Title:</label>
+              <input type="text" class="form-control" id="title_{{this._id}}" name="title" value="{{this.title}}" required>
+
+              <label for="description_{{this._id}}" class="form-label">Description:</label>
+              <textarea class="form-control" id="description_{{this._id}}" name="description" required>{{this.description}}</textarea>
+
+              <label for="price_{{this._id}}" class="form-label">Price:</label>
+              <input type="number" class="form-control" id="price{{this._id}}" name="price" value="{{this.price}}" required>
+
+            <label for="category">Category</label>
+            <select id="category-{{this._id}}" name="category" class="form-control">
+              <option value="PYE OVER RICE">PYE OVER RICE</option>
+              <option value="PYE SNACKS">PYE SNACKS</option>
+              <option value="PYE BOAT NOODLES">PYE BOAT NOODLES</option>
+              <option value="PYE DRY NOODLES">PYE DRY NOODLES</option>
+              <option value="J SNACKS">J SNACKS</option>
+              <option value="DESSERT">DESSERT</option>
+              <option value="DRINK">DRINK</option>
+            </select>
+
+              <button type="button" class="btn btn-primary mt-3" onclick="addAdditionalChoice('{{this._id}}')">Add Additional Choice</button>
+
+              <div id="additionalChoicesContainer_{{this._id}}" class="card card-body mt-3">
+                {{#each this.additionalChoices}}
+                  <div class="additional-choice-container additional-choice-container_{{../this._id}}">
+                    <input type="text" class="form-control mb-2" value="{{this.title}}" required>
+                    <button type="button" class="btn btn-secondary mb-2" onclick="addChoice(this.parentNode)">Add Choice</button>
+                    <button type="button" class="btn btn-danger mb-2 remove-btn" onclick="this.parentNode.remove()">Remove</button>
+
+                    {{#if this.choices}}
+                      {{#each this.choices}}
+                        <div class="choice-container">
+                          <input type="text" class="form-control mb-2" value="{{this}}" required>
+                          <input type="number" class="form-control mb-2" value="{{lookup ../prices @index}}" required>
+                          <button type="button" class="btn btn-danger mb-2" onclick="this.parentNode.remove()">Remove</button>
+                        </div>
+                      {{/each}}
+                    {{/if}}
+                  </div>
+                {{/each}}
+              </div>
+              <hr>
+              <button type="submit" class="btn btn-primary w-100">Save</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Modal -->
+  {{/each}}
+
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"></script>
+
+  <script>
+    // Handle form submission for each product form
+    {{#each products}}
+    document.getElementById("productForm_{{this._id}}").addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      var title = document.getElementById("title_{{this._id}}").value;
+      var description = document.getElementById("description_{{this._id}}").value;
+      var additionalChoices = [];
+
+      var additionalChoiceContainers = document.getElementsByClassName("additional-choice-container_{{this._id}}");
+      for (var i = 0; i < additionalChoiceContainers.length; i++) {
+        var additionalChoiceTitleInput = additionalChoiceContainers[i].querySelector("input[type='text']");
+        var choiceContainers = additionalChoiceContainers[i].getElementsByClassName("choice-container");
+        var choices = [];
+        var prices = [];
+        for (var j = 0; j < choiceContainers.length; j++) {
+          var choiceNameInput = choiceContainers[j].querySelector("input[type='text']");
+          var choicePriceInput = choiceContainers[j].querySelector("input[type='number']");
+          choices.push(choiceNameInput.value);
+          prices.push(parseFloat(choicePriceInput.value));
+        }
+        var additionalChoice = {
+          title: additionalChoiceTitleInput.value,
+          choices: choices,
+          prices: prices
+        };
+        additionalChoices.push(additionalChoice);
+      }
+
+      // Create a hidden input field to hold the additionalChoices data
+      var additionalChoicesInput = document.createElement("input");
+      additionalChoicesInput.type = "hidden";
+      additionalChoicesInput.name = "additionalChoices";
+      additionalChoicesInput.value = JSON.stringify(additionalChoices);
+
+      // Append the hidden input field to the form
+      document.getElementById("productForm_{{this._id}}").appendChild(additionalChoicesInput);
+
+      // Submit the form
+      document.getElementById("productForm_{{this._id}}").submit();
+    });
+    {{/each}}
+
+    // Function to add a new additional choice section
+    // Function to add a new additional choice section
+    function addAdditionalChoice(productId) {
+      
+      var container = document.getElementById("additionalChoicesContainer_" + productId);
+
+      var additionalChoiceContainer = document.createElement("div");
+      additionalChoiceContainer.className = "additional-choice-container additional-choice-container_" + productId;
+
+      var additionalChoiceTitleInput = document.createElement("input");
+      additionalChoiceTitleInput.type = "text";
+      additionalChoiceTitleInput.className = "form-control mb-2 Additional-Title choice-title";
+      additionalChoiceTitleInput.placeholder = "Additional Choice Title";
+      additionalChoiceTitleInput.required = true;
+
+      var addChoiceBtn = document.createElement("button");
+      addChoiceBtn.type = "button";
+      addChoiceBtn.className = "btn btn-secondary mb-2";
+      addChoiceBtn.textContent = "Add Choice";
+      addChoiceBtn.onclick = function() {
+        addChoice(additionalChoiceContainer);
+      };
+
+      var removeAdditionalChoiceBtn = document.createElement("button");
+      removeAdditionalChoiceBtn.type = "button";
+      removeAdditionalChoiceBtn.className = "btn btn-danger mb-2 remove-btn";
+      removeAdditionalChoiceBtn.textContent = "Remove";
+      removeAdditionalChoiceBtn.onclick = function() {
+        additionalChoiceContainer.remove();
+      };
+
+      additionalChoiceContainer.appendChild(additionalChoiceTitleInput);
+      additionalChoiceContainer.appendChild(addChoiceBtn);
+      additionalChoiceContainer.appendChild(removeAdditionalChoiceBtn);
+
+      container.appendChild(additionalChoiceContainer);
+
+      // Add an initial choice for the new additional choice section
+      addChoice(additionalChoiceContainer);
+       var hrElement = document.createElement('hr');
+      container.appendChild(hrElement)
+    }
+
+    // Function to add a new choice input field within an additional choice
+    function addChoice(additionalChoiceContainer) {
+      var choiceContainer = document.createElement("div");
+      choiceContainer.className = "choice-container";
+
+      var choiceNameInput = document.createElement("input");
+      choiceNameInput.type = "text";
+      choiceNameInput.className = "form-control mb-2";
+      choiceNameInput.placeholder = "Choice Name";
+      choiceNameInput.required = true;
+
+      var choicePriceInput = document.createElement("input");
+      choicePriceInput.type = "number";
+      choicePriceInput.className = "form-control mb-2";
+      choicePriceInput.placeholder = "Choice Price";
+      choicePriceInput.required = true;
+
+      var removeChoiceBtn = document.createElement("button");
+      removeChoiceBtn.type = "button";
+      removeChoiceBtn.className = "btn btn-danger mb-2";
+      removeChoiceBtn.textContent = "Remove";
+      removeChoiceBtn.onclick = function() {
+        choiceContainer.remove();
+      };
+
+      choiceContainer.appendChild(choiceNameInput);
+      choiceContainer.appendChild(choicePriceInput);
+      choiceContainer.appendChild(removeChoiceBtn);
+      
+      additionalChoiceContainer.appendChild(choiceContainer);
+    }
+  </script>
+  
+</body>
+</html>
