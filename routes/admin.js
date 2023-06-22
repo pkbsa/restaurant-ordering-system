@@ -6,30 +6,47 @@ var Product = require("../models/product");
 var Order = require('../models/order');
 var User = require('../models/user')
 
-/* admin homepage*/
-router.get("/", isAdmin,function(req, res) {
+router.get("/", isAdmin, function (_, res) {
   Promise.all([
-      Order.countDocuments({}),
-      User.countDocuments({}),
-      Product.countDocuments({})
-  ]).then(function(results) {
-      res.render("admin/home", {
-          ordersLength: results[0],
-          usersLength: results[1],
-          productsLength: results[2],
-          isadmin :1
-      });
-  }).catch(function(error) {
+    Order.countDocuments({}),
+    User.countDocuments({}),
+    Product.countDocuments({}),
+  ])
+    .then(function (results) {
+      Order.find(
+        { paymentStatus: { $ne: "Awaiting Payment" } },
+        null,
+        { sort: { _id: -1 }, limit: 5 },
+        function (err, orders) {
+          if (err) {
+            return res.status(500).send("Error!");
+          }
+
+          var cart;
+          orders.forEach(function (order) {
+            cart = new Cart(order.cart);
+            order.items = cart.generateArray();
+          });
+          res.render("admin/dashboard", {
+            orders: orders,
+            ordersLength: results[0],
+            usersLength: results[1],
+            productsLength: results[2],
+            isadmin: 1,
+          });
+        }
+      );
+    })
+    .catch(function (error) {
       res.status(500).send({ error: "Error getting collection length" });
-  });
+    });
 });
 
 router.get("/orders", isAdmin, function (req, res, next) {
-  Order.find( {}, null, {sort: {_id: -1}}, function (err, orders){
+  Order.find( {paymentStatus: { $ne: "Awaiting Payment" }}, null, {sort: {_id: -1}}, function (err, orders){
       if (err) {
           return res.write('Error!')
         }
-        //console.log(orders)
         var cart;
         orders.forEach(function(order){
           cart = new Cart(order.cart);

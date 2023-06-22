@@ -11,12 +11,6 @@
 
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
     <link href="/stylesheets/assets/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
-
-    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
 
     <style>
         .bd-placeholder-img {
@@ -69,22 +63,6 @@
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
         }
-        .Received{
-            background-color:#f5d471b6;
-            border: 1px solid #ffc107;  
-        }
-        .Preparing{
-            background-color:#94cad3;
-            border: 1px solid #17a2b8;  
-        }
-        .Out-For-Delivery{
-            background-color: #D8E7F4;
-            border: 1px solid #007bff;  
-        }
-        .Completed{
-            background-color:#E1F0DA;
-            border: 1px solid #A7D28F;   
-        }
     </style>
 
 
@@ -116,13 +94,13 @@
                 <div class="position-sticky pt-3 sidebar-sticky">
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link" aria-current="page" href="#">
+                            <a class="nav-link active" aria-current="page" href="/admin/">
                                 <span data-feather="home" class="align-text-bottom"></span>
                                 Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="#">
+                            <a class="nav-link" href="/admin/orders">
                                 <span data-feather="file" class="align-text-bottom"></span>
                                 Orders
                             </a>
@@ -150,7 +128,7 @@
                         </a>
                     </h6>
                     <ul class="nav flex-column mb-2">
-
+                       
                         <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <span data-feather="file-text" class="align-text-bottom"></span>
@@ -170,7 +148,7 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Orders</h1>
+                    <h1 class="h2">Dashboard</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
                             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
@@ -182,48 +160,53 @@
                         </button>
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="col-md-9">
+                        <canvas class="my-4 w-100" id="doughnutChart" width="900" height="380"></canvas>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Opening and Closing Times</h5>
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="openingTime" class="form-label">Opening Time:</label>
+                                        <input type="time" class="form-control" id="openingTime" name="openingTime"
+                                            required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="closingTime" class="form-label">Closing Time:</label>
+                                        <input type="time" class="form-control" id="closingTime" name="closingTime"
+                                            required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <h2>Recent Orders</h2>
                 <div class="table-responsive">
-                    <table class="display" id="myTable">
+                    <table class="table">
                         <thead>
                             <tr>
-                                <th scope="col">Order ID</th>
-                                <th scope="col">Date/Time</th>
-                                <th scope="col">Customer</th>
+                                <th scope="col">#</th>
+                                <th scope="col">TotalQty</th>
+                                <th scope="col">TotalPrice</th>
+                                <th scope="col">Delivery Name</th>
                                 <th scope="col">Status</th>
-                                <th scope="col">Items</th>
-                                <th scope="col">Total</th>
-                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
                             {{#each orders}}
                             <tr>
                                 <td>{{this._id}}</td>
-                                <td>{{this.date}}</td>
-                                <td>{{this.deliveryName}}</td>
-                                <td>
-                                    <p style="display:none">{{this.orderStatus}}</p>
-                                    <form>
-                                        <input type="hidden" value="{{this.orderStatus}}" id="{{this._id}}-status">
-                                        <select class="form-control {{this.orderStatus}}" id="{{this._id}}" name="status">
-                                            <option value="Received">Received</option>
-                                            <option value="Preparing">Preparing</option>
-                                            <option value="Out-For-Delivery">Out For Delivery</option>
-                                            <option value="Completed">Completed</option>
-                                        </select>
-                                    </form>
-                                </td>
                                 <td>{{this.cart.totalQty}}</td>
-                                <td>${{this.cart.totalPrice}}</td>
-                                <td><a href="#">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                                            <path
-                                                d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-                                        </svg>
-                                    </a></td>
+                                <td>{{this.cart.totalPrice}}</td>
+                                <td>{{this.deliveryName}}</td>
+                                <td>{{this.orderStatus}}</td>
                             </tr>
                             {{/each}}
                         </tbody>
@@ -242,34 +225,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
         integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
         crossorigin="anonymous"></script>
-    <script>
-        $(document).ready(function () {
-            $('#myTable').DataTable();
-        });
-    </script>
-    <script>
-        var dropdowns = document.querySelectorAll('.form-control');
-
-        dropdowns.forEach(function (dropdown) {
-            if (dropdown.tagName === 'SELECT') {
-                var orderId = dropdown.id.split('+')[0];
-
-                var selectedValue = document.getElementById(`${orderId}-status`).value;
-                //dropdown.className = `form-control ${selectedValue}`
-
-                var options = dropdown.options;
-
-                for (var i = 0; i < options.length; i++) {
-                    console.log(i)
-                    if (options[i].value === selectedValue) {
-                        options[i].selected = true;
-                        break;
-                    }
-                }
-            }
-        });
-
-    </script>
+    <script src="/stylesheets/dashboard.js"></script>
 </body>
 
 </html>
