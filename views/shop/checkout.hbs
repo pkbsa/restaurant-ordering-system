@@ -82,19 +82,29 @@
                         <h4>${{cart.totalPrice}}</h4>
                     </div>
                     <div class="flex-row-3">
+                        <p>Vat 4%</p>
+                        <p id="vat">$0</p>
+                    </div>
+                    <div class="flex-row-3">
                         <p>Delivery Charge</p>
                         <p>$0</p>
+                    </div>
+                    <div class="flex-row-3">
+                        <p>Tip</p>
+                        <p> $ <input type="number" id="tipbox" oninput="calculateTip()" required></p>
                     </div>
 
                     <hr>
                     <div class="flex-row-3">
                         <h4>Total</h4>
-                        <h4>${{totalPrice}}</h4>
+                        <h4 id="finalPrice">${{totalPrice}}</h4>
                     </div>
+
                     {{#if user.address}}
-                    <form action="/create-checkout-session" method="POST">
+                    <form action="/create-checkout-session" method="POST" onsubmit="return validateForm()">
                         <input type="hidden" name="_csrf" value="{{csrfToken}}">
-                        <input type="hidden" value="{{totalPrice}}" name="totalprice">
+                        <input type="hidden" value="{{totalPrice}}" id="totalPrice" name="totalprice">
+                        <input type="hidden" name="tip" id="totalTip">
                         <button type="submit" id="checkout-button" class="btn btn-primary w-100 submitbtn">CHECK
                             OUT</button>
                     </form>
@@ -110,7 +120,8 @@
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Please Complete Adding Delivery Address</h1>
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Please Complete Adding Delivery
+                                    Address</h1>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>

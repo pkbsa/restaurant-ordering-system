@@ -303,8 +303,9 @@ router.post("/create-checkout-session", async (req, res) => {
   const YOUR_DOMAIN = `${protocol}://${host}`;
 
   const lineItems = [];
+  let totalPrice = 0;
 
-  // Convert cart items into line items
+  // Convert cart items into line items and calculate total price
   for (const itemId in cart.items) {
     const cartItem = cart.items[itemId];
     const { item, qty } = cartItem;
@@ -313,7 +314,7 @@ router.post("/create-checkout-session", async (req, res) => {
     const lineItem = {
       price_data: {
         currency: "usd",
-        unit_amount_decimal: price * 100,
+        unit_amount_decimal: (price * 100).toFixed(0), // Round to 2 decimal places and convert to cents
         product_data: {
           name: item.title,
           description: item.description,
@@ -323,10 +324,46 @@ router.post("/create-checkout-session", async (req, res) => {
     };
 
     lineItems.push(lineItem);
+    totalPrice += price * qty;
+  }
+
+  const taxPercentage = 0.04; // 4% tax rate
+  const taxAmount = totalPrice * taxPercentage; // Calculate tax amount
+
+  const taxLineItem = {
+    price_data: {
+      currency: "usd",
+      unit_amount_decimal: (taxAmount * 100).toFixed(0), // Round to 2 decimal places and convert to cents
+      product_data: {
+        name: "Tax",
+        description: `${(taxPercentage * 100).toFixed(2)}% of total amount`,
+      },
+    },
+    quantity: 1, // Only one tax line item
+  };
+
+  lineItems.push(taxLineItem);
+  var tip = req.body.tip
+  if (tip > 0){
+    
+    const tipLineItem = {
+      price_data: {
+        currency: "usd",
+        unit_amount_decimal: (tip * 100).toFixed(0), // Round to 2 decimal places and convert to cents
+        product_data: {
+          name: "Tip",
+          description: `Your tip helps us provide better service and support`,
+        },
+      },
+      quantity: 1, // Only one tax line item
+    };
+
+    lineItems.push(tipLineItem);
+
   }
 
   const session = await stripe.checkout.sessions.create({
-    line_items: lineItems, // Use the converted line items
+    line_items: lineItems,
     mode: "payment",
     success_url: `${YOUR_DOMAIN}/success/`,
     cancel_url: `${YOUR_DOMAIN}/checkout`,
@@ -338,6 +375,9 @@ router.post("/create-checkout-session", async (req, res) => {
     res.redirect(303, session.url);
   });
 });
+
+
+
 
 const fulfillOrder = (session) => {
   const paymentId = session.id;

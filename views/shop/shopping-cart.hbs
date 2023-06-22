@@ -17,12 +17,12 @@
                                 <p>{{{this.additionalNote}}}</p>
                                 <div class="quantity">
                                     <script>
-            if ({{this.qty}} === 1) {
-              document.write(`<a data-bs-toggle="modal" data-bs-target="#{{this.item._id}}"><i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a>`);
-            } else {
-              document.write(`<a href="/reduce/{{this.item._id}}-{{additionalChoices}}-{{additionalNote}}"><i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a>`);
-            }
-          </script>
+                                        if ({{ this.qty }} === 1) {
+                                            document.write(`<a data-bs-toggle="modal" data-bs-target="#{{this.item._id}}"><i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a>`);
+                                        } else {
+                                            document.write(`<a href="/reduce/{{this.item._id}}-{{additionalChoices}}-{{additionalNote}}"><i class="fa fa-minus-circle fa-2x" aria-hidden="true"></i></a>`);
+                                        }
+                                    </script>
                                     <button type="button" class="btn">{{this.qty}}</button>
                                     <form action="/addone-to-cart/{{this.item._id}}" method="POST">
                                         <input type="hidden" name="price" value="{{this.price}}" />
@@ -82,6 +82,10 @@
                         <h4>${{cart.totalPrice}}</h4>
                     </div>
                     <div class="flex-row-3">
+                        <p>Vat 4%</p>
+                        <p id="vat">$0</p>
+                    </div>
+                    <div class="flex-row-3">
                         <p>Delivery Charge</p>
                         <p>$0</p>
                     </div>
@@ -89,11 +93,12 @@
                     <hr>
                     <div class="flex-row-3">
                         <h4>Total</h4>
-                        <h4>${{totalPrice}}</h4>
+                        <h4 id="finalPrice">${{totalPrice}}</h4>
                     </div>
                     <a href="/checkout" class="btn btn-primary w-100 submitbtn">CHECK OUT</a>
                     <a href="/menu" class="btn btn-secondary w-100 submitbtn">Add more food</a>
                 </div>
+                <input type="hidden" value="{{totalPrice}}" id="totalPrice" name="totalprice">
             </div>
             {{else}}
         </div>
@@ -101,3 +106,13 @@
         {{/if}}
     </div>
 </div>
+<script>
+    var totalPrice = document.getElementById('totalPrice').value;
+    var vatPrice = totalPrice * 0.04;
+    vatPrice = vatPrice.toFixed(2);
+    var finalPrice = totalPrice * 1.04
+    finalPrice = finalPrice.toFixed(2);
+
+    document.getElementById('vat').textContent = `$${vatPrice}`
+    document.getElementById('finalPrice').textContent = `$${finalPrice}`
+</script>
