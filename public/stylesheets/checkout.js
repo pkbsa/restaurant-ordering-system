@@ -59,6 +59,11 @@ function validatePhoneNumber() {
 
       return false; // Prevent form submission
     }
+    if (tipAmount > 9000){
+      document.getElementById("tipbox").setCustomValidity("Must be lower than 9000$.");
+      document.getElementById("tipbox").reportValidity();
+      return false; // Prevent form submission
+    }
     document.getElementById('totalTip').value = parseFloat(tipAmount).toFixed(2)
     return true; // Allow form submission
   }

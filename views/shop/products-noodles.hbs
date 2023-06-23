@@ -42,19 +42,19 @@
         <div class="container">
             <h2>PYE BOAT NOODLES</h2>
             <div class="row">
-                {{#each boat}}
-                 <div class="col-6 col-sm-6">
+               {{#each boat}}
+                <div class="col-6 col-sm-6">
                     <div class="card mb-3" style="max-width: 540px;">
                         <div class="row g-0">
                             <div class="col-md-5">
-                                <img src="{{ this.imagePath.[0] }}" class="img-fluid rounded-start" alt="...">
+                                <img src="{{ this.imagePath.[0] }}" class="img-fluid rounded-start" alt="{{this.title}}">
                             </div>
                             <div class="col-md-7">
                                 <div class="card-body">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
-                                    <button class="form-control" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
-
+                                    <input type="hidden" id="status-{{this._id}}" value="{{this.status}}">
+                                    <button class="form-control  add-button" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
                                 </div>
                             </div>
                         </div>
@@ -116,18 +116,18 @@
             <h2>PYE DRY NOODLES</h2>
             <div class="row">
                 {{#each dry}}
-                 <div class="col-6 col-sm-6">
+                <div class="col-6 col-sm-6">
                     <div class="card mb-3" style="max-width: 540px;">
                         <div class="row g-0">
                             <div class="col-md-5">
-                                <img src="{{ this.imagePath.[0] }}" class="img-fluid rounded-start" alt="...">
+                                <img src="{{ this.imagePath.[0] }}" class="img-fluid rounded-start" alt="{{this.title}}">
                             </div>
                             <div class="col-md-7">
                                 <div class="card-body">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
-                                    <button class="form-control" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
-
+                                    <input type="hidden" id="status-{{this._id}}" value="{{this.status}}">
+                                    <button class="form-control  add-button" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
                                 </div>
                             </div>
                         </div>

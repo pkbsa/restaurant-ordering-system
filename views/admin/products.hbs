@@ -86,6 +86,15 @@
         .remove-btn {
             margin-left: 0.5em;
         }
+
+        .Available{
+            background-color:#C6E1C6 ;
+            color: #678F30;
+        }
+         .Not-Available{
+            background-color:#dfb3b3 ;
+            color: #8d0707;
+        }
     </style>
 
 
@@ -214,12 +223,13 @@
 
                                 <td>
                                     <p style="display:none">{{this.status}}</p>
-                                    <form>
+                                    <form method="POST" action="/admin/product-status">
+                                        <input type="hidden" value="{{this._id}}" name="_id">
                                         <input type="hidden" value="{{this.category}}" id="{{this._id}}-statusCategory">
                                         <input type="hidden" value="{{this.status}}" id="{{this._id}}-status">
-                                        <select class="form-control form-select {{this.status}}" id="{{this._id}}" name="status">
-                                            <option value="Received">Available</option>
-                                            <option value="Preparing">Not Available</option>
+                                        <select class="form-control form-select updateStatusForm {{this.status}}" id="{{this._id}}-statusSelect" name="status">
+                                            <option value="Available">Available</option>
+                                            <option value="Not-Available">Not Available</option>
                                         </select>
                                     </form>
                                 </td>
@@ -267,7 +277,7 @@
                             <option value="PYE BOAT NOODLES">PYE BOAT NOODLES</option>
                             <option value="PYE DRY NOODLES">PYE DRY NOODLES</option>
                             <option value="J SNACKS">J SNACKS</option>
-                            <option value="DESSERT">DESSERT</option>
+                            <option value="DESERT">DESERT</option>
                             <option value="DRINK">DRINK</option>
                         </select>
                         <label for="formFile">Image</label>
@@ -319,14 +329,14 @@
                         <input type="number" class="form-control" id="price_{{this._id}}" name="price"
                             value="{{this.price}}" required>
 
-                        <label for="{{this._id}}">Category</label>
-                        <select id="{{this._id}}" name="category" class="form-control form-select" >
+                        <label for="{{this._id}}-categorySelect">Category</label>
+                        <select id="{{this._id}}-categorySelect" name="category" class="form-control form-select" >
                             <option value="PYE OVER RICE">PYE OVER RICE</option>
                             <option value="PYE SNACKS">PYE SNACKS</option>
                             <option value="PYE BOAT NOODLES">PYE BOAT NOODLES</option>
                             <option value="PYE DRY NOODLES">PYE DRY NOODLES</option>
                             <option value="J SNACKS">J SNACKS</option>
-                            <option value="DESSERT">DESSERT</option>
+                            <option value="DESERT">DESERT</option>
                             <option value="DRINK">DRINK</option>
                         </select>
 
@@ -406,9 +416,9 @@
         dropdowns.forEach(function (dropdown) {
             if (dropdown.tagName === 'SELECT') {
 
-                var orderId = dropdown.id.split('+')[0];
+                var orderId = dropdown.id.split('-')[0];
 
-                if(orderId !== "category"){
+                if(orderId !== "category" && orderId !== "status"){
                     var selectedValue = document.getElementById(`${orderId}-status`).value;
                     var selectedValue1 = document.getElementById(`${orderId}-statusCategory`).value;
 
@@ -425,6 +435,13 @@
                
             }
         });
+        document.querySelectorAll(".updateStatusForm").forEach(function(select) {
+                select.addEventListener("change", function() {
+                    var form = select.closest("form");
+                    form.submit();
+                });
+        });
+
     </script>
     <script>
         // Handle form submission for each product form

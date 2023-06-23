@@ -121,7 +121,6 @@ router.get("/delete-product/:id", isAdmin, function (req, res) {
 });
 
 router.post("/add-product/", isAdmin, function (req, res) {
-  console.log(req.body);
   let sampleFiles = req.files.sampleFile;
 
   if (!Array.isArray(sampleFiles)) {
@@ -149,8 +148,6 @@ router.post("/add-product/", isAdmin, function (req, res) {
     };
   });
 
-  console.log(transformedChoices);
-
   let product = new Product({
     imagePath: filePaths,
     title: req.body.title,
@@ -165,6 +162,26 @@ router.post("/add-product/", isAdmin, function (req, res) {
       return res.status(500).send({ error: "Error saving product" });
     }
     res.redirect("/admin/products");
+  });
+});
+
+router.post("/product-status", isAdmin, function (req, res, next) {
+  Product.findOne({ _id: req.body._id }, function (err, product) {
+    if (err) {
+      return res.status(500).send({ error: "Error updating product status" });
+    }
+    if (!product) {
+      return res.status(404).send({ error: "Product not found" });
+    }
+
+    product.status = req.body.status;
+
+    product.save(function (err) {
+      if (err) {
+        return res.status(500).send({ error: "Error updating product status" });
+      }
+      res.redirect("/admin/products");
+    });
   });
 });
 

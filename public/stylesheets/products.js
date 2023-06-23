@@ -54,3 +54,19 @@ buttons.forEach((button) => {
     calculateTotalPrice(modal);
   });
 });
+
+var addBtns = document.querySelectorAll(".add-button");
+addBtns.forEach((button) => {
+  var modalId = button.getAttribute('data-bs-target').replace('#', '');
+  var statusInput = document.getElementById("status-" + modalId);
+  console.log(statusInput)
+  
+  if (statusInput.value === "Not-Available") {
+    button.disabled = true;
+    button.textContent = "Not Available"
+    button.style.backgroundColor = "gray";
+
+  } else {
+    button.disabled = false;
+  }
+});

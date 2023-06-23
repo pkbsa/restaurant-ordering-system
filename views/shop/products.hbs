@@ -54,8 +54,8 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
-                                    <button class="form-control" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
-
+                                    <input type="hidden" id="status-{{this._id}}" value="{{this.status}}">
+                                    <button class="form-control  add-button" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
                                 </div>
                             </div>
                         </div>
@@ -116,8 +116,8 @@
         <div class="container">
             <h2>PYE OVER RICE</h2>
             <div class="row">
-                {{#each rice}}
-                 <div class="col-6 col-sm-6">
+               {{#each rice}}
+                <div class="col-6 col-sm-6">
                     <div class="card mb-3" style="max-width: 540px;">
                         <div class="row g-0">
                             <div class="col-md-5">
@@ -127,7 +127,8 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{this.title}}</h5>
                                     <p class="card-text">{{this.description}}</p>
-                                    <button class="form-control" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
+                                    <input type="hidden" id="status-{{this._id}}" value="{{this.status}}">
+                                    <button class="form-control  add-button" data-bs-toggle="modal" data-bs-target="#{{this._id}}">+${{this.price}}</button>
                                 </div>
                             </div>
                         </div>
