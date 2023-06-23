@@ -171,9 +171,12 @@
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Orders</h1>
+                    <h1 class="h2">Products</h1>
+                    
                     <div class="btn-toolbar mb-2 mb-md-0">
+                        
                         <div class="btn-group me-2">
+                            
                             <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
                             <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
                         </div>
@@ -183,6 +186,7 @@
                         </button>
                     </div>
                 </div>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createProductModal">Add New Products</button>
 
                 <div class="table-responsive">
                     <table class="display" id="myTable">
@@ -193,6 +197,7 @@
                                 <th scope="col">Total</th>
                                 <th scope="col">Category</th>
                                 <th scope="col">Status</th>
+                                <th scope="col"></th>
                                 <th scope="col"></th>
                             </tr>
                         </thead>
@@ -212,7 +217,7 @@
                                     <form>
                                         <input type="hidden" value="{{this.category}}" id="{{this._id}}-statusCategory">
                                         <input type="hidden" value="{{this.status}}" id="{{this._id}}-status">
-                                        <select class="form-control {{this.status}}" id="{{this._id}}" name="status">
+                                        <select class="form-control form-select {{this.status}}" id="{{this._id}}" name="status">
                                             <option value="Received">Available</option>
                                             <option value="Preparing">Not Available</option>
                                         </select>
@@ -220,13 +225,15 @@
                                 </td>
 
                                 <td><a href="#" data-bs-toggle="modal" data-bs-target="#editProductModal_{{this._id}}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                            fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                                            <path
-                                                d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16">
+  <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+</svg>
+                                    </a>
+                                </td>
+                                  <td><a href="#" data-bs-toggle="modal" data-bs-target="#deleteProductModal_{{this._id}}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16" style="color:red">
+  <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5ZM11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H2.506a.58.58 0 0 0-.01 0H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1h-.995a.59.59 0 0 0-.01 0H11Zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5h9.916Zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47ZM8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5Z"/>
+</svg>
                                     </a>
                                 </td>
                             </tr>
@@ -237,6 +244,55 @@
             </main>
         </div>
     </div>
+    {{!-- Create Product --}}
+    <div class="modal fade" id="createProductModal" tabindex="-1" aria-labelledby="createProductModalLabel" aria-hidden="true">
+        <form id="createProductForm" method="post" action="/admin/add-product/" enctype="multipart/form-data">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="createProductModalLabel">Create Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <label for="title" class="form-label">Title:</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                        <label for="description" class="form-label">Description:</label>
+                        <textarea class="form-control" id="description" name="description" required></textarea>
+                        <label for="price" class="form-label">Price:</label>
+                        <input type="number" class="form-control" id="price" name="price" required>
+                        <label for="category">Category</label>
+                        <select name="category" class="form-control form-select" id="category" aria-label="Default select example">
+                            <option value="PYE OVER RICE">PYE OVER RICE</option>
+                            <option value="PYE SNACKS">PYE SNACKS</option>
+                            <option value="PYE BOAT NOODLES">PYE BOAT NOODLES</option>
+                            <option value="PYE DRY NOODLES">PYE DRY NOODLES</option>
+                            <option value="J SNACKS">J SNACKS</option>
+                            <option value="DESSERT">DESSERT</option>
+                            <option value="DRINK">DRINK</option>
+                        </select>
+                        <label for="formFile">Image</label>
+                        <input class="form-control" type="file" id="formFile" name="sampleFile" accept="image/*" required>
+                        <label for="status">Status</label>
+                        <select name="status" class="form-control form-select" id="status" aria-label="Default select example">
+                            <option value="Available">Available</option>
+                            <option value="Not-Available">Not Available</option>
+                        </select>
+                        <button class="btn btn-primary mt-3"type="button" id="addNewAdditionalChoiceBtn" onclick="addNewAdditionalChoice()">Add Additional Choice</button><br>
+                        <div class="card mt-3">
+                            <div id="additionalChoicesContainer" class="card-body">
+                        </div>
+                    </div>               
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" form="createProductForm">Save</button>
+                </div>
+            </div>
+        </div>
+        </form>
+    </div>
+
+    {{!-- End Create Product --}}
 
     {{#each products}}
     <!-- Modal -->
@@ -263,8 +319,8 @@
                         <input type="number" class="form-control" id="price_{{this._id}}" name="price"
                             value="{{this.price}}" required>
 
-                        <label for="category_{{this._id}}">Category</label>
-                        <select id="{{this._id}}" name="category" class="form-control" id="category_{{this._id}}">
+                        <label for="{{this._id}}">Category</label>
+                        <select id="{{this._id}}" name="category" class="form-control form-select" >
                             <option value="PYE OVER RICE">PYE OVER RICE</option>
                             <option value="PYE SNACKS">PYE SNACKS</option>
                             <option value="PYE BOAT NOODLES">PYE BOAT NOODLES</option>
@@ -308,6 +364,25 @@
         </div>
     </div>
     <!-- End Modal -->
+     <!-- Modal -->
+    <div class="modal fade" id="deleteProductModal_{{this._id}}" tabindex="-1"
+        aria-labelledby="deleteProductModalLabel_{{this._id}}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Delete  <strong>"{{this.title}}"</strong></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    <p>Are you sure that you want to delete <strong>"{{this.title}}"</strong> </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <a href="/admin/delete-product/{{this._id}}"><button type="submit" class="btn btn-danger">Delete</button></a>
+                    </div>
+                </div>
+            </div>
+    </div>
     {{/each}}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
@@ -333,18 +408,21 @@
 
                 var orderId = dropdown.id.split('+')[0];
 
-                var selectedValue = document.getElementById(`${orderId}-status`).value;
-                var selectedValue1 = document.getElementById(`${orderId}-statusCategory`).value;
+                if(orderId !== "category"){
+                    var selectedValue = document.getElementById(`${orderId}-status`).value;
+                    var selectedValue1 = document.getElementById(`${orderId}-statusCategory`).value;
 
 
-                var options = dropdown.options;
+                    var options = dropdown.options;
 
-                for (var i = 0; i < options.length; i++) {
-                    if ((options[i].value === selectedValue) || (options[i].value === selectedValue1)) {
-                        options[i].selected = true;
-                        break;
+                    for (var i = 0; i < options.length; i++) {
+                        if ((options[i].value === selectedValue) || (options[i].value === selectedValue1)) {
+                            options[i].selected = true;
+                            break;
+                        }
                     }
                 }
+               
             }
         });
     </script>
@@ -364,6 +442,7 @@
                 var choiceContainers = additionalChoiceContainers[i].getElementsByClassName("choice-container");
                 var choices = [];
                 var prices = [];
+
                 for (var j = 0; j < choiceContainers.length; j++) {
                     var choiceNameInput = choiceContainers[j].querySelector("input[type='text']");
                     var choicePriceInput = choiceContainers[j].querySelector("input[type='number']");
@@ -391,7 +470,6 @@
             document.getElementById("productForm_{{this._id}}").submit();
         });
         {{/each}}
-            // Function to add a new additional choice section
             // Function to add a new additional choice section
             function addAdditionalChoice(productId) {
                 var container = document.getElementById("additionalChoicesContainer_" + productId);
@@ -452,6 +530,125 @@
                 additionalChoiceContainer.appendChild(choiceContainer);
             }
     </script>
+     <script>
+    // Function to add a new additional choice section
+    function addNewAdditionalChoice() {
+      var container = document.getElementById("additionalChoicesContainer");
+
+      var additionalChoiceContainer = document.createElement("div");
+      additionalChoiceContainer.className = "additional-choice-container-create";
+
+      var additionalChoiceTitleInput = document.createElement("input");
+      additionalChoiceTitleInput.type = "text";
+      additionalChoiceTitleInput.className =  "form-control mb-2 Additional-Title choice-title";
+      additionalChoiceTitleInput.placeholder = "Additional Choice Title";
+      additionalChoiceTitleInput.required = true;
+
+      var addChoiceBtn = document.createElement("button");
+      addChoiceBtn.type = "button";
+      addChoiceBtn.className = "btn btn-secondary mb-2"
+      addChoiceBtn.textContent = "Add Choice";
+      addChoiceBtn.onclick = function() {
+        addChoiceToAdditionalChoice(additionalChoiceContainer);
+      };
+
+      var removeAdditionalChoiceBtn = document.createElement("button");
+      removeAdditionalChoiceBtn.type = "button";
+      removeAdditionalChoiceBtn.className = "btn btn-danger remove-btn mb-2"
+      removeAdditionalChoiceBtn.textContent = "Remove";
+      removeAdditionalChoiceBtn.onclick = function() {
+        additionalChoiceContainer.remove();
+      };
+
+      additionalChoiceContainer.appendChild(additionalChoiceTitleInput);
+      additionalChoiceContainer.appendChild(addChoiceBtn);
+      additionalChoiceContainer.appendChild(removeAdditionalChoiceBtn);
+
+      container.appendChild(additionalChoiceContainer);
+
+      // Add an initial choice for the new additional choice section
+      addChoiceToAdditionalChoice(additionalChoiceContainer);
+      var hrElement = document.createElement('hr');
+                container.appendChild(hrElement)
+    }
+
+    // Function to add a new choice input field within an additional choice
+    function addChoiceToAdditionalChoice(additionalChoiceContainer) {
+      var choiceContainer = document.createElement("div");
+      choiceContainer.className = "choice-container";
+
+      var choiceNameInput = document.createElement("input");
+      choiceNameInput.type = "text";
+      choiceNameInput.placeholder = "Choice Name";
+      choiceNameInput.className = "form-control mb-2";
+      choiceNameInput.required = true;
+
+      var choicePriceInput = document.createElement("input");
+      choicePriceInput.type = "number";
+      choicePriceInput.placeholder = "Choice Price";
+      choicePriceInput.className = "form-control mb-2";
+      choicePriceInput.required = true;
+
+      var removeChoiceBtn = document.createElement("button");
+      removeChoiceBtn.type = "button";
+      removeChoiceBtn.textContent = "Remove";
+      removeChoiceBtn.className = "btn btn-danger mb-2";
+      removeChoiceBtn.onclick = function() {
+        choiceContainer.remove();
+      };
+
+      choiceContainer.appendChild(choiceNameInput);
+      choiceContainer.appendChild(choicePriceInput);
+      choiceContainer.appendChild(removeChoiceBtn);
+
+      additionalChoiceContainer.appendChild(choiceContainer);
+    }
+
+    document.getElementById("createProductForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        var title = document.getElementById("title").value;
+        var description = document.getElementById("description").value;
+        var additionalChoices = [];
+
+        var additionalChoiceContainers = document.getElementsByClassName("additional-choice-container-create");
+        for (var i = 0; i < additionalChoiceContainers.length; i++) {
+            var additionalChoiceTitleInput = additionalChoiceContainers[i].querySelector("input[type='text']");
+            var choiceContainers = additionalChoiceContainers[i].getElementsByClassName("choice-container");
+            var choices = [];
+            var prices = [];
+
+            for (var j = 0; j < choiceContainers.length; j++) {
+            var choiceNameInput = choiceContainers[j].querySelector("input[type='text']");
+            var choicePriceInput = choiceContainers[j].querySelector("input[type='number']");
+
+            choices.push(choiceNameInput.value);
+            prices.push(parseFloat(choicePriceInput.value));
+            }
+
+            var additionalChoice = {
+            title: additionalChoiceTitleInput.value,
+            choices: choices,
+            prices: prices
+            };
+
+            additionalChoices.push(additionalChoice);
+        }
+
+        // Create a hidden input field to hold the additionalChoices data
+        var additionalChoicesInput = document.createElement("input");
+        additionalChoicesInput.type = "hidden";
+        additionalChoicesInput.name = "additionalChoices";
+        additionalChoicesInput.value = JSON.stringify(additionalChoices);
+
+        // Append the hidden input field to the form
+        document.getElementById("createProductForm").appendChild(additionalChoicesInput);
+
+        // Submit the form
+        document.getElementById("createProductForm").submit();
+    });
+
+  </script>
 </body>
 
 </html>

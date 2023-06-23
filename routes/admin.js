@@ -110,6 +110,64 @@ router.post("/edit-products", isAdmin, function (req, res, next) {
   });
 });
 
+router.get("/delete-product/:id", isAdmin, function (req, res) {
+  var productId = req.params.id;
+  Product.deleteOne({ _id: productId }, function (err) {
+    if (err) {
+      return res.status(500).send({ error: "Error deleting product" });
+    }
+    res.redirect("/admin/products");
+  });
+});
+
+router.post("/add-product/", isAdmin, function (req, res) {
+  console.log(req.body);
+  let sampleFiles = req.files.sampleFile;
+
+  if (!Array.isArray(sampleFiles)) {
+    sampleFiles = [sampleFiles];
+  }
+
+  let filePaths = [];
+  sampleFiles.forEach(function (sampleFile) {
+    let uploadFilename = "/products/" + sampleFile.name;
+    //console.log(uploadFilename)
+    let uploadFile = "./public/products/" + sampleFile.name;
+    filePaths.push(uploadFilename);
+    sampleFile.mv(uploadFile);
+  });
+
+  var additionalChoice = req.body.additionalChoices;
+
+  var additionalChoiceArray = JSON.parse(additionalChoice);
+
+  var transformedChoices = additionalChoiceArray.map(function (item, index) {
+    return {
+      title: item.title,
+      choices: item.choices,
+      prices: item.prices,
+    };
+  });
+
+  console.log(transformedChoices);
+
+  let product = new Product({
+    imagePath: filePaths,
+    title: req.body.title,
+    description: req.body.description,
+    price: req.body.price,
+    category: req.body.category,
+    status: req.body.status,
+    additionalChoices: transformedChoices,
+  });
+  product.save(function (err) {
+    if (err) {
+      return res.status(500).send({ error: "Error saving product" });
+    }
+    res.redirect("/admin/products");
+  });
+});
+
 router.get("/users", isAdmin, function (req, res, next) {
   User.find({}, function (err, users) {
     if (err) {
@@ -139,8 +197,17 @@ router.post("/admin-status", isAdmin, function (req, res, next) {
   });
 });
 
+router.get("/delete-user/:id", isAdmin, function (req, res) {
+  var userId = req.params.id;
+  User.deleteOne({ _id: userId }, function (err) {
+    if (err) {
+      return res.status(500).send({ error: "Error deleting users" });
+    }
+    res.redirect("/admin/users");
+  });
+});
+
 router.post("/order-edit", isAdmin, function (req, res, next) {
-  console.log(req.body);
   Order.findOne({ _id: req.body._id }, function (err, order) {
     if (err) {
       return res.status(500).send({ error: "Error updating order status" });
@@ -168,57 +235,6 @@ router.get("/delete-order/:id", isAdmin, function (req, res) {
   });
 });
 
-router.get("/delete-product/:id", isAdmin, function (req, res) {
-  var productId = req.params.id;
-  Product.deleteOne({ _id: productId }, function (err) {
-    if (err) {
-      return res.status(500).send({ error: "Error deleting product" });
-    }
-    res.redirect("/admin/products");
-  });
-});
-
-router.get("/delete-user/:id", isAdmin, function (req, res) {
-  var userId = req.params.id;
-  User.deleteOne({ _id: userId }, function (err) {
-    if (err) {
-      return res.status(500).send({ error: "Error deleting users" });
-    }
-    res.redirect("/admin/users");
-  });
-});
-
-router.post("/add-product/", isAdmin, function (req, res) {
-  console.log(req.body);
-  let sampleFiles = req.files.sampleFile;
-
-  if (!Array.isArray(sampleFiles)) {
-    sampleFiles = [sampleFiles];
-  }
-
-  let filePaths = [];
-  sampleFiles.forEach(function (sampleFile) {
-    let uploadFilename = "/products/" + sampleFile.name;
-    //console.log(uploadFilename)
-    let uploadFile = "./public/products/" + sampleFile.name;
-    filePaths.push(uploadFilename);
-    sampleFile.mv(uploadFile);
-  });
-
-  let product = new Product({
-    title: req.body.title,
-    description: req.body.description,
-    price: req.body.price,
-    status: req.body.status,
-    imagePath: filePaths,
-  });
-  product.save(function (err) {
-    if (err) {
-      return res.status(500).send({ error: "Error saving product" });
-    }
-    res.redirect("/admin/products");
-  });
-});
 
 module.exports = router;
 
