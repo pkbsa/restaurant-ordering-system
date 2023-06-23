@@ -8,7 +8,6 @@
         </ul>
         <ul>
           {{#if login }}
-
             <div class="delivery">
                 <div class="textoverflow">
                     <p>Delivery to : {{user.address}} </p>
@@ -37,7 +36,7 @@
             {{/if}}
         </ul>
     </div>
-
+    <input type="hidden" id="storeStatus" value="{{store.status}}">
     <div class="snack">
         <div class="container">
             <h2>JAE SNACKS</h2>

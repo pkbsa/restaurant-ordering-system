@@ -14,3 +14,22 @@ var myLineChart = new Chart(ctxD, {
     responsive: true
   }
 });
+
+const storeStatusInput = document.getElementById("oldStatus");
+const newStatus = document.getElementById("newStatus");
+
+const checkbox = document.getElementById("stackedCheck1");
+
+if (storeStatusInput.value === "open") {
+  checkbox.checked = true; // Check the checkbox
+  newStatus.value = "closed"
+} else {
+  checkbox.checked = false; // Uncheck the checkbox
+  newStatus.value = "open"
+}
+
+const form = document.getElementById("storeStatusForm");
+
+$(checkbox).on("change.bootstrapToggle", function() {
+    form.submit(); // Submit the form
+});

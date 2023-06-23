@@ -5,41 +5,79 @@ var Cart = require("../models/cart");
 var Product = require("../models/product");
 var Order = require("../models/order");
 var User = require("../models/user");
+const Store = require('../models/store');
 
-router.get("/", isAdmin, function (_, res) {
+router.get('/', isAdmin, function(_, res) {
   Promise.all([
     Order.countDocuments({}),
     User.countDocuments({}),
-    Product.countDocuments({}),
+    Product.countDocuments({})
   ])
-    .then(function (results) {
+    .then(function(results) {
       Order.find(
-        { paymentStatus: { $ne: "Awaiting Payment" } },
+        { paymentStatus: { $ne: 'Awaiting Payment' } },
         null,
         { sort: { _id: -1 }, limit: 5 },
-        function (err, orders) {
+        function(err, orders) {
           if (err) {
-            return res.status(500).send("Error!");
+            return res.status(500).send('Error!');
           }
 
           var cart;
-          orders.forEach(function (order) {
+          orders.forEach(function(order) {
             cart = new Cart(order.cart);
             order.items = cart.generateArray();
           });
-          res.render("admin/dashboard", {
-            orders: orders,
-            ordersLength: results[0],
-            usersLength: results[1],
-            productsLength: results[2],
-            isadmin: 1,
+
+          // Fetch the Store data from the database
+          Store.findOne({}, function(err, store) {
+            if (err) {
+              console.log('Error fetching store data:', err);
+              res.render('admin/dashboard', {
+                orders: orders,
+                ordersLength: results[0],
+                usersLength: results[1],
+                productsLength: results[2],
+                isadmin: 1,
+                store: null // Pass null if store data is not found
+              });
+            } else {
+              res.render('admin/dashboard', {
+                orders: orders,
+                ordersLength: results[0],
+                usersLength: results[1],
+                productsLength: results[2],
+                isadmin: 1,
+                store: store // Pass the store data to the view
+              });
+            }
           });
         }
       );
     })
-    .catch(function (error) {
-      res.status(500).send({ error: "Error getting collection length" });
+    .catch(function(error) {
+      res.status(500).send({ error: 'Error getting collection length' });
     });
+});
+
+router.post("/store-status", isAdmin, function (req, res, next) {
+  Store.findOne({}, function (err, store) {
+    if (err) {
+      return res.status(500).send({ error: "Error updating store status" });
+    }
+    if (!store) {
+      return res.status(404).send({ error: "Store not found" });
+    }
+
+    store.status = req.body.newStatus;
+
+    store.save(function (err) {
+      if (err) {
+        return res.status(500).send({ error: "Error updating store status" });
+      }
+      res.redirect("/admin");
+    });
+  });
 });
 
 router.get("/orders", isAdmin, function (req, res, next) {

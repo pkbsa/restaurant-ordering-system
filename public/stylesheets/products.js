@@ -58,10 +58,11 @@ buttons.forEach((button) => {
 var addBtns = document.querySelectorAll(".add-button");
 addBtns.forEach((button) => {
   var modalId = button.getAttribute('data-bs-target').replace('#', '');
+  var storeStatus = document.getElementById('storeStatus').value;
   var statusInput = document.getElementById("status-" + modalId);
   console.log(statusInput)
   
-  if (statusInput.value === "Not-Available") {
+  if (statusInput.value === "Not-Available" || storeStatus === "closed") {
     button.disabled = true;
     button.textContent = "Not Available"
     button.style.backgroundColor = "gray";

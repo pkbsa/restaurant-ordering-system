@@ -3,6 +3,8 @@ var Cart = require("../models/cart");
 var csrf = require("csurf");
 var Product = require("../models/product");
 var Order = require("../models/order");
+const Store = require('../models/store');
+
 
 const stripe = require("stripe")(
   "sk_test_51MR6MPExAgqOVTCm0kkqWiINL1gFOP2X1V2EJJZEzTrMdrW3tsXodHr1p7jeXWm7K2oeKTiU56xnAwiFFlOVpu8D00JwVPq6vC"
@@ -33,123 +35,210 @@ router.get("/privacy", function (req, res, next) {
   });
 });
 
-router.get("/menu", function (req, res, next) {
-  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-  res.setHeader("Pragma", "no-cache");
-  res.setHeader("Expires", "0");
+router.get('/menu', function(req, res, next) {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
 
   req.session.referringUrl = req.originalUrl;
 
   var cart = new Cart(req.session.cart ? req.session.cart : {});
-  var successMsg = req.flash("success")[0];
-  Product.find(function (err, docs) {
-    var snacks = [];
-    var rice = [];
+  var successMsg = req.flash('success')[0];
 
-    // Categorize the products into separate arrays
-    docs.forEach(function (product) {
-      if (product.category === "PYE SNACKS") {
-        snacks.push(product);
-      } else if (product.category === "PYE OVER RICE") {
-        rice.push(product);
-      }
-    });
+  // Fetch the Store data from the database
+  Store.findOne({}, function(err, store) {
+    if (err) {
+      console.log('Error fetching store data:', err);
+      res.render('shop/products', {
+        title: 'Shopping Cart',
+        snacks: [],
+        rice: [],
+        successMsg: successMsg || null,
+        noMessages: !successMsg,
+        user: req.user,
+        totalPrice: cart.totalPrice
+      });
+    } else {
+      Product.find(function(err, docs) {
+        var snacks = [];
+        var rice = [];
 
-    res.render("shop/products", {
-      title: "Shopping Cart",
-      snacks: snacks,
-      rice: rice,
-      successMsg: successMsg || null,
-      noMessages: !successMsg,
-      user: req.user,
-      totalPrice: cart.totalPrice,
-    });
+        docs.forEach(function(product) {
+          if (product.category === 'PYE SNACKS') {
+            snacks.push(product);
+          } else if (product.category === 'PYE OVER RICE') {
+            rice.push(product);
+          }
+        });
+
+        if (store.status === 'closed'){
+          req.session.cart = null;
+        }
+
+        res.render('shop/products', {
+          title: 'Shopping Cart',
+          snacks: snacks,
+          rice: rice,
+          successMsg: successMsg || null,
+          noMessages: !successMsg,
+          user: req.user,
+          totalPrice: cart.totalPrice,
+          store: store // Pass the store data to the view
+        });
+      });
+    }
   });
 });
 
-router.get("/menu/noodles", function (req, res, next) {
+router.get('/menu/noodles', function(req, res, next) {
   req.session.referringUrl = req.originalUrl;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
-  var successMsg = req.flash("success")[0];
-  Product.find(function (err, docs) {
-    var boat = [];
-    var dry = [];
+  var successMsg = req.flash('success')[0];
 
-    // Categorize the products into separate arrays
-    docs.forEach(function (product) {
-      if (product.category === "PYE BOAT NOODLES") {
-        boat.push(product);
-      } else if (product.category === "PYE DRY NOODLES") {
-        dry.push(product);
-      }
-    });
+  // Fetch the Store data from the database
+  Store.findOne({}, function(err, store) {
+    if (err) {
+      console.log('Error fetching store data:', err);
+      res.render('shop/products-noodles', {
+        title: 'Shopping Cart',
+        boat: [],
+        dry: [],
+        successMsg: successMsg || null,
+        noMessages: !successMsg,
+        totalPrice: cart.totalPrice,
+        user: req.user
+      });
+    } else {
+      Product.find(function(err, docs) {
+        var boat = [];
+        var dry = [];
 
-    res.render("shop/products-noodles", {
-      title: "Shopping Cart",
-      boat: boat,
-      dry: dry,
-      successMsg: successMsg || null,
-      noMessages: !successMsg,
-      totalPrice: cart.totalPrice,
-      user: req.user,
-    });
+        // Categorize the products into separate arrays
+        docs.forEach(function(product) {
+          if (product.category === 'PYE BOAT NOODLES') {
+            boat.push(product);
+          } else if (product.category === 'PYE DRY NOODLES') {
+            dry.push(product);
+          }
+        });
+
+        if (store.status === 'closed'){
+          req.session.cart = null;
+        }
+
+        res.render('shop/products-noodles', {
+          title: 'Shopping Cart',
+          boat: boat,
+          dry: dry,
+          successMsg: successMsg || null,
+          noMessages: !successMsg,
+          totalPrice: cart.totalPrice,
+          user: req.user,
+          store: store // Pass the store data to the view
+        });
+      });
+    }
   });
 });
-router.get("/menu/vegetarian", function (req, res, next) {
+router.get('/menu/vegetarian', function(req, res, next) {
   req.session.referringUrl = req.originalUrl;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
-  var successMsg = req.flash("success")[0];
-  Product.find(function (err, docs) {
-    var snack = [];
-    var noodle = [];
+  var successMsg = req.flash('success')[0];
 
-    // Categorize the products into separate arrays
-    docs.forEach(function (product) {
-      if (product.category === "J SNACKS") {
-        snack.push(product);
-      } else if (product.category === "JAE NOODLES") {
-        noodle.push(product);
-      }
-    });
+  // Fetch the Store data from the database
+  Store.findOne({}, function(err, store) {
+    if (err) {
+      console.log('Error fetching store data:', err);
+      res.render('shop/products-vegetarian', {
+        title: 'Shopping Cart',
+        snack: [],
+        noodle: [],
+        successMsg: successMsg || null,
+        noMessages: !successMsg,
+        totalPrice: cart.totalPrice,
+        user: req.user
+      });
+    } else {
+      Product.find(function(err, docs) {
+        var snack = [];
+        var noodle = [];
 
-    res.render("shop/products-vegetarian", {
-      title: "Shopping Cart",
-      snack: snack,
-      noodle: noodle,
-      successMsg: successMsg || null,
-      noMessages: !successMsg,
-      totalPrice: cart.totalPrice,
-      user: req.user,
-    });
+        // Categorize the products into separate arrays
+        docs.forEach(function(product) {
+          if (product.category === 'J SNACKS') {
+            snack.push(product);
+          } else if (product.category === 'JAE NOODLES') {
+            noodle.push(product);
+          }
+        });
+
+        if (store.status === 'closed'){
+          req.session.cart = null;
+        }
+
+        res.render('shop/products-vegetarian', {
+          title: 'Shopping Cart',
+          snack: snack,
+          noodle: noodle,
+          successMsg: successMsg || null,
+          noMessages: !successMsg,
+          totalPrice: cart.totalPrice,
+          user: req.user,
+          store: store // Pass the store data to the view
+        });
+      });
+    }
   });
 });
 
-router.get("/menu/drinks", function (req, res, next) {
+router.get('/menu/drinks', function(req, res, next) {
   req.session.referringUrl = req.originalUrl;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
-  var successMsg = req.flash("success")[0];
-  Product.find(function (err, docs) {
-    var drink = [];
-    var desert = [];
+  var successMsg = req.flash('success')[0];
 
-    // Categorize the products into separate arrays
-    docs.forEach(function (product) {
-      if (product.category === "DRINK") {
-        drink.push(product);
-      } else if (product.category === "DESERT") {
-        desert.push(product);
-      }
-    });
+  // Fetch the Store data from the database
+  Store.findOne({}, function(err, store) {
+    if (err) {
+      console.log('Error fetching store data:', err);
+      res.render('shop/products-drinks', {
+        title: 'Shopping Cart',
+        drink: [],
+        desert: [],
+        successMsg: successMsg || null,
+        noMessages: !successMsg,
+        totalPrice: cart.totalPrice,
+        user: req.user
+      });
+    } else {
+      Product.find(function(err, docs) {
+        var drink = [];
+        var desert = [];
 
-    res.render("shop/products-drinks", {
-      title: "Shopping Cart",
-      drink: drink,
-      desert: desert,
-      successMsg: successMsg || null,
-      noMessages: !successMsg,
-      totalPrice: cart.totalPrice,
-      user: req.user,
-    });
+        // Categorize the products into separate arrays
+        docs.forEach(function(product) {
+          if (product.category === 'DRINK') {
+            drink.push(product);
+          } else if (product.category === 'DESERT') {
+            desert.push(product);
+          }
+        });
+
+        if (store.status === 'closed'){
+          req.session.cart = null;
+        }
+
+        res.render('shop/products-drinks', {
+          title: 'Shopping Cart',
+          drink: drink,
+          desert: desert,
+          successMsg: successMsg || null,
+          noMessages: !successMsg,
+          totalPrice: cart.totalPrice,
+          user: req.user,
+          store: store // Pass the store data to the view
+        });
+      });
+    }
   });
 });
 
