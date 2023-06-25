@@ -13,16 +13,28 @@ var router = express.Router();
 
 var csrfProtection = csrf();
 
+let eventHandlerRegistered = false;
+
+
 router.use(function(req, res, next) {
   const io = req.app.locals.io;
-  
-  io.on('connection', function(socket) {
-    console.log('A user connected');
-    socket.on('event', function(data) {
-      console.log('Received event:', data);
+
+  if (!eventHandlerRegistered) {
+    io.on('connection', function(socket) {
+      console.log('A user connected');
+
+      socket.on('event', function(data) {
+        console.log('Received event:', data);
+      });
+
+      socket.on('disconnect', function() {
+        console.log('A user disconnected');
+      });
     });
-    socket.emit('event', { message: 'Hello client!' });
-  });
+
+    eventHandlerRegistered = true;
+  }
+
   next();
 });
 
@@ -258,7 +270,10 @@ router.get('/menu/drinks', function(req, res, next) {
 router.get("/order/:id", function (req, res, next) {
   const io = req.app.locals.io;
   io.emit('refresh', 'Refreshing user in /menu');
-  
+
+      const socket = req.socket;
+  socket.emit('disconnect');
+
   Order.findOne({ _id: req.params.id }, function (err, order) {
     if (err) {
       return res.redirect("/");

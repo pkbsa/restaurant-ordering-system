@@ -250,6 +250,7 @@ p.formcheck{
 }
 
 .page-profile .form-group {
+    width: 100%;
     text-align: left;
     align-items: center;
     justify-content: center;
@@ -821,6 +822,24 @@ p.formcheck{
 .deleteacc .modal-footer{
     justify-content: center;
 }
+@media (max-width: 991px) {
+    .page-products .foodnav {
+        flex-direction: column;
+    }
+
+    .page-products .foodnav ul {
+        flex-direction: row;
+        margin: 0.5em 0 0.5em 0;
+
+    }
+
+    .page-products .foodnav button {
+        width: 100%;
+    }
+
+   
+    
+}
 
 @media (max-width: 780px) {
 
@@ -877,18 +896,12 @@ p.formcheck{
         margin-top: 1em;
         margin-bottom: 1em;
     }
-
-    .page-products .foodnav {
-        flex-direction: column;
-    }
-
     .page-products .foodnav ul {
         flex-direction: column;
         gap: 1em;
         margin: 0.5em 0 0.5em 0;
 
     }
-
     .page-products .foodnav button {
         width: 100%;
     }
