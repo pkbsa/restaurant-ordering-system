@@ -1,13 +1,14 @@
 var express = require("express");
 var router = express.Router();
-var Cart = require("../models/cart");
 
+var Cart = require("../models/cart");
 var Product = require("../models/product");
 var Order = require("../models/order");
 var User = require("../models/user");
 const Store = require('../models/store');
 
 router.get('/', isAdmin, function(_, res) {
+  
   Promise.all([
     Order.countDocuments({}),
     User.countDocuments({}),
@@ -89,15 +90,31 @@ router.get("/orders", isAdmin, function (req, res, next) {
       if (err) {
         return res.write("Error!");
       }
+
+      var notconfirmedOrder = orders.filter(function (order) {
+        return order.orderStatus === "Not-Confirmed";
+      });
+
+      var confirmedOrder = orders.filter(function (order) {
+        return order.orderStatus === "Confirmed";
+      });
+
       var cart;
       orders.forEach(function (order) {
         cart = new Cart(order.cart);
         order.items = cart.generateArray();
       });
-      res.render("admin/orders", { orders: orders, isadmin: 1 });
+
+      res.render("admin/orders", {
+        orders: orders,
+        notconfirmedOrder: notconfirmedOrder,
+        confirmedOrder: confirmedOrder,
+        isadmin: 1
+      });
     }
   );
 });
+
 
 router.get("/products", isAdmin, function (req, res, next) {
   Product.find({}, function (err, products) {

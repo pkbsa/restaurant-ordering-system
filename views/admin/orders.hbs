@@ -93,7 +93,9 @@
         .table-responsive {
             padding: 1em 0 1em 0;
         }
-
+        #playButton {
+            display: none;
+        }
        
         
     </style>
@@ -177,8 +179,9 @@
                     </ul>
                 </div>
             </nav>
-
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <button id="playButton">Play Audio</button>
+
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Orders</h1>
@@ -197,9 +200,9 @@
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home"
-                            aria-selected="true">Home</button>
+                            aria-selected="true">Not Confirmed</button>
                         <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
-                            type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</button>
+                            type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Confirmed</button>
                         <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
                             type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>
                     </div>
@@ -210,73 +213,61 @@
                             <table class="display" id="myTable">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Order ID</th>
-                                        <th scope="col">Date/Time</th>
-                                        <th scope="col">Customer</th>
                                         <th scope="col">Status</th>
+                                        <th scope="col">Customer</th>
                                         <th scope="col">Items</th>
                                         <th scope="col">Total</th>
-                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {{#each orders}}
-                                    <tr>
-                                        <td>{{this._id}}</td>
-                                        <td>{{this.date}}</td>
-                                        <td>{{this.deliveryName}}</td>
-                                        <td>
-                                            <p style="display:none">{{this.orderStatus}}</p>
-                                            <form>
-                                                <input type="hidden" value="{{this.orderStatus}}"
-                                                    id="{{this._id}}-status">
-                                                <select class="form-control {{this.orderStatus}}" id="{{this._id}}"
-                                                    name="status">
-                                                    <option value="Received">Received</option>
-                                                    <option value="Preparing">Preparing</option>
-                                                    <option value="Out-For-Delivery">Out For Delivery</option>
-                                                    <option value="Completed">Completed</option>
-                                                </select>
-                                            </form>
+                                    {{#each notconfirmedOrder}}
+                                    <tr onclick="window.location.href='/order/{{this._id}}';">
+
+                                         <td>
+                                           <span class="badge rounded-pill text-bg-secondary">{{this.orderStatus}}</span>
+                                        </td>
+                                        <td>{{this.deliveryName}}<br>
+                                        #{{this._id}}<br>
+                                            {{this.date}}
                                         </td>
                                         <td>{{this.cart.totalQty}}</td>
                                         <td>${{this.cart.totalPrice}}</td>
-                                        <td><a href="#">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z" />
-                                                    <path
-                                                        d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z" />
-                                                </svg>
-                                            </a></td>
                                     </tr>
                                     {{/each}}
                                 </tbody>
                             </table>
                         </div>
-
                     </div>
                     <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                         <div class="table-responsive">
                             <table class="display" id="myTable2">
                                 <thead>
                                     <tr>
-                                        <th scope="col">Order ID</th>
-                                        <th scope="col">Date/Time</th>
-                                        <th scope="col">Customer</th>
                                         <th scope="col">Status</th>
+                                        <th scope="col">Customer</th>
                                         <th scope="col">Items</th>
                                         <th scope="col">Total</th>
-                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
-                                <tbody id="receivedOrder">
+                                <tbody>
+                                    {{#each confirmedOrder}}
+                                    <tr onclick="window.location.href='/order/{{this._id}}';">
 
-
+                                         <td>
+                                           <span class="badge rounded-pill text-bg-secondary">{{this.orderStatus}}</span>
+                                        </td>
+                                        <td>{{this.deliveryName}}<br>
+                                        #{{this._id}}<br>
+                                            {{this.date}}
+                                        </td>
+                                        <td>{{this.cart.totalQty}}</td>
+                                        <td>${{this.cart.totalPrice}}</td>
+                                    </tr>
+                                    {{/each}}
                                 </tbody>
                             </table>
                         </div>
+                        
                     </div>
                     <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...
                        
@@ -300,50 +291,20 @@
         $(document).ready(function () {
             $('#myTable').DataTable();
         });
-        $(document).ready(function () {
+         $(document).ready(function () {
             $('#myTable2').DataTable();
         });
+
     </script>
+
+    <script src="/socket.io/socket.io.js"></script>
     <script>
-        // Get the source table and destination table
-        const sourceTable = document.getElementById('myTable');
-
-        // Get the source and destination tbody elements
-        const sourceTbody = sourceTable.getElementsByTagName('tbody')[0];
-        const destinationTbody = document.getElementById('receivedOrder');
-
-        // Get the rows with orderStatus "Order Received"
-        const receivedRows = Array.from(sourceTbody.getElementsByTagName('tr')).filter(row => row.querySelector('p')?.textContent === 'Order Received');
-
-        // Move the received rows to the destination tbody
-        receivedRows.forEach(row => {
-            const newRow = row.cloneNode(true);
-            destinationTbody.appendChild(newRow);
+        const socket = io();
+        socket.on('refresh', function() {
+            window.location.reload();
         });
-
-
-        var dropdowns = document.querySelectorAll('.form-control');
-
-        dropdowns.forEach(function (dropdown) {
-            if (dropdown.tagName === 'SELECT') {
-                var orderId = dropdown.id.split('+')[0];
-
-                var selectedValue = document.getElementById(`${orderId}-status`).value;
-
-                var options = dropdown.options;
-
-                for (var i = 0; i < options.length; i++) {
-                    if (options[i].value === selectedValue) {
-                        options[i].selected = true;
-                        break;
-                    }
-                }
-            }
-        });
-
-
-
     </script>
+
 </body>
 
 </html>

@@ -5,7 +5,6 @@ var Product = require("../models/product");
 var Order = require("../models/order");
 const Store = require('../models/store');
 
-
 const stripe = require("stripe")(
   "sk_test_51MR6MPExAgqOVTCm0kkqWiINL1gFOP2X1V2EJJZEzTrMdrW3tsXodHr1p7jeXWm7K2oeKTiU56xnAwiFFlOVpu8D00JwVPq6vC"
 );
@@ -14,12 +13,26 @@ var router = express.Router();
 
 var csrfProtection = csrf();
 
+router.use(function(req, res, next) {
+  const io = req.app.locals.io;
+  
+  io.on('connection', function(socket) {
+    console.log('A user connected');
+    socket.on('event', function(data) {
+      console.log('Received event:', data);
+    });
+    socket.emit('event', { message: 'Hello client!' });
+  });
+  next();
+});
+
 /* GET home page. */
 router.get("/", function (req, res, next) {
   res.render("shop/index", {
     title: "Pye Boat Noodle",
     user: req.user,
   });
+  
 });
 
 router.get("/terms", function (req, res, next) {
@@ -243,6 +256,9 @@ router.get('/menu/drinks', function(req, res, next) {
 });
 
 router.get("/order/:id", function (req, res, next) {
+  const io = req.app.locals.io;
+  io.emit('refresh', 'Refreshing user in /menu');
+  
   Order.findOne({ _id: req.params.id }, function (err, order) {
     if (err) {
       return res.redirect("/");
@@ -465,9 +481,7 @@ router.post("/create-checkout-session", async (req, res) => {
   });
 });
 
-
-
-
+//stripe listen --forward-to localhost:3000/webhook
 const fulfillOrder = (session) => {
   const paymentId = session.id;
 
@@ -516,7 +530,7 @@ const createOrder = (session, user, cart) => {
     deliveryContact: deliveryContact,
     paymentId: session.id,
     paymentStatus: "Awaiting Payment",
-    orderStatus: "Order Received",
+    orderStatus: "Not-Confirmed",
     date: formattedDate,
   });
   order.save(function (err, result) {});

@@ -17,11 +17,17 @@ const validator = require("express-validator");
 const MongoStore = require("connect-mongo")(session);
 const cors = require("cors");
 
-const routes = require("./routes/index");
+const app = express();
+
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+
+app.locals.io = io;
+
+const indexRoutes = require('./routes/index');
 const userRoutes = require("./routes/user");
 const adminRoutes = require("./routes/admin");
 
-const app = express();
 const { mongodb_url } = require("./config/config");
 
 mongoose.set("strictQuery", true);
@@ -43,6 +49,8 @@ app.engine(
 );
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", ".hbs");
+app.set('socketio', io);
+
 app.use(cors());
 app.use(logger("dev"));
 app.use(
@@ -84,7 +92,7 @@ app.use(function (req, res, next) {
 });
 app.use("/admin", adminRoutes);
 app.use("/user", userRoutes);
-app.use("/", routes);
+app.use('/', indexRoutes);
 
 app.use(function (req, res, next) {
   const err = new Error("Not Found");
@@ -113,7 +121,7 @@ app.use(function (err, req, res, next) {
 const port = normalizePort(process.env.PORT || "3000");
 app.set("port", port);
 
-const server = app.listen(port, function () {
+server.listen(port, function () {
   console.log(`Server started on port ${port}`);
 });
 
