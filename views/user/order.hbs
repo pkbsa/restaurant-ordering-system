@@ -45,6 +45,8 @@
                             <p class="price">Price: ${{this.price}}</p>
                             {{#if this.additionalChoices}}
                                 <p class="price">Option: {{this.additionalChoices}}</p>
+                                {{else}}
+                                <p class="price">Option: None</p>
                             {{/if}}
                              {{#if this.additionalNote}}
                             <p class="price">Notes : {{this.additionalNote}}</p>

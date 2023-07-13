@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.104.2">
+    <title>Dashboard Template · Bootstrap v5.2</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
+    <link href="/stylesheets/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+    <style>
+        .nav-scroller {
+            position: relative;
+            z-index: 2;
+            height: 2.75rem;
+            overflow-y: hidden;
+        }
+
+        .nav-scroller .nav {
+            display: flex;
+            flex-wrap: nowrap;
+            padding-bottom: 1rem;
+            margin-top: -1px;
+            overflow-x: auto;
+            text-align: center;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        p {
+            margin: 0;
+            font-size: 1.3em;
+        }
+
+        body {
+            height: 100vh;
+        }
+
+        .choose-time {
+            height: 3.5em;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .col button {
+            border-radius: 100%;
+            height: 8em;
+            width: 8em;
+            background-color: grey;
+            color: white;
+            border: 0;
+        }
+
+        button span {
+            font-size: 2em;
+        }
+
+        p#items {
+            font-size: 0.8em;
+        }
+
+        .qty-badge {
+            color: rgb(134, 133, 133);
+            background-color: white;
+            border: 1px solid rgb(194, 192, 192);
+        }
+
+        .summary p {
+            font-size: 1.2em;
+        }
+    </style>
+
+    <link href="/stylesheets/dashboard.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#">Pye Boat Noodle</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search"
+            aria-label="Search">
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <a class="nav-link px-3" href="#">Sign out</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3 sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="/admin">
+                                <span data-feather="home" class="align-text-bottom"></span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/orders">
+                                <span data-feather="file" class="align-text-bottom"></span>
+                                Orders
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/products">
+                                <span data-feather="shopping-cart" class="align-text-bottom"></span>
+                                Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/users">
+                                <span data-feather="users" class="align-text-bottom"></span>
+                                Customers
+                            </a>
+                        </li>
+
+                    </ul>
+
+                    <h6
+                        class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted text-uppercase">
+                        <span>Navigation</span>
+                        <a class="link-secondary" href="#" aria-label="Add a new report">
+                            <span data-feather="plus-circle" class="align-text-bottom"></span>
+                        </a>
+                    </h6>
+                    <ul class="nav flex-column mb-2">
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="file-text" class="align-text-bottom"></span>
+                                Menu
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <span data-feather="file-text" class="align-text-bottom"></span>
+                                Profile
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <nav aria-label="breadcrumb" class="mt-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin">Admin</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/orders">Orders</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{order._id}}</li>
+                    </ol>
+                </nav>
+                <a href="/admin/orders" style="color:black"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                        height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z" />
+                    </svg></a>
+                <div class="card px-2 mt-4">
+                    <div class="card-header bg-white">
+                        <div class="row justify-content-between align-items-center">
+                            <div class="col-2 text-center">
+                                <h2>
+                                    <span id="totalItem" class="badge bg-secondary">
+                                        {{order.cart.totalQty}}
+                                    </span>
+                                </h2>
+                                <p id="items">ITEMS</p>
+                            </div>
+                            <div class="col-8 align-items-center">
+                                <p class="text-muted"> <span class="font-weight-bold text-dark">
+                                        {{order.deliveryName}}</span>
+                                </p>
+                                <p class="text-muted"> {{order.deliveryContact}}</p>
+                                <p> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-clock" viewBox="0 0 16 16">
+                                        <path
+                                            d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
+                                        <path
+                                            d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
+                                    </svg> Place: {{order.date}}</p>
+                                <p> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                        class="bi bi-envelope-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z" />
+                                    </svg> {{order.orderStatus}} 
+                                    {{#if order.orderEta}}
+                                    · {{order.orderEta}} Mins
+                                    {{/if}}
+                                </p>
+                            </div>
+                            <div class="col-2 text-end align-self-start">
+                                <span class="badge rounded-pill text-bg-secondary">PICKUP</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        {{#each order.cart.items}}
+                        <div class="row mt-3 align-items-center">
+                            <div class="col-2 text-center">
+                                <h2>
+                                    <span class="badge qty-badge">
+                                        {{this.qty}}
+                                    </span>
+                                </h2>
+                            </div>
+
+                            <div class="col-8 ">
+                                <p><b>{{this.item.title}}</b></p>
+                                {{#if this.additionalChoices}}
+                                <p>{{this.additionalChoices}}</p>
+                                {{/if}}
+                                {{#if this.additionalNote}}
+                                <p>Notes : {{this.additionalNote}}</p>
+                                {{/if}}
+                            </div>
+                            <div class="col-2 text-end">
+                                <h5>
+                                    ${{this.price}}
+                                </h5>
+                            </div>
+                        </div>
+                        {{/each}}
+                        <hr />
+                        <div class="summary">
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-8">
+                                    <p>SUBTOTAL</p>
+                                </div>
+                                <div class="col-2 text-end">
+                                    <p>${{order.cart.totalPrice}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-8">
+                                    <p>TAXES</p>
+                                </div>
+                                <div class="col-2 text-end">
+                                    <p id="tax">{{order.cart.totalPrice}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-2"></div>
+                                <div class="col-8">
+                                    <p>TIPS</p>
+                                </div>
+                                <div class="col-2 text-end">
+                                    <p>${{order.tip}}</p>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <input type="hidden" id="orderEta" value="{{order.orderEta}}">
+                                {{#if order.orderEta}}
+                                
+                                    <button id='cancel-refund'class="form-control btn btn-danger mt-4 choose-time mb-2" data-bs-toggle="modal"
+                                    data-bs-target="#cancelModal">CANCEL & REFUND</button> 
+                                {{else}}
+                                <button class="form-control btn btn-primary mt-4 choose-time mb-2"
+                                    data-bs-toggle="modal" data-bs-target="#exampleModal">CHOOSE TIME</button>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <h3>When wil the order be ready?</h3>
+                    <div class="container text-center">
+                        <div class="row align-items-end mt-3">
+                            <div class="col">
+                                <form action="/admin/order-status" method="POST">
+                                    <input type="hidden" name="_id" value="{{order._id}}">
+                                    <input type="hidden" name="status" value="Confirmed">
+                                    <input type="hidden" name="eta" value="10">
+                                    <button type="submit">
+                                        <span>10</span><br>
+                                        MINS
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="/admin/order-status" method="POST">
+                                    <input type="hidden" name="_id" value="{{order._id}}">
+                                    <input type="hidden" name="status" value="Confirmed">
+                                    <input type="hidden" name="eta" value="15">
+                                    <button type="submit">
+                                        <span>15</span><br>
+                                        MINS
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="/admin/order-status" method="POST">
+                                    <input type="hidden" name="_id" value="{{order._id}}">
+                                    <input type="hidden" name="status" value="Confirmed">
+                                    <input type="hidden" name="eta" value="20">
+                                    <button type="submit">
+                                        <span>20</span><br>
+                                        MINS
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="row align-items-end mt-3">
+                            <div class="col">
+                                <form action="/admin/order-status" method="POST">
+                                    <input type="hidden" name="_id" value="{{order._id}}">
+                                    <input type="hidden" name="status" value="Confirmed">
+                                    <input type="hidden" name="eta" value="30">
+                                    <button type="submit">
+                                        <span>30</span><br>
+                                        MINS
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                 <form action="/admin/order-status" method="POST">
+                                    <input type="hidden" name="_id" value="{{order._id}}">
+                                    <input type="hidden" name="status" value="Confirmed">
+                                    <input type="hidden" name="eta" value="45">
+                                    <button type="submit">
+                                        <span>45</span><br>
+                                        MINS
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="col">
+                                <form action="/admin/order-status" method="POST">
+                                    <input type="hidden" name="_id" value="{{order._id}}">
+                                    <input type="hidden" name="status" value="Confirmed">
+                                    <input type="hidden" name="eta" value="50">
+                                    <button type="submit">
+                                        <span>50</span><br>
+                                        MINS
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <input type="text" class="form-control mt-4 pt-3 pb-3" placeholder="Or specify time in minutes">
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="cancelModalLabel">CANCEL ORDER</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>
+        Do you sure that you want to<br> <b>CANCEL</b> and <b>REFUND</b> the order
+        </p>
+        <p>
+            <br>
+            <b>THIS ACTION CANNOT BE UNDO**</b>
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <form action="/refund-order" method="POST">
+            <input type="hidden" name="_id" value="{{order._id}}">
+            <input type="hidden" name="paymentIntentId" value="{{order.paymentIntentId}}">
+            <button type="submit" class="btn btn-danger">CANCEL & REFUND</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+    <script>
+        let taxValue = document.getElementById("tax").textContent
+        let newTaxValue = parseFloat(taxValue) * 0.04
+        document.getElementById("tax").innerHTML = "$" + newTaxValue
+
+        let orderEta = document.getElementById("orderEta").value;
+        const refundBtn = document.getElementById("cancel-refund");
+        if (orderEta == '0'){
+            refundBtn.innerHTML = "CANCELLED"
+            refundBtn.disabled = true
+        }
+
+    </script>
+
+
+    <script src="/stylesheets/assets/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -180,7 +180,12 @@
                 </div>
             </nav>
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <button id="playButton">Play Audio</button>
+                <nav aria-label="breadcrumb" class="mt-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/admin">Admin</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Orders</li>
+                    </ol>
+                </nav>
 
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -203,8 +208,8 @@
                             aria-selected="true">Not Confirmed</button>
                         <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
                             type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Confirmed</button>
-                        <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
-                            type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</button>
+                        <button class="nav-link" id="nav-cancel-tab" data-bs-toggle="tab" data-bs-target="#nav-cancel"
+                            type="button" role="tab" aria-controls="nav-cancel" aria-selected="false">Cancel</button>
                     </div>
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
@@ -215,13 +220,12 @@
                                     <tr>
                                         <th scope="col">Status</th>
                                         <th scope="col">Customer</th>
-                                        <th scope="col">Items</th>
                                         <th scope="col">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {{#each notconfirmedOrder}}
-                                    <tr onclick="window.location.href='/order/{{this._id}}';">
+                                    <tr onclick="window.location.href='/admin/order/{{this._id}}';">
 
                                          <td>
                                            <span class="badge rounded-pill text-bg-secondary">{{this.orderStatus}}</span>
@@ -230,8 +234,7 @@
                                         #{{this._id}}<br>
                                             {{this.date}}
                                         </td>
-                                        <td>{{this.cart.totalQty}}</td>
-                                        <td>${{this.cart.totalPrice}}</td>
+                                        <td>${{this.totalPrice}}</td>
                                     </tr>
                                     {{/each}}
                                 </tbody>
@@ -245,13 +248,12 @@
                                     <tr>
                                         <th scope="col">Status</th>
                                         <th scope="col">Customer</th>
-                                        <th scope="col">Items</th>
                                         <th scope="col">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {{#each confirmedOrder}}
-                                    <tr onclick="window.location.href='/order/{{this._id}}';">
+                                    <tr onclick="window.location.href='/admin/order/{{this._id}}';">
 
                                          <td>
                                            <span class="badge rounded-pill text-bg-secondary">{{this.orderStatus}}</span>
@@ -260,8 +262,7 @@
                                         #{{this._id}}<br>
                                             {{this.date}}
                                         </td>
-                                        <td>{{this.cart.totalQty}}</td>
-                                        <td>${{this.cart.totalPrice}}</td>
+                                        <td>${{this.totalPrice}}</td>
                                     </tr>
                                     {{/each}}
                                 </tbody>
@@ -269,8 +270,33 @@
                         </div>
                         
                     </div>
-                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...
-                       
+                    <div class="tab-pane fade" id="nav-cancel" role="tabpanel" aria-labelledby="nav-cancel-tab">
+                        <div class="table-responsive">
+                            <table class="display" id="myTable3">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Customer</th>
+                                        <th scope="col">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each cancelledOrder}}
+                                    <tr onclick="window.location.href='/admin/order/{{this._id}}';">
+
+                                         <td>
+                                           <span class="badge rounded-pill text-bg-secondary">{{this.orderStatus}}</span>
+                                        </td>
+                                        <td>{{this.deliveryName}}<br>
+                                        #{{this._id}}<br>
+                                            {{this.date}}
+                                        </td>
+                                        <td>${{this.totalPrice}}</td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
@@ -293,6 +319,9 @@
         });
          $(document).ready(function () {
             $('#myTable2').DataTable();
+        });
+        $(document).ready(function () {
+            $('#myTable3').DataTable();
         });
 
     </script>

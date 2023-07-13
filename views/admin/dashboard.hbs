@@ -12,10 +12,15 @@
     <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/dashboard/">
     <link href="/stylesheets/assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css"
+        rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle/js/bootstrap4-toggle.min.js"></script>
 
 
     <style>
@@ -69,7 +74,8 @@
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
         }
-        .toggle{
+
+        .toggle {
             margin: 0 10px 0 10px;
         }
     </style>
@@ -121,7 +127,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/admin/users"  >
+                            <a class="nav-link" href="/admin/users">
                                 <span data-feather="users" class="align-text-bottom"></span>
                                 Customers
                             </a>
@@ -137,7 +143,7 @@
                         </a>
                     </h6>
                     <ul class="nav flex-column mb-2">
-                       
+
                         <li class="nav-item">
                             <a class="nav-link" href="#">
                                 <span data-feather="file-text" class="align-text-bottom"></span>
@@ -155,6 +161,11 @@
             </nav>
 
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <nav aria-label="breadcrumb" class="mt-3">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item active" aria-current="page">Admin</li>
+                    </ol>
+                </nav>
                 <div
                     class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Dashboard</h1>
@@ -175,12 +186,13 @@
                     </div>
                     <div class="col-md-3">
                         <div style="margin:10px 0 10px 0" class="d-flex flex-row align-items-center">
-                        <h5 class="card-title">Store : </h5>
-                        <form id="storeStatusForm" method="POST" action="/admin/store-status">
-                            <input type="hidden" id="oldStatus" value="{{store.status}}" name="oldStatus">
-                            <input type="hidden" id="newStatus"  name="newStatus">
-                            <input id="stackedCheck1" class="form-check-input" type="checkbox" data-toggle="toggle" data-size="sm">
-                        </form>
+                            <h5 class="card-title">Store : </h5>
+                            <form id="storeStatusForm" method="POST" action="/admin/store-status">
+                                <input type="hidden" id="oldStatus" value="{{store.status}}" name="oldStatus">
+                                <input type="hidden" id="newStatus" name="newStatus">
+                                <input id="stackedCheck1" class="form-check-input" type="checkbox" data-toggle="toggle"
+                                    data-size="sm">
+                            </form>
                         </div>
                         <div class="card">
                             <div class="card-body">

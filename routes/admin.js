@@ -99,6 +99,12 @@ router.get("/orders", isAdmin, function (req, res, next) {
         return order.orderStatus === "Confirmed";
       });
 
+      var cancelledOrder = orders.filter(function (order) {
+        return order.orderStatus === "Cancelled";
+      });
+
+      
+
       var cart;
       orders.forEach(function (order) {
         cart = new Cart(order.cart);
@@ -109,10 +115,53 @@ router.get("/orders", isAdmin, function (req, res, next) {
         orders: orders,
         notconfirmedOrder: notconfirmedOrder,
         confirmedOrder: confirmedOrder,
+        cancelledOrder: cancelledOrder,
         isadmin: 1
       });
     }
   );
+});
+
+router.get("/order/:id", isAdmin, function (req, res, next) {
+
+  Order.findOne({ _id: req.params.id }, function (err, order) {
+    if (err) {
+      return res.redirect("/");
+    }
+
+    if (!order) {
+      return res.redirect("/");
+    }
+    console.log(order.cart)
+
+    res.render("admin/order-confirm", {
+      order: order,
+      user: req.user,
+      isadmin: 1  
+    });
+  });
+});
+
+router.post("/order-status", isAdmin, function (req, res, next) {
+  Order.findOne({ _id: req.body._id }, function (err, order) {
+    if (err) {
+      console.log(err)
+      return res.status(500).send({ error: "Error updating order status" });
+    }
+    if (!order) {
+      return res.status(404).send({ error: "Order not found" });
+    }
+
+    order.orderStatus = req.body.status;
+    order.orderEta = req.body.eta;
+
+    order.save(function (err) {
+      if (err) {
+        return res.status(500).send({ error: "Error updating order status" });
+      }
+      res.redirect("/admin/orders");
+    });
+  });
 });
 
 
@@ -276,34 +325,6 @@ router.get("/delete-user/:id", isAdmin, function (req, res) {
       return res.status(500).send({ error: "Error deleting users" });
     }
     res.redirect("/admin/users");
-  });
-});
-
-router.post("/order-edit", isAdmin, function (req, res, next) {
-  Order.findOne({ _id: req.body._id }, function (err, order) {
-    if (err) {
-      return res.status(500).send({ error: "Error updating order status" });
-    }
-    if (!order) {
-      return res.status(404).send({ error: "Order not found" });
-    }
-    order.status = req.body.status;
-    order.save(function (err) {
-      if (err) {
-        return res.status(500).send({ error: "Error updating order status" });
-      }
-      res.redirect("/admin");
-    });
-  });
-});
-
-router.get("/delete-order/:id", isAdmin, function (req, res) {
-  var orderId = req.params.id;
-  Order.deleteOne({ _id: orderId }, function (err) {
-    if (err) {
-      return res.status(500).send({ error: "Error deleting order" });
-    }
-    res.redirect("/admin/orders");
   });
 });
 

@@ -305,7 +305,6 @@ router.post("/add-to-cart/:id", function (req, res, next) {
       }
     }
     var price = req.body.price;
-    console.log(price);
     var additionalChoicesString = additionalChoices.join(", ");
     var additionalNote = req.body.additionalNote;
 
@@ -332,7 +331,6 @@ router.post("/addone-to-cart/:id", function (req, res, next) {
   let additionalChoices = req.body.additionalChoices;
   let additionalNote = req.body.additionalNote;
   let price = parseFloat(req.body.price) / parseFloat(req.body.qty);
-  console.log(price);
 
   Product.findById(productId, function (err, product) {
     if (err) {
@@ -359,7 +357,6 @@ router.get("/remove/:id", function (req, res, next) {
   var cart = new Cart(req.session.cart ? req.session.cart : {});
 
   cart.removeItem(productId, function () {
-    console.log(cart);
     req.session.cart = cart;
     req.session.save(function (err) {
       res.redirect("/shopping-cart?cache=" + Date.now());
@@ -414,6 +411,39 @@ router.get("/success/", isLoggedIn, function (req, res, next) {
   });
 });
 
+router.post("/refund-order", isLoggedIn, async (req, res) => {
+  const orderId = req.body._id;
+  const paymentIntentId = req.body.paymentIntentId;
+
+  console.log(paymentIntentId)
+  const refund = await stripe.refunds.create({
+    payment_intent: `${paymentIntentId}`,
+  });
+
+  Order.findOne({ _id: orderId }, function (err, order) {
+    if (err) {
+      console.log(err)
+      return res.status(500).send({ error: "Error updating order status" });
+    }
+    if (!order) {
+      return res.status(404).send({ error: "Order not found" });
+    }
+
+    console.log(refund)
+    order.orderStatus = "Cancelled";
+    order.orderEta = 0;
+    order.refundId = refund.id;
+
+    order.save(function (err) {
+      if (err) {
+        return res.status(500).send({ error: "Error updating order status" });
+      }
+      res.redirect("/admin/orders");
+    });
+  });
+
+})
+
 router.post("/create-checkout-session", async (req, res) => {
   const cart = req.session.cart;
   const user = req.user;
@@ -464,6 +494,7 @@ router.post("/create-checkout-session", async (req, res) => {
 
   lineItems.push(taxLineItem);
   var tip = req.body.tip
+  var finalTotalPrice = parseFloat(tip) + parseFloat(taxAmount) + parseFloat(cart.totalPrice);
   if (tip > 0){
     
     const tipLineItem = {
@@ -489,7 +520,8 @@ router.post("/create-checkout-session", async (req, res) => {
     cancel_url: `${YOUR_DOMAIN}/checkout`,
   });
 
-  createOrder(session, user, cart);
+  createOrder(session, user, cart, tip, taxAmount, finalTotalPrice);
+  
   req.session.recentid = session.id;
   req.session.save(function (err) {
     res.redirect(303, session.url);
@@ -500,9 +532,14 @@ router.post("/create-checkout-session", async (req, res) => {
 const fulfillOrder = (session) => {
   const paymentId = session.id;
 
+  console.log(session)
+
   Order.findOneAndUpdate(
     { paymentId: paymentId },
-    { $set: { paymentStatus: "Paid" } },
+    { $set: { 
+      paymentStatus: "Paid",
+      paymentIntentId: session.payment_intent,
+     } },
     { new: true },
     (err, order) => {
       if (err) {
@@ -517,7 +554,7 @@ const fulfillOrder = (session) => {
   );
 };
 
-const createOrder = (session, user, cart) => {
+const createOrder = (session, user, cart, tip, tax, totalPrice) => {
   var currentDate = new Date();
   var timezoneOffset = -420;
   currentDate.setMinutes(currentDate.getMinutes() + timezoneOffset);
@@ -529,7 +566,7 @@ const createOrder = (session, user, cart) => {
     minute: "numeric",
     hour12: true,
   });
-  console.log("Creating order");
+  console.log("Inserting order in to DB");
 
   var deliveryName = user.firstname + " " + user.lastname;
   var deliveryAddress = user.address;
@@ -539,6 +576,10 @@ const createOrder = (session, user, cart) => {
   const order = new Order({
     user: user,
     cart: cart,
+    tip: tip,
+    tax: tax,
+    totalPrice: totalPrice,
+    deliveryType: "Delivery",
     deliveryName: deliveryName,
     deliveryAddress: deliveryAddress,
     deliveryUrl: deliveryUrl,
@@ -549,43 +590,6 @@ const createOrder = (session, user, cart) => {
     date: formattedDate,
   });
   order.save(function (err, result) {});
-};
-
-const emailCustomerAboutFailedPayment = (session) => {
-  const paymentId = session.id;
-
-  Order.findOneAndUpdate(
-    { paymentId: paymentId },
-    { $set: { paymentStatus: "payment failed" } },
-    { new: true },
-    (err, order) => {
-      if (err) {
-        console.log("Error fulfilling order:", err);
-        return;
-      }
-
-      if (order) {
-        console.log("Order fulfilled:", order);
-      }
-    }
-  );
-};
-
-const removeOrder = async (session) => {
-  try {
-    // Retrieve the order based on the session
-    const order = await Order.findOne({ paymentId: session.id });
-
-    if (order) {
-      // Remove the order from the database
-      await Order.findByIdAndRemove(order._id);
-      console.log("Order removed:", order);
-    } else {
-      console.log("Order not found:", session.id);
-    }
-  } catch (err) {
-    console.log("Error removing order:", err);
-  }
 };
 
 const endpointSecret =
@@ -612,14 +616,10 @@ router.post("/webhook", async (request, response) => {
   switch (event.type) {
     case "checkout.session.completed": {
       const session = event.data.object;
-      console.log("waiting payment");
 
       if (session.payment_status === "paid") {
         console.log("Change payment status to paid");
         fulfillOrder(session);
-      } else {
-        console.log("Order is still waiting for payment. Removing order...");
-        await removeOrder(session);
       }
 
       break;
@@ -627,18 +627,12 @@ router.post("/webhook", async (request, response) => {
 
     case "checkout.session.async_payment_succeeded": {
       const session = event.data.object;
-      console.log("change payment status to paid");
-
+      console.log("WTF IS THIS");
       fulfillOrder(session);
-
       break;
     }
 
     case "checkout.session.async_payment_failed": {
-      const session = event.data.object;
-
-      emailCustomerAboutFailedPayment(session);
-
       break;
     }
   }
