@@ -11,28 +11,30 @@ var csrfProtection = csrf();
 router.use(csrfProtection);
 
 router.get("/profile", isLoggedIn, function (req, res, next) {
-
   req.session.referringUrl = req.originalUrl;
 
-  Order.find({ user: req.user, paymentStatus: { $ne: "Awaiting Payment" } }, function (err, orders) {
-    if (err) {
-      return res.write("Error!");
-    }
-    var cart;
-    orders.forEach(function (order) {
-      cart = new Cart(order.cart);
-      order.items = cart.generateArray();
-    });
+  Order.find(
+    { user: req.user, paymentStatus: { $ne: "Awaiting Payment" } },
+    function (err, orders) {
+      if (err) {
+        return res.write("Error!");
+      }
+      var cart;
+      orders.forEach(function (order) {
+        cart = new Cart(order.cart);
+        order.items = cart.generateArray();
+      });
 
-    var messages = req.flash();
-    console.log(messages)
-    res.render("user/profile", {
-      orders: orders,
-      user: req.user,
-      csrfToken: req.csrfToken(),
-      messages: messages,
-    });
-  });
+      var messages = req.flash();
+      console.log(messages);
+      res.render("user/profile", {
+        orders: orders,
+        user: req.user,
+        csrfToken: req.csrfToken(),
+        messages: messages,
+      });
+    }
+  );
 });
 
 router.get("/adddeliverylocation", isLoggedIn, function (req, res, next) {
@@ -40,13 +42,13 @@ router.get("/adddeliverylocation", isLoggedIn, function (req, res, next) {
   res.render("user/delivery", {
     csrfToken: req.csrfToken(),
     user: req.user,
-    redirectUrl: req.session.referringUrl
+    redirectUrl: req.session.referringUrl,
   });
 });
 
 router.post("/edit-address", isLoggedIn, function (req, res, next) {
-  var redirectUrl = req.session.referringUrl
-  console.log(redirectUrl)
+  var redirectUrl = req.session.referringUrl;
+  console.log(redirectUrl);
   var userId = req.user._id;
   var latitude = req.body.latitude;
   var longitude = req.body.longitude;
@@ -73,13 +75,12 @@ router.post("/edit-address", isLoggedIn, function (req, res, next) {
   );
 });
 
-
 router.post("/edit-profile", isLoggedIn, function (req, res, next) {
   var email = req.body.email;
   var firstName = req.body.firstName;
   var lastName = req.body.lastName;
   var mobilePhone = req.body.mobilePhone;
-  var referringUrl = req.session.referringUrl
+  var referringUrl = req.session.referringUrl;
 
   User.findOne({ email: email }, function (err, existingUser) {
     if (err) {
@@ -95,52 +96,29 @@ router.post("/edit-profile", isLoggedIn, function (req, res, next) {
       return res.redirect("/user/profile#contact");
     }
 
-    User.findOne({ mobilePhone: mobilePhone }, function (err, existingUser) {
-      if (err) {
-        console.log(err);
-        if (referringUrl === '/checkout'){
-          return res.redirect(referringUrl)
-        }else{
-          return res.redirect("/user/profile#contact");
-        }
-      }
-
-      if (
-        existingUser &&
-        existingUser._id.toString() !== req.user._id.toString()
-      ) {
-        req.flash("error", "Mobile number already in use.");
-        if (referringUrl === '/checkout'){
-          return res.redirect(referringUrl)
-        }else{
-          return res.redirect("/user/profile#contact");
-        }
-      }
-
-      // Update the user information
-      User.updateOne(
-        { _id: req.user._id },
-        {
-          $set: {
-            firstname: firstName,
-            lastname: lastName,
-            mobilePhone: mobilePhone,
-          },
+    // Update the user information
+    User.updateOne(
+      { _id: req.user._id },
+      {
+        $set: {
+          firstname: firstName,
+          lastname: lastName,
+          mobilePhone: mobilePhone,
         },
-        function (err, result) {
-          if (err) {
-            console.log(err);
-            return res.redirect("/user/profile");
-          }
-          req.flash("success", "Successfully Updated Contact Detail.");
-          if (referringUrl === '/checkout'){
-            return res.redirect(referringUrl)
-          }else{
-            return res.redirect("/user/profile#contact");
-          }
+      },
+      function (err, result) {
+        if (err) {
+          console.log(err);
+          return res.redirect("/user/profile");
         }
-      );
-    });
+        req.flash("success", "Successfully Updated Contact Detail.");
+        if (referringUrl === "/checkout") {
+          return res.redirect(referringUrl);
+        } else {
+          return res.redirect("/user/profile#contact");
+        }
+      }
+    );
   });
 });
 
@@ -171,8 +149,13 @@ router.post("/reset-password", function (req, res, next) {
 
   req.checkBody("email", "Invalid email").notEmpty().isEmail();
   req.checkBody("oldPassword", "Invalid old password").notEmpty();
-  req.checkBody("newPassword", "Invalid password").notEmpty().isLength({ min: 4 });
-  req.checkBody("confirmPassword", "Passwords do not match").equals(newPassword);
+  req
+    .checkBody("newPassword", "Invalid password")
+    .notEmpty()
+    .isLength({ min: 4 });
+  req
+    .checkBody("confirmPassword", "Passwords do not match")
+    .equals(newPassword);
 
   var errors = req.validationErrors();
   if (errors) {
@@ -202,17 +185,19 @@ router.post("/reset-password", function (req, res, next) {
     // Update user's password
     user.password = user.encryptPassword(newPassword);
 
-    User.updateOne({ email: email }, { password: user.password }, function (err) {
-      if (err) {
-        return next(err);
+    User.updateOne(
+      { email: email },
+      { password: user.password },
+      function (err) {
+        if (err) {
+          return next(err);
+        }
+        req.flash("success", "Password reset successful.");
+        res.redirect("/user/profile#password"); // Redirect to the login page after password reset
       }
-      req.flash("success", "Password reset successful.");
-      res.redirect("/user/profile#password"); // Redirect to the login page after password reset
-    });
+    );
   });
 });
-
-
 
 router.get("/logout", isLoggedIn, function (req, res, next) {
   req.logout(function (err) {
@@ -248,7 +233,7 @@ router.post(
       req.session.referringUrl = null;
       res.redirect(oldUrl);
     } else {
-      res.redirect('/menu');
+      res.redirect("/menu");
     }
   }
 );
@@ -277,11 +262,10 @@ router.post(
       req.session.referringUrl = null;
       res.redirect(oldUrl);
     } else {
-      res.redirect('/menu');
+      res.redirect("/menu");
     }
   }
 );
-
 
 module.exports = router;
 

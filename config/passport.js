@@ -30,16 +30,12 @@ passport.use('local.signup',new LocalStrategy({
         });
         return done(null, false, req.flash('error',messages));
     }
-    User.findOne({ $or: [{ 'email': email.toLowerCase() }, { 'mobilePhone': req.body.mobilePhone }] }, function(err, user) {
+    User.findOne({ 'email': email.toLowerCase()  }, function(err, user) {
         if (err) {
             return done(err);
         }
         if (user) {
-            if (user.email === email) {
-                return done(null, false, { message: 'Email already in use.' });
-            } else {
-                return done(null, false, { message: 'Mobile phone number already in use.' });
-            }
+            return done(null, false, { message: 'Email already in use.' });
         }
 
         var newUser = new User();

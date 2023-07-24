@@ -3,7 +3,7 @@ var Cart = require("../models/cart");
 var csrf = require("csurf");
 var Product = require("../models/product");
 var Order = require("../models/order");
-const Store = require('../models/store');
+const Store = require("../models/store");
 
 const stripe = require("stripe")(
   "sk_test_51MR6MPExAgqOVTCm0kkqWiINL1gFOP2X1V2EJJZEzTrMdrW3tsXodHr1p7jeXWm7K2oeKTiU56xnAwiFFlOVpu8D00JwVPq6vC"
@@ -15,20 +15,19 @@ var csrfProtection = csrf();
 
 let eventHandlerRegistered = false;
 
-
-router.use(function(req, res, next) {
+router.use(function (req, res, next) {
   const io = req.app.locals.io;
 
   if (!eventHandlerRegistered) {
-    io.on('connection', function(socket) {
-      console.log('A user connected');
+    io.on("connection", function (socket) {
+      console.log("A user connected");
 
-      socket.on('event', function(data) {
-        console.log('Received event:', data);
+      socket.on("event", function (data) {
+        console.log("Received event:", data);
       });
 
-      socket.on('disconnect', function() {
-        console.log('A user disconnected');
+      socket.on("disconnect", function () {
+        console.log("A user disconnected");
       });
     });
 
@@ -44,7 +43,6 @@ router.get("/", function (req, res, next) {
     title: "Pye Boat Noodle",
     user: req.user,
   });
-  
 });
 
 router.get("/terms", function (req, res, next) {
@@ -60,207 +58,207 @@ router.get("/privacy", function (req, res, next) {
   });
 });
 
-router.get('/menu', function(req, res, next) {
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.setHeader('Pragma', 'no-cache');
-  res.setHeader('Expires', '0');
+router.get("/menu", function (req, res, next) {
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
 
   req.session.referringUrl = req.originalUrl;
 
   var cart = new Cart(req.session.cart ? req.session.cart : {});
-  var successMsg = req.flash('success')[0];
+  var successMsg = req.flash("success")[0];
 
   // Fetch the Store data from the database
-  Store.findOne({}, function(err, store) {
+  Store.findOne({}, function (err, store) {
     if (err) {
-      console.log('Error fetching store data:', err);
-      res.render('shop/products', {
-        title: 'Shopping Cart',
+      console.log("Error fetching store data:", err);
+      res.render("shop/products", {
+        title: "Shopping Cart",
         snacks: [],
         rice: [],
         successMsg: successMsg || null,
         noMessages: !successMsg,
         user: req.user,
-        totalPrice: cart.totalPrice
+        totalPrice: cart.totalPrice,
       });
     } else {
-      Product.find(function(err, docs) {
+      Product.find(function (err, docs) {
         var snacks = [];
         var rice = [];
 
-        docs.forEach(function(product) {
-          if (product.category === 'PYE SNACKS') {
+        docs.forEach(function (product) {
+          if (product.category === "PYE SNACKS") {
             snacks.push(product);
-          } else if (product.category === 'PYE OVER RICE') {
+          } else if (product.category === "PYE OVER RICE") {
             rice.push(product);
           }
         });
 
-        if (store.status === 'closed'){
+        if (store.status === "closed") {
           req.session.cart = null;
         }
 
-        res.render('shop/products', {
-          title: 'Shopping Cart',
+        res.render("shop/products", {
+          title: "Shopping Cart",
           snacks: snacks,
           rice: rice,
           successMsg: successMsg || null,
           noMessages: !successMsg,
           user: req.user,
           totalPrice: cart.totalPrice,
-          store: store // Pass the store data to the view
+          store: store, // Pass the store data to the view
         });
       });
     }
   });
 });
 
-router.get('/menu/noodles', function(req, res, next) {
+router.get("/menu/noodles", function (req, res, next) {
   req.session.referringUrl = req.originalUrl;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
-  var successMsg = req.flash('success')[0];
+  var successMsg = req.flash("success")[0];
 
   // Fetch the Store data from the database
-  Store.findOne({}, function(err, store) {
+  Store.findOne({}, function (err, store) {
     if (err) {
-      console.log('Error fetching store data:', err);
-      res.render('shop/products-noodles', {
-        title: 'Shopping Cart',
+      console.log("Error fetching store data:", err);
+      res.render("shop/products-noodles", {
+        title: "Shopping Cart",
         boat: [],
         dry: [],
         successMsg: successMsg || null,
         noMessages: !successMsg,
         totalPrice: cart.totalPrice,
-        user: req.user
+        user: req.user,
       });
     } else {
-      Product.find(function(err, docs) {
+      Product.find(function (err, docs) {
         var boat = [];
         var dry = [];
 
         // Categorize the products into separate arrays
-        docs.forEach(function(product) {
-          if (product.category === 'PYE BOAT NOODLES') {
+        docs.forEach(function (product) {
+          if (product.category === "PYE BOAT NOODLES") {
             boat.push(product);
-          } else if (product.category === 'PYE DRY NOODLES') {
+          } else if (product.category === "PYE DRY NOODLES") {
             dry.push(product);
           }
         });
 
-        if (store.status === 'closed'){
+        if (store.status === "closed") {
           req.session.cart = null;
         }
 
-        res.render('shop/products-noodles', {
-          title: 'Shopping Cart',
+        res.render("shop/products-noodles", {
+          title: "Shopping Cart",
           boat: boat,
           dry: dry,
           successMsg: successMsg || null,
           noMessages: !successMsg,
           totalPrice: cart.totalPrice,
           user: req.user,
-          store: store // Pass the store data to the view
+          store: store, // Pass the store data to the view
         });
       });
     }
   });
 });
-router.get('/menu/vegetarian', function(req, res, next) {
+router.get("/menu/vegetarian", function (req, res, next) {
   req.session.referringUrl = req.originalUrl;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
-  var successMsg = req.flash('success')[0];
+  var successMsg = req.flash("success")[0];
 
   // Fetch the Store data from the database
-  Store.findOne({}, function(err, store) {
+  Store.findOne({}, function (err, store) {
     if (err) {
-      console.log('Error fetching store data:', err);
-      res.render('shop/products-vegetarian', {
-        title: 'Shopping Cart',
+      console.log("Error fetching store data:", err);
+      res.render("shop/products-vegetarian", {
+        title: "Shopping Cart",
         snack: [],
         noodle: [],
         successMsg: successMsg || null,
         noMessages: !successMsg,
         totalPrice: cart.totalPrice,
-        user: req.user
+        user: req.user,
       });
     } else {
-      Product.find(function(err, docs) {
+      Product.find(function (err, docs) {
         var snack = [];
         var noodle = [];
 
         // Categorize the products into separate arrays
-        docs.forEach(function(product) {
-          if (product.category === 'J SNACKS') {
+        docs.forEach(function (product) {
+          if (product.category === "J SNACKS") {
             snack.push(product);
-          } else if (product.category === 'JAE NOODLES') {
+          } else if (product.category === "JAE NOODLES") {
             noodle.push(product);
           }
         });
 
-        if (store.status === 'closed'){
+        if (store.status === "closed") {
           req.session.cart = null;
         }
 
-        res.render('shop/products-vegetarian', {
-          title: 'Shopping Cart',
+        res.render("shop/products-vegetarian", {
+          title: "Shopping Cart",
           snack: snack,
           noodle: noodle,
           successMsg: successMsg || null,
           noMessages: !successMsg,
           totalPrice: cart.totalPrice,
           user: req.user,
-          store: store // Pass the store data to the view
+          store: store, // Pass the store data to the view
         });
       });
     }
   });
 });
 
-router.get('/menu/drinks', function(req, res, next) {
+router.get("/menu/drinks", function (req, res, next) {
   req.session.referringUrl = req.originalUrl;
   var cart = new Cart(req.session.cart ? req.session.cart : {});
-  var successMsg = req.flash('success')[0];
+  var successMsg = req.flash("success")[0];
 
   // Fetch the Store data from the database
-  Store.findOne({}, function(err, store) {
+  Store.findOne({}, function (err, store) {
     if (err) {
-      console.log('Error fetching store data:', err);
-      res.render('shop/products-drinks', {
-        title: 'Shopping Cart',
+      console.log("Error fetching store data:", err);
+      res.render("shop/products-drinks", {
+        title: "Shopping Cart",
         drink: [],
         desert: [],
         successMsg: successMsg || null,
         noMessages: !successMsg,
         totalPrice: cart.totalPrice,
-        user: req.user
+        user: req.user,
       });
     } else {
-      Product.find(function(err, docs) {
+      Product.find(function (err, docs) {
         var drink = [];
         var desert = [];
 
         // Categorize the products into separate arrays
-        docs.forEach(function(product) {
-          if (product.category === 'DRINK') {
+        docs.forEach(function (product) {
+          if (product.category === "DRINK") {
             drink.push(product);
-          } else if (product.category === 'DESERT') {
+          } else if (product.category === "DESERT") {
             desert.push(product);
           }
         });
 
-        if (store.status === 'closed'){
+        if (store.status === "closed") {
           req.session.cart = null;
         }
 
-        res.render('shop/products-drinks', {
-          title: 'Shopping Cart',
+        res.render("shop/products-drinks", {
+          title: "Shopping Cart",
           drink: drink,
           desert: desert,
           successMsg: successMsg || null,
           noMessages: !successMsg,
           totalPrice: cart.totalPrice,
           user: req.user,
-          store: store // Pass the store data to the view
+          store: store, // Pass the store data to the view
         });
       });
     }
@@ -269,10 +267,10 @@ router.get('/menu/drinks', function(req, res, next) {
 
 router.get("/order/:id", function (req, res, next) {
   const io = req.app.locals.io;
-  io.emit('refresh', 'Refreshing user in /menu');
+  io.emit("refresh", "Refreshing user in /menu");
 
-      const socket = req.socket;
-  socket.emit('disconnect');
+  const socket = req.socket;
+  socket.emit("disconnect");
 
   Order.findOne({ _id: req.params.id }, function (err, order) {
     if (err) {
@@ -414,22 +412,22 @@ router.get("/success/", isLoggedIn, function (req, res, next) {
 router.post("/refund-order", isLoggedIn, async (req, res) => {
   const orderId = req.body._id;
   const paymentIntentId = req.body.paymentIntentId;
-
-  console.log(paymentIntentId)
+  console.log(stripe);
+  console.log(paymentIntentId);
   const refund = await stripe.refunds.create({
     payment_intent: `${paymentIntentId}`,
   });
 
   Order.findOne({ _id: orderId }, function (err, order) {
     if (err) {
-      console.log(err)
+      console.log(err);
       return res.status(500).send({ error: "Error updating order status" });
     }
     if (!order) {
       return res.status(404).send({ error: "Order not found" });
     }
 
-    console.log(refund)
+    console.log(refund);
     order.orderStatus = "Cancelled";
     order.orderEta = 0;
     order.refundId = refund.id;
@@ -441,8 +439,45 @@ router.post("/refund-order", isLoggedIn, async (req, res) => {
       res.redirect("/admin/orders");
     });
   });
+});
 
-})
+const createOrder = (session, user, cart, tip, tax, totalPrice) => {
+  var currentDate = new Date();
+  var timezoneOffset = -420;
+  currentDate.setMinutes(currentDate.getMinutes() + timezoneOffset);
+  var formattedDate = currentDate.toLocaleString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+  console.log("Inserting order in to DB");
+
+  var deliveryName = user.firstname + " " + user.lastname;
+  var deliveryAddress = user.address;
+  var deliveryUrl = `http://maps.google.com/maps?z=12&t=m&q=loc:${user.latitude}+${user.longitude}`;
+  var deliveryContact = user.mobilePhone;
+
+  const order = new Order({
+    user: user,
+    cart: cart,
+    tip: tip,
+    tax: tax,
+    totalPrice: totalPrice,
+    deliveryType: "Delivery",
+    deliveryName: deliveryName,
+    deliveryAddress: deliveryAddress,
+    deliveryUrl: deliveryUrl,
+    deliveryContact: deliveryContact,
+    paymentId: session.id,
+    paymentStatus: "Awaiting Payment",
+    orderStatus: "Not-Confirmed",
+    date: formattedDate,
+  });
+  order.save(function (err, result) {});
+};
 
 router.post("/create-checkout-session", async (req, res) => {
   const cart = req.session.cart;
@@ -493,10 +528,10 @@ router.post("/create-checkout-session", async (req, res) => {
   };
 
   lineItems.push(taxLineItem);
-  var tip = req.body.tip
-  var finalTotalPrice = parseFloat(tip) + parseFloat(taxAmount) + parseFloat(cart.totalPrice);
-  if (tip > 0){
-    
+  var tip = req.body.tip;
+  var finalTotalPrice =
+    parseFloat(tip) + parseFloat(taxAmount) + parseFloat(cart.totalPrice);
+  if (tip > 0) {
     const tipLineItem = {
       price_data: {
         currency: "usd",
@@ -510,7 +545,6 @@ router.post("/create-checkout-session", async (req, res) => {
     };
 
     lineItems.push(tipLineItem);
-
   }
 
   const session = await stripe.checkout.sessions.create({
@@ -521,7 +555,7 @@ router.post("/create-checkout-session", async (req, res) => {
   });
 
   createOrder(session, user, cart, tip, taxAmount, finalTotalPrice);
-  
+
   req.session.recentid = session.id;
   req.session.save(function (err) {
     res.redirect(303, session.url);
@@ -529,17 +563,17 @@ router.post("/create-checkout-session", async (req, res) => {
 });
 
 //stripe listen --forward-to localhost:3000/webhook
-const fulfillOrder = (session) => {
+const fulfillOrder = async (session) => {
   const paymentId = session.id;
-
-  console.log(session)
 
   Order.findOneAndUpdate(
     { paymentId: paymentId },
-    { $set: { 
-      paymentStatus: "Paid",
-      paymentIntentId: session.payment_intent,
-     } },
+    {
+      $set: {
+        paymentStatus: "Paid",
+        paymentIntentId: session.payment_intent,
+      },
+    },
     { new: true },
     (err, order) => {
       if (err) {
@@ -552,44 +586,6 @@ const fulfillOrder = (session) => {
       }
     }
   );
-};
-
-const createOrder = (session, user, cart, tip, tax, totalPrice) => {
-  var currentDate = new Date();
-  var timezoneOffset = -420;
-  currentDate.setMinutes(currentDate.getMinutes() + timezoneOffset);
-  var formattedDate = currentDate.toLocaleString("en-US", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
-  console.log("Inserting order in to DB");
-
-  var deliveryName = user.firstname + " " + user.lastname;
-  var deliveryAddress = user.address;
-  var deliveryUrl = `http://maps.google.com/maps?z=12&t=m&q=loc:${user.latitude}+${user.longitude}`;
-  var deliveryContact = user.mobilePhone;
-
-  const order = new Order({
-    user: user,
-    cart: cart,
-    tip: tip,
-    tax: tax,
-    totalPrice: totalPrice,
-    deliveryType: "Delivery",
-    deliveryName: deliveryName,
-    deliveryAddress: deliveryAddress,
-    deliveryUrl: deliveryUrl,
-    deliveryContact: deliveryContact,
-    paymentId: session.id,
-    paymentStatus: "Awaiting Payment",
-    orderStatus: "Not-Confirmed",
-    date: formattedDate,
-  });
-  order.save(function (err, result) {});
 };
 
 const endpointSecret =
@@ -622,13 +618,6 @@ router.post("/webhook", async (request, response) => {
         fulfillOrder(session);
       }
 
-      break;
-    }
-
-    case "checkout.session.async_payment_succeeded": {
-      const session = event.data.object;
-      console.log("WTF IS THIS");
-      fulfillOrder(session);
       break;
     }
 
